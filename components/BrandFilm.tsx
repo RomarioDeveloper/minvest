@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import LoopVideo from "@/components/LoopVideo";
 
 type Props = {
   /** All-intra mp4 for frame-accurate scrubbing (desktop). */
   scrubSrc: string;
-  /** Base path (no extension) of the looped version for mobile. */
-  loopSrc: string;
   poster: string;
 };
 
@@ -30,32 +27,21 @@ function pinProgress(section: HTMLElement): number {
  * (every frame a keyframe), so seeking is instant and the scrub reads as
  * buttery playback.
  *
- * Mobile: scrubbing via currentTime is unreliable on touch Safari/Chrome,
- * so phones get the auto-playing looped version instead.
+ * Mobile: the section is omitted entirely — desktop only.
  */
-export default function BrandFilm({ scrubSrc, loopSrc, poster }: Props) {
+export default function BrandFilm({ scrubSrc, poster }: Props) {
   const [mobile, setMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     setMobile(window.matchMedia("(max-width: 767px)").matches);
   }, []);
 
-  if (mobile === null) {
-    return <section className="h-[100svh] w-full bg-ink" aria-hidden="true" />;
-  }
-
-  if (mobile) {
-    return (
-      <section className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink">
-        <LoopVideo src={loopSrc} className="absolute inset-0 h-full w-full object-cover" />
-      </section>
-    );
-  }
+  if (mobile === null || mobile) return null;
 
   return <ScrubFilm scrubSrc={scrubSrc} poster={poster} />;
 }
 
-function ScrubFilm({ scrubSrc, poster }: Omit<Props, "loopSrc">) {
+function ScrubFilm({ scrubSrc, poster }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 

@@ -25,8 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Preloader />
         <SmoothScroller />
+        <Preloader />
         {children}
       </body>
     </html>

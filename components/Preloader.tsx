@@ -36,8 +36,18 @@ export default function Preloader() {
     };
   }, []);
 
+  // Pause scrolling while the curtain is up. Going through Lenis (instead of
+  // overflow: hidden) keeps its virtual scroll position in sync — flipping
+  // overflow on <html> desynced touch scrolling and froze pinned sections.
   useEffect(() => {
     if (done) return;
+    type LenisLike = { stop: () => void; start: () => void };
+    const w = window as unknown as { __lenis?: LenisLike };
+    const lenis = w.__lenis;
+    if (lenis) {
+      lenis.stop();
+      return () => lenis.start();
+    }
     document.documentElement.style.overflow = "hidden";
     return () => {
       document.documentElement.style.overflow = "";
@@ -49,7 +59,7 @@ export default function Preloader() {
       {!done && (
         <motion.div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
-          style={{ background: "#efeae3" }}
+          style={{ background: "#efeae3", touchAction: "none", overscrollBehavior: "none" }}
           exit={{ y: "-100%" }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
           aria-hidden="true"

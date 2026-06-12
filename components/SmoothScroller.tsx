@@ -26,9 +26,14 @@ export default function SmoothScroller() {
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 0.9,
-      touchMultiplier: 1.2,
-      syncTouch: true,
+      // Native touch scrolling: hijacking touch (syncTouch) feels broken on
+      // phones — momentum fights the browser and pinned sections stall. The
+      // canvas scrub has its own inertia, so native flicks still look smooth.
+      syncTouch: false,
     });
+
+    // Let other components (e.g. the preloader) pause scrolling properly.
+    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
     let frameId: number;
     const raf = (time: number) => {
@@ -40,6 +45,7 @@ export default function SmoothScroller() {
     return () => {
       cancelAnimationFrame(frameId);
       lenis.destroy();
+      delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
   }, []);
 

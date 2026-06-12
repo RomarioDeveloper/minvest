@@ -39,12 +39,8 @@ export default function HomePage() {
         <ScrollHouseAnimation />
       </div>
 
-      {/* ---------- BRAND FILM (scroll-scrubbed on desktop, looped on mobile) ---------- */}
-      <BrandFilm
-        scrubSrc="/video/brand-scrub.mp4"
-        loopSrc="/video/brand"
-        poster="/video/brand.jpg"
-      />
+      {/* ---------- BRAND FILM (scroll-scrubbed, desktop only) ---------- */}
+      <BrandFilm scrubSrc="/video/brand-scrub.mp4" poster="/video/brand.jpg" />
 
       {/* ---------- HERO ---------- */}
       <div>
