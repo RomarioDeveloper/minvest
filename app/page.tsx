@@ -1,3 +1,4 @@
+import BrandFilm from "@/components/BrandFilm";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import RevealOnView from "@/components/RevealOnView";
@@ -6,7 +7,6 @@ import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import TwoUpVideo from "@/components/TwoUpVideo";
-import VideoSpread from "@/components/VideoSpread";
 
 export default function HomePage() {
   return (
@@ -38,6 +38,27 @@ export default function HomePage() {
       <div id="top">
         <ScrollHouseAnimation />
       </div>
+
+      {/* ---------- BRAND FILM (scroll-scrubbed on desktop, looped on mobile) ---------- */}
+      <BrandFilm
+        scrubSrc="/video/brand-scrub.mp4"
+        loopSrc="/video/brand"
+        poster="/video/brand.jpg"
+        eyebrow="Застройщик"
+        title={
+          <>
+            Malaysary
+            <br />
+            Invest.
+          </>
+        }
+        body={
+          <>
+            Надёжный застройщик недвижимости. Строим сами — от первого ковша до
+            выдачи ключей — и отвечаем за каждый этап.
+          </>
+        }
+      />
 
       {/* ---------- HERO ---------- */}
       <div>
@@ -106,25 +127,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ---------- BRAND FILM (looped) ---------- */}
-      <VideoSpread
-        src="/video/brand"
-        eyebrow="Застройщик"
-        title={
-          <>
-            Malaysary
-            <br />
-            Invest.
-          </>
-        }
-        body={
-          <>
-            Надёжный застройщик недвижимости. Строим сами — от первого ковша до
-            выдачи ключей — и отвечаем за каждый этап.
-          </>
-        }
-      />
 
       {/* ---------- EDITORIAL: NIGHT FACADE ---------- */}
       <div id="facade">
