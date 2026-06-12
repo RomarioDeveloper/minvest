@@ -44,20 +44,6 @@ export default function HomePage() {
         scrubSrc="/video/brand-scrub.mp4"
         loopSrc="/video/brand"
         poster="/video/brand.jpg"
-        eyebrow="Застройщик"
-        title={
-          <>
-            Malaysary
-            <br />
-            Invest.
-          </>
-        }
-        body={
-          <>
-            Надёжный застройщик недвижимости. Строим сами — от первого ковша до
-            выдачи ключей — и отвечаем за каждый этап.
-          </>
-        }
       />
 
       {/* ---------- HERO ---------- */}
