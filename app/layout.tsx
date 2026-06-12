@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Preloader from "@/components/Preloader";
 import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <Preloader />
         <SmoothScroller />
         {children}
       </body>
