@@ -5,6 +5,8 @@ import ScrollHouseAnimation from "@/components/ScrollHouseAnimation";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TwoUpFeature from "@/components/TwoUpFeature";
+import TwoUpVideo from "@/components/TwoUpVideo";
+import VideoSpread from "@/components/VideoSpread";
 
 export default function HomePage() {
   return (
@@ -105,6 +107,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ---------- BRAND FILM (looped) ---------- */}
+      <VideoSpread
+        src="/video/brand"
+        eyebrow="Застройщик"
+        title={
+          <>
+            Malaysary
+            <br />
+            Invest.
+          </>
+        }
+        body={
+          <>
+            Надёжный застройщик недвижимости. Строим сами — от первого ковша до
+            выдачи ключей — и отвечаем за каждый этап.
+          </>
+        }
+      />
+
       {/* ---------- EDITORIAL: NIGHT FACADE ---------- */}
       <div id="facade">
         <EditorialSpread
@@ -184,6 +205,32 @@ export default function HomePage() {
             <>
               Прорезиненное покрытие, современные игровые формы, прямой обзор с балконов
               и от подъезда.
+            </>
+          ),
+        }}
+      />
+
+      {/* ---------- LIVING YARD (looped videos) ---------- */}
+      <TwoUpVideo
+        left={{
+          src: "/video/yard-day",
+          eyebrow: "Двор днём",
+          title: <>Вода, игры и солнце.</>,
+          body: (
+            <>
+              Сухой фонтан, игровые формы и навесы от солнца. Двор, в котором
+              дети проводят весь день — на виду у родителей.
+            </>
+          ),
+        }}
+        right={{
+          src: "/video/yard-evening",
+          eyebrow: "Двор вечером",
+          title: <>Тёплый свет после заката.</>,
+          body: (
+            <>
+              Вечером двор подсвечивается мягким светом: дорожки, зелень и
+              площадка видны с каждого балкона.
             </>
           ),
         }}
