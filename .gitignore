@@ -36,11 +36,6 @@ next-env.d.ts
 .vscode/
 .idea/
 
-# Generated assets (regenerable via `npm run optimize:frames`)
-/public/frames/
-/public/photos/
-/public/video/
-
 # Heavy source assets (not needed in repo)
 /Realistic/
 /3d modeling/
