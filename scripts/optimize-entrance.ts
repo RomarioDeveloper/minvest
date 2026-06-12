@@ -1,7 +1,7 @@
 /**
  * Portrait entrance flythrough video → web-ready scroll frames (mobile).
  *
- *   Realistic/IMG_0549.MP4  →  public/entrance-frames/{0001..}.webp
+ *   Realistic/entrance-flythrough.mp4  →  public/entrance-frames/{0001..}.webp
  */
 import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
@@ -11,10 +11,10 @@ import path from "node:path";
 import sharp from "sharp";
 
 const ROOT = process.cwd();
-const SRC_VIDEO = path.join(ROOT, "Realistic/IMG_0549.MP4");
+const SRC_VIDEO = path.join(ROOT, "Realistic/entrance-flythrough.mp4");
 const OUT = path.join(ROOT, "public/entrance-frames");
 
-/** Take every Nth video frame — 24fps × 10s source. */
+/** Take every Nth video frame — 24fps × 15s source. */
 const STEP = 2;
 const WIDTH = 720;
 const QUALITY = 72;

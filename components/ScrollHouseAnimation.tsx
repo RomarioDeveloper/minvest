@@ -285,7 +285,7 @@ export default function ScrollHouseAnimation() {
       const target = computePinProgress(section);
       // Framerate-independent ease toward the scroll position — gives the
       // scrub inertia and absorbs abrupt wheel/touch jumps.
-      const k = 1 - Math.exp(-7 * dt);
+      const k = 1 - Math.exp(-4.5 * dt);
       smooth += (target - smooth) * k;
       if (Math.abs(target - smooth) < 0.0003) smooth = target;
       progressRef.current = smooth;
