@@ -1,10 +1,16 @@
 import BrandFilm from "@/components/BrandFilm";
+import CompanyAdvantages from "@/components/CompanyAdvantages";
+import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
+import HorizontalAdvantages from "@/components/HorizontalAdvantages";
+import ObjectsCatalog from "@/components/ObjectsCatalog";
+import PurchaseTerms from "@/components/PurchaseTerms";
 import RevealOnView from "@/components/RevealOnView";
 import ScrollHouseAnimation from "@/components/ScrollHouseAnimation";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
+import TradeIn from "@/components/TradeIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import TwoUpVideo from "@/components/TwoUpVideo";
 
@@ -17,13 +23,15 @@ export default function HomePage() {
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 backdrop-blur-[2px] sm:px-10">
         <a href="#top" className="flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
           <span className="grid h-7 w-7 place-items-center border border-bone/20 text-[11px] tracking-[0.2em]">M</span>
-          <span className="hidden sm:inline">MINVEST · Жилой дом</span>
-          <span className="sm:hidden">MINVEST</span>
+          <span className="hidden sm:inline">MALAYSARY INVEST</span>
+          <span className="sm:hidden">MALAYSARY</span>
         </a>
-        <nav className="hidden gap-8 text-eyebrow uppercase text-bone-soft sm:flex">
-          <a className="transition hover:text-bone" href="#tour">Обзор</a>
-          <a className="transition hover:text-bone" href="#facade">Архитектура</a>
-          <a className="transition hover:text-bone" href="#yard">Двор</a>
+        <nav className="hidden gap-7 text-eyebrow uppercase text-bone-soft lg:flex">
+          <a className="transition hover:text-bone" href="#objects">Объекты</a>
+          <a className="transition hover:text-bone" href="#advantages">Преимущества</a>
+          <a className="transition hover:text-bone" href="#construction">Конструктив</a>
+          <a className="transition hover:text-bone" href="#terms">Условия</a>
+          <a className="transition hover:text-bone" href="#company">О компании</a>
           <a className="transition hover:text-bone" href="#contact">Контакты</a>
         </nav>
         <a
@@ -107,6 +115,32 @@ export default function HomePage() {
               <div className="mt-2 text-eyebrow uppercase text-bone-dim">видеонаблюдение</div>
             </RevealOnView>
           </div>
+        </div>
+      </section>
+
+      {/* ---------- ADVANTAGES (horizontal scroll) ---------- */}
+      <HorizontalAdvantages />
+
+      {/* ---------- OBJECTS CATALOG ---------- */}
+      <ObjectsCatalog />
+
+      {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
+      <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
+        <div className="mx-auto max-w-7xl">
+          <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+            Флагман · Корпус 1
+          </RevealOnView>
+          <RevealOnView
+            as="div"
+            delay={120}
+            className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
+          >
+            <h2 style={{ fontSize: "clamp(30px, 4.8vw, 64px)", lineHeight: 0.98 }}>
+              Загляните внутрь дома,
+              <br />
+              <span className="text-bone-mute">который уже строится.</span>
+            </h2>
+          </RevealOnView>
         </div>
       </section>
 
@@ -220,6 +254,18 @@ export default function HomePage() {
         }}
       />
 
+      {/* ---------- CONSTRUCTION SPEC ---------- */}
+      <ConstructionSpec />
+
+      {/* ---------- PURCHASE TERMS ---------- */}
+      <PurchaseTerms />
+
+      {/* ---------- TRADE-IN ---------- */}
+      <TradeIn />
+
+      {/* ---------- COMPANY ADVANTAGES + INFOGRAPHICS ---------- */}
+      <CompanyAdvantages />
+
       {/* ---------- CLOSING SPREAD ---------- */}
       <EditorialSpread
         imageSrc="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp"
@@ -305,12 +351,26 @@ export default function HomePage() {
               Написать
             </a>
           </RevealOnView>
+
+          {/* Sales office map */}
+          <RevealOnView delay={200} className="mt-16">
+            <div className="text-eyebrow uppercase text-bone-dim">Офис продаж на карте</div>
+            <div className="mt-5 overflow-hidden border border-bone/15">
+              <iframe
+                title="Офис продаж Malaysary Invest на карте"
+                className="h-[320px] w-full grayscale-[0.4] sm:h-[420px]"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=76.8700%2C43.2300%2C76.9100%2C43.2500&layer=mapnik&marker=43.2389%2C76.8897"
+              />
+            </div>
+          </RevealOnView>
         </div>
       </section>
 
       <footer className="border-t border-bone/10 bg-ink-deep px-6 py-8 text-eyebrow uppercase text-bone-dim sm:px-10 lg:px-16">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-          <div>© {new Date().getFullYear()} MINVEST</div>
+          <div>© {new Date().getFullYear()} MALAYSARY INVEST</div>
           <div className="text-bone-dim/70">Изображения — визуализация проекта.</div>
         </div>
       </footer>

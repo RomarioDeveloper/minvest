@@ -4,9 +4,9 @@ import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MINVEST — Жилой дом",
+  title: "Malaysary Invest — застройщик",
   description:
-    "Шестиэтажный жилой комплекс с закрытой территорией, гаражами и детской площадкой.",
+    "Надёжный застройщик Malaysary Invest: жилые комплексы с закрытой территорией, гаражами и детскими площадками. Ипотека, рассрочка, trade-in.",
 };
 
 export const viewport: Viewport = {
