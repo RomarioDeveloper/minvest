@@ -31,7 +31,7 @@ const config: Config = {
       fontSize: {
         // editorial display sizes
         display: ["clamp(48px, 8vw, 132px)", { lineHeight: "0.92", letterSpacing: "-0.055em" }],
-        eyebrow: ["11px", { lineHeight: "1.2", letterSpacing: "0.32em" }],
+        eyebrow: ["11px", { lineHeight: "1.2", letterSpacing: "0.22em", fontWeight: "600" }],
       },
       animation: {
         "fade-up": "fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) both",
