@@ -5,20 +5,17 @@ export type RealtyObject = {
   name: string;
   district: string;
   status: ObjectStatus;
-  /** Short pitch line. */
   tagline: string;
-  /** Cover image (webp in /public/photos/...). */
   image: string;
+  /** Gallery slides shown in the modal */
+  gallery: string[];
   floors: number;
   apartments: number;
-  /** Price "from", in millions ₸ — placeholder. */
   priceFrom: number;
-  /** Handover quarter/year. */
   deadline: string;
-  /** Plan types available. */
   rooms: string;
-  /** Flagship object gets the full on-page tour. */
   flagship?: boolean;
+  description?: string;
 };
 
 export const STATUS_LABEL: Record<ObjectStatus, string> = {
@@ -27,10 +24,6 @@ export const STATUS_LABEL: Record<ObjectStatus, string> = {
   done: "Сдан",
 };
 
-/**
- * Placeholder catalog — replace names, prices and deadlines with real data.
- * Images reuse the available renders so every card looks complete.
- */
 export const OBJECTS: RealtyObject[] = [
   {
     slug: "minvest-1",
@@ -38,7 +31,15 @@ export const OBJECTS: RealtyObject[] = [
     district: "мкр. Центральный",
     status: "sales",
     tagline: "Закрытый двор, гаражи и детская площадка.",
+    description: "Флагманский объект Malaysary Invest — шестиэтажный кирпичный дом с закрытой территорией, собственными гаражами и благоустроенным двором. Стены 62 см, трёхкамерные окна, бесшумные лифты.",
     image: "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
+    gallery: [
+      "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
+      "/photos/exterior/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.webp",
+      "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
+      "/photos/entrance/4adedb6da6327883ce2ea4f732eb86fd_6a83d1d0-68a8-4c80-833c-98dfff0b3088.webp",
+      "/photos/entrance/a1363237a0b8e8b582fb3403ecdb66ff_3ea6281a-adc0-4b89-841f-70f6c62204d0.webp",
+    ],
     floors: 6,
     apartments: 40,
     priceFrom: 18,
@@ -52,7 +53,14 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Парковая",
     status: "sales",
     tagline: "Кирпичные секции у городского парка.",
+    description: "Семиэтажный комплекс с видом на парк. Просторные планировки, панорамные окна и закрытая территория с зеленью. Отдельный паркинг на каждую квартиру.",
     image: "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
+    gallery: [
+      "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
+      "/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp",
+      "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
+      "/photos/entrance/124ff09e7dc6c177fbe814461e08cdf1_db043c37-390e-4974-9f33-d8e943653299.webp",
+    ],
     floors: 7,
     apartments: 58,
     priceFrom: 21,
@@ -65,7 +73,14 @@ export const OBJECTS: RealtyObject[] = [
     district: "мкр. Садовый",
     status: "soon",
     tagline: "Малоэтажный квартал с приватными дворами.",
+    description: "Камерный малоэтажный квартал в тихом районе. Приватные дворы, озеленение и уютная атмосфера для жизни всей семьи. Старт продаж скоро.",
     image: "/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp",
+    gallery: [
+      "/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp",
+      "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
+      "/photos/exterior/5b43565591a74ce208225cb74fbb6926_470adef1-f7ee-44e0-b9e5-db7788e4f2fc.webp",
+      "/photos/entrance/eb3572a213674a790538667bda9bc5bd_220f9feb-2795-4a1e-bd9c-b3d13ff1e177.webp",
+    ],
     floors: 5,
     apartments: 32,
     priceFrom: 16,
@@ -78,7 +93,14 @@ export const OBJECTS: RealtyObject[] = [
     district: "пр. Абая",
     status: "sales",
     tagline: "Видовые этажи и панорамное остекление.",
+    description: "Девятиэтажный дом с видовыми квартирами на верхних этажах. Витражные фасады, высокие потолки и Face ID на входе. Один из самых технологичных объектов в портфеле.",
     image: "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
+    gallery: [
+      "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
+      "/photos/exterior/88b321f5ceeecb55f2d35ed2598c3e2f_65567578-29b5-45e8-8456-a1ea24bed0e0.webp",
+      "/photos/exterior/7b3aef5a98199018116dfc82b023f7da_930f09ae-5722-462a-8880-2d498132476d.webp",
+      "/photos/entrance/2291e420cae69caf3fb8d5c47741aa85_a6f3a6e6-6c07-4834-9010-0d98b177e589.webp",
+    ],
     floors: 9,
     apartments: 84,
     priceFrom: 24,
@@ -91,7 +113,14 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Заводская",
     status: "done",
     tagline: "Сданный дом с заселёнными квартирами.",
+    description: "Сданный и заселённый объект. Можно приехать, посмотреть на реальные квартиры и пообщаться с жителями. Вторичный рынок от застройщика — без посредников.",
     image: "/photos/exterior/da54d15b01f2b830a33dabea43642029_7cbfc151-4e98-4a94-953b-af8989eb8808.webp",
+    gallery: [
+      "/photos/exterior/da54d15b01f2b830a33dabea43642029_7cbfc151-4e98-4a94-953b-af8989eb8808.webp",
+      "/photos/exterior/e23826c868683d844315d08a53909223_83fd141d-ecd7-429b-a381-4be2128c94c5.webp",
+      "/photos/exterior/a0bdbfa78d0e9e9bce4ba5c27047fa61_8f7602db-e457-4bc3-896b-ce929391456f.webp",
+      "/photos/entrance/d6587687f251d8f849ca3ba835a3222a_d52a0412-7d34-4a89-bce4-e879edc3176f.webp",
+    ],
     floors: 6,
     apartments: 46,
     priceFrom: 19,
@@ -104,7 +133,14 @@ export const OBJECTS: RealtyObject[] = [
     district: "мкр. Восточный",
     status: "soon",
     tagline: "Новый квартал на старте проектирования.",
+    description: "Масштабный проект нового квартала на востоке города. Коммерческие помещения на первых этажах, подземный паркинг и современная инфраструктура. Регистрируйтесь на старт продаж.",
     image: "/photos/exterior/dd54c08850a98fb706a805585bb226ca_591ee229-3407-4d4a-a44e-e3e9afb8ac00.webp",
+    gallery: [
+      "/photos/exterior/dd54c08850a98fb706a805585bb226ca_591ee229-3407-4d4a-a44e-e3e9afb8ac00.webp",
+      "/photos/exterior/34e8b126450f03bc75749cc86655fcde_349e2f67-d696-46a3-bc65-64445557ea36.webp",
+      "/photos/exterior/d35e2dd9ea5b85af4ae941f145210ab0_e67ec5ac-c3ee-4941-b36f-1902f98521b0.webp",
+      "/photos/entrance/422c2379d3a72933141ee994111a4737_f4686fd9-d09d-4c10-9247-7df1ea38d088.webp",
+    ],
     floors: 8,
     apartments: 72,
     priceFrom: 17,

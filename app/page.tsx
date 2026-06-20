@@ -1,4 +1,5 @@
 import BrandFilm from "@/components/BrandFilm";
+import MalaysaryMap from "@/components/MalaysaryMap";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
@@ -22,7 +23,7 @@ export default function HomePage() {
       {/* ---------- NAV ---------- */}
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 backdrop-blur-[2px] sm:px-10">
         <a href="#top" className="flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
-          <span className="grid h-7 w-7 place-items-center border border-bone/20 text-[11px] tracking-[0.2em]">M</span>
+          <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
           <span className="hidden sm:inline">MALAYSARY INVEST</span>
           <span className="sm:hidden">MALAYSARY</span>
         </a>
@@ -354,24 +355,25 @@ export default function HomePage() {
 
           {/* Sales office map */}
           <RevealOnView delay={200} className="mt-16">
-            <div className="text-eyebrow uppercase text-bone-dim">Офис продаж на карте</div>
+            <div className="text-eyebrow uppercase text-bone-dim">Наши объекты на карте</div>
             <div className="mt-5 overflow-hidden border border-bone/15">
-              <iframe
-                title="Офис продаж Malaysary Invest на карте"
-                className="h-[320px] w-full grayscale-[0.4] sm:h-[420px]"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=76.8700%2C43.2300%2C76.9100%2C43.2500&layer=mapnik&marker=43.2389%2C76.8897"
-              />
+              <MalaysaryMap />
             </div>
           </RevealOnView>
         </div>
       </section>
 
-      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-8 text-eyebrow uppercase text-bone-dim sm:px-10 lg:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-          <div>© {new Date().getFullYear()} MALAYSARY INVEST</div>
-          <div className="text-bone-dim/70">Изображения — визуализация проекта.</div>
+      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-12 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-7xl">
+          <img
+            src="/logo-light.webp"
+            alt="Malaysary Invest"
+            className="h-20 w-auto opacity-90"
+          />
+          <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-bone/10 pt-6 text-eyebrow uppercase text-bone-dim sm:flex-row sm:items-center">
+            <div>© {new Date().getFullYear()} MALAYSARY INVEST</div>
+            <div className="text-bone-dim/70">Изображения — визуализация проекта.</div>
+          </div>
         </div>
       </footer>
     </main>

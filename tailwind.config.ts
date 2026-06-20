@@ -5,9 +5,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Inter Tight"', "system-ui", "sans-serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
-        serif: ['"Cormorant Garamond"', "ui-serif", "Georgia", "serif"],
+        display: ["Manrope", "system-ui", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        serif: ["Manrope", "system-ui", "sans-serif"],
       },
       colors: {
         ink: {
