@@ -38,8 +38,8 @@ export default function ObjectsCatalog() {
             <RevealOnView className="text-eyebrow uppercase text-bone-mute">Каталог объектов</RevealOnView>
             <RevealOnView as="div" delay={120} className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone">
               <h2 style={{ fontSize: "clamp(34px, 5.4vw, 72px)", lineHeight: 0.98 }}>
-                {OBJECTS.length} объектов<br />
-                <span className="text-bone-mute">в одном застройщике.</span>
+                Проекты<br />
+                <span className="text-bone-mute">Malaysary Invest.</span>
               </h2>
             </RevealOnView>
           </div>
