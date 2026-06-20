@@ -3,30 +3,12 @@
 import { useEffect, useRef } from "react";
 
 const LOCATIONS = [
-  {
-    lat: 52.2871,
-    lng: 76.9638,
-    label: "Malaysary Invest",
-    address: "ул. Бекмаханова",
-  },
-  {
-    lat: 52.2777,
-    lng: 76.9445,
-    label: "Malaysary Invest ★5",
-    address: "ул. Академика Сатпаева",
-  },
-  {
-    lat: 52.2703,
-    lng: 76.9515,
-    label: "Malaysary Invest",
-    address: "ул. Достоевского",
-  },
-  {
-    lat: 52.2575,
-    lng: 76.9438,
-    label: "Malaysary Invest ★4",
-    address: "ул. Гагарина",
-  },
+  { lat: 52.2871, lng: 76.9638, label: "Дюсенова, 304", address: "ул. Дюсенова, 304" },
+  { lat: 52.2855, lng: 76.9620, label: "Дюсенова, 306", address: "ул. Дюсенова, 306" },
+  { lat: 52.2777, lng: 76.9445, label: "Горького, 46",  address: "ул. Горького, 46" },
+  { lat: 52.2703, lng: 76.9515, label: "Естая, 90",     address: "ул. Естая, 90" },
+  { lat: 52.2610, lng: 76.9480, label: "Бектурова, 348", address: "ул. Бектурова, 348" },
+  { lat: 52.2595, lng: 76.9460, label: "Бектурова, 356", address: "ул. Бектурова, 356" },
 ];
 
 export default function MalaysaryMap() {

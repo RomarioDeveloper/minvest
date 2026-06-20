@@ -314,42 +314,47 @@ export default function HomePage() {
             <RevealOnView delay={200} className="border-t border-bone/15 pt-5">
               <div className="text-eyebrow uppercase text-bone-dim">Телефон</div>
               <a
-                href="tel:+70000000000"
+                href="tel:+77072343333"
                 className="mt-2 block font-display text-2xl font-semibold tracking-tightest text-bone transition hover:text-bone-mute"
               >
-                +7 (000) 000-00-00
+                8 707 234 33 33
               </a>
             </RevealOnView>
             <RevealOnView delay={280} className="border-t border-bone/15 pt-5">
-              <div className="text-eyebrow uppercase text-bone-dim">Почта</div>
+              <div className="text-eyebrow uppercase text-bone-dim">Instagram</div>
               <a
-                href="mailto:hello@minvest.example"
+                href="https://instagram.com/malaysary_invest"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-2 block font-display text-2xl font-semibold tracking-tightest text-bone transition hover:text-bone-mute"
               >
-                hello@minvest.example
+                @malaysary_invest
               </a>
             </RevealOnView>
             <RevealOnView delay={360} className="border-t border-bone/15 pt-5">
-              <div className="text-eyebrow uppercase text-bone-dim">Адрес</div>
-              <div className="mt-2 font-display text-2xl font-semibold leading-snug tracking-tightest text-bone">
-                ул. Примерная, 1<br />
-                <span className="text-bone-mute">офис продаж</span>
+              <div className="text-eyebrow uppercase text-bone-dim">Офис продаж</div>
+              <div className="mt-2 font-display text-xl font-semibold leading-snug tracking-tightest text-bone">
+                г. Павлодар,<br />
+                ул. Луначарского, 10<br />
+                <span className="text-bone-mute">2 этаж, кабинет 2</span>
               </div>
             </RevealOnView>
           </div>
 
           <RevealOnView delay={440} className="mt-16 flex flex-wrap items-center gap-4">
             <a
-              href="tel:+70000000000"
+              href="tel:+77072343333"
               className="inline-flex items-center gap-3 bg-bone px-7 py-4 text-eyebrow uppercase text-ink transition hover:bg-bone-soft"
             >
               Позвонить сейчас →
             </a>
             <a
-              href="mailto:hello@minvest.example"
+              href="https://instagram.com/malaysary_invest"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 border border-bone/25 px-7 py-4 text-eyebrow uppercase text-bone transition hover:border-bone hover:bg-bone hover:text-ink"
             >
-              Написать
+              Instagram →
             </a>
           </RevealOnView>
 
@@ -363,16 +368,54 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-12 sm:px-10 lg:px-16">
+      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-14 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <img
-            src="/logo-light.webp"
-            alt="Malaysary Invest"
-            className="h-20 w-auto opacity-90"
-          />
-          <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-bone/10 pt-6 text-eyebrow uppercase text-bone-dim sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+            {/* Logo + tagline */}
+            <div>
+              <img
+                src="/logo-light.webp"
+                alt="Malaysary Invest"
+                className="h-16 w-auto opacity-90"
+              />
+              <p className="mt-4 max-w-xs text-sm leading-relaxed text-bone-dim">
+                Застройщик комфортной среды для жизни в Павлодаре.
+              </p>
+            </div>
+
+            {/* Contacts */}
+            <div className="grid gap-6 sm:grid-cols-3 sm:gap-10">
+              <div>
+                <div className="text-eyebrow uppercase text-bone-dim">Телефон</div>
+                <a href="tel:+77072343333" className="mt-2 block text-bone transition hover:text-bone-mute">
+                  8 707 234 33 33
+                </a>
+              </div>
+              <div>
+                <div className="text-eyebrow uppercase text-bone-dim">Instagram</div>
+                <a
+                  href="https://instagram.com/malaysary_invest"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 block text-bone transition hover:text-bone-mute"
+                >
+                  @malaysary_invest
+                </a>
+              </div>
+              <div>
+                <div className="text-eyebrow uppercase text-bone-dim">Офис</div>
+                <div className="mt-2 text-bone leading-relaxed">
+                  г. Павлодар<br />
+                  ул. Луначарского, 10<br />
+                  <span className="text-bone-mute">2 этаж, каб. 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-bone/10 pt-6 text-eyebrow uppercase text-bone-dim sm:flex-row sm:items-center">
             <div>© {new Date().getFullYear()} MALAYSARY INVEST</div>
-            <div className="text-bone-dim/70">Изображения — визуализация проекта.</div>
+            <div className="text-bone-dim/60">Изображения — визуализация проекта.</div>
           </div>
         </div>
       </footer>
