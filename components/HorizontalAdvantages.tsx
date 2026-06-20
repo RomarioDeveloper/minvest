@@ -5,52 +5,65 @@ import { useRef } from "react";
 
 type Advantage = {
   index: string;
+  tag: string;
   title: string;
-  body?: string;
-  items?: string[];
+  body: string;
 };
 
 const ADVANTAGES: Advantage[] = [
   {
     index: "01",
-    title: "Архитектура и строительство",
-    body: "Кирпичная технология с фиброцементными панелями и утеплением — долговечность, энергоэффективность и эстетичный облик зданий.",
+    tag: "Строительство",
+    title: "Экибастузский кирпич и фасад",
+    body: "Кирпичная технология с фиброцементными панелями и двойным утеплением — долговечность, энергоэффективность и эстетичный облик на десятилетия.",
   },
   {
     index: "02",
-    title: "Стены 62 см — тепло и тишина",
-    body: "Экибастузский кирпич, двойной утеплитель, фиброцементные панели. Тепло зимой, прохладно летом, тишина круглый год.",
+    tag: "Комфорт",
+    title: "Современные бесшумные лифты",
+    body: "Тихие скоростные лифты в каждом подъезде — никакого шума, плавный ход. Поднимают без ожидания, работают без сбоев.",
   },
   {
     index: "03",
-    title: "Витражные окна и высокие потолки",
-    body: "Панорамные и витражные окна наполняют квартиры естественным светом. Высота потолков от 2,8 до 3 метров — ощущение свободы и комфорта.",
+    tag: "Комфорт",
+    title: "Трёхкамерные окна",
+    body: "Высокая тепло- и шумоизоляция — зимой тепло, летом прохладно, уличный шум не слышен. Витражное и панорамное остекление в каждом проекте.",
   },
   {
     index: "04",
-    title: "Комфорт в каждой детали",
-    items: [
-      "Современные бесшумные лифты",
-      "Трёхкамерные окна с высокой тепло- и шумоизоляцией",
-      "Удобные и функциональные планировки квартир",
-      "Собственные гаражи и парковочные решения",
-      "Коммерческие помещения на первых этажах в отдельных проектах",
-    ],
+    tag: "Комфорт",
+    title: "Функциональные планировки",
+    body: "Удобные и продуманные планировки квартир — от студий до трёхкомнатных. Потолки от 2,8 до 3 метров, ровные перекрытия под любой дизайн.",
   },
   {
     index: "05",
-    title: "Безопасность нового уровня",
-    items: [
-      "Закрытые территории с контролем доступа",
-      "Системы Face ID в премиальных проектах",
-      "Умные замки в квартирах",
-      "Продуманная система приватности и безопасности для жителей",
-    ],
+    tag: "Комфорт",
+    title: "Гаражи и парковка",
+    body: "Собственные капитальные гаражи во дворе и организованные парковочные решения — место для машины есть у каждого жителя.",
   },
   {
     index: "06",
-    title: "Эстетика с первого шага",
-    body: "Дизайнерские входные группы и подъезды формируют атмосферу премиального уровня. Эстетика и чистота линий — в каждом элементе.",
+    tag: "Комфорт",
+    title: "Коммерция на первых этажах",
+    body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах — инфраструктура прямо в доме: кафе, аптека, магазин.",
+  },
+  {
+    index: "07",
+    tag: "Безопасность",
+    title: "Закрытая территория",
+    body: "Контроль доступа на въезде и входе — только жители и их гости. Единственный шлагбаум, видеонаблюдение 24/7 по всему периметру.",
+  },
+  {
+    index: "08",
+    tag: "Безопасность",
+    title: "Face ID в подъезде",
+    body: "Системы распознавания лиц в премиальных проектах — вход без ключа, без кода. Быстро, удобно и надёжно для каждого жителя.",
+  },
+  {
+    index: "09",
+    tag: "Безопасность",
+    title: "Умные замки в квартирах",
+    body: "Электронные замки с приложением — открытие со смартфона, временные ключи для гостей, история входов. Полный контроль без физического ключа.",
   },
 ];
 
@@ -69,14 +82,14 @@ export default function HorizontalAdvantages() {
 
   // Translate the track from 0 to the overflow width. We approximate the
   // overflow with viewport-relative units so it works without measuring.
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-78%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-86%"]);
 
   return (
     <section
       id="advantages"
       ref={sectionRef}
       className="relative bg-ink-deep"
-      style={{ height: "320vh" }}
+      style={{ height: "500vh" }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div className="px-6 pb-10 sm:px-10 lg:px-16">
@@ -115,26 +128,20 @@ export default function HorizontalAdvantages() {
 
 function Card({ a }: { a: Advantage }) {
   return (
-    <article className="flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-8 sm:w-[420px]">
-      <div className="font-display text-5xl font-semibold tracking-tightest text-bone/15">
-        {a.index}
+    <article className="flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-8 sm:w-[400px]">
+      <div className="flex items-start justify-between">
+        <div className="font-display text-5xl font-semibold tracking-tightest text-bone/15">
+          {a.index}
+        </div>
+        <span className="rounded-full border border-bone/20 px-3 py-1 text-[11px] uppercase tracking-wider text-bone-dim">
+          {a.tag}
+        </span>
       </div>
       <div>
-        <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
+        <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-[26px]">
           {a.title}
         </h3>
-        {a.items ? (
-          <ul className="mt-4 space-y-2">
-            {a.items.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm leading-snug text-bone-soft">
-                <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-bone/40" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
-        )}
+        <p className="mt-4 text-sm leading-relaxed text-bone-soft">{a.body}</p>
       </div>
     </article>
   );
