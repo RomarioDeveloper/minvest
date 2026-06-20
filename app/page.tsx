@@ -1,14 +1,13 @@
 import BrandFilm from "@/components/BrandFilm";
-import MalaysaryMap from "@/components/MalaysaryMap";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
+import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
 import PurchaseTerms from "@/components/PurchaseTerms";
 import RevealOnView from "@/components/RevealOnView";
-import ScrollHouseAnimation from "@/components/ScrollHouseAnimation";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
@@ -43,13 +42,10 @@ export default function HomePage() {
         </a>
       </header>
 
-      {/* ---------- SCROLL-DRIVEN 3D TOUR (fullscreen, pinned) ---------- */}
+      {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
       <div id="top">
-        <ScrollHouseAnimation />
+        <BrandFilm scrubSrc="/hero-scrub.mp4" poster="" />
       </div>
-
-      {/* ---------- BRAND FILM (scroll-scrubbed, desktop only) ---------- */}
-      <BrandFilm scrubSrc="/video/brand-scrub.mp4" poster="/video/brand.jpg" />
 
       {/* ---------- HERO ---------- */}
       <div>
