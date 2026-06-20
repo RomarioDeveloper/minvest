@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
 import { OBJECTS, STATUS_LABEL, type ObjectStatus, type RealtyObject } from "@/lib/objects";
@@ -154,8 +154,10 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
 
 /* ─────────────────────────── Modal ─────────────────────────── */
 function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void }) {
+  const [mediaTab, setMediaTab] = useState<"photo" | "video">("photo");
   const [slide, setSlide] = useState(0);
   const [dir, setDir] = useState(1);
+  const hasVideos = !!obj.videos?.length;
 
   const go = useCallback((next: number) => {
     setDir(next > slide ? 1 : -1);
@@ -166,15 +168,22 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
   const next = () => go((slide + 1) % obj.gallery.length);
 
   useEffect(() => {
+    setSlide(0);
+    setMediaTab("photo");
+  }, [obj.slug]);
+
+  useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") prev();
+      if (mediaTab === "photo") {
+        if (e.key === "ArrowRight") next();
+        if (e.key === "ArrowLeft") prev();
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide]);
+  }, [slide, mediaTab]);
 
   return (
     <>
@@ -188,7 +197,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         onClick={onClose}
       />
 
-      {/* Panel — slides up from bottom on mobile, from right on desktop */}
+      {/* Panel */}
       <motion.div
         className="fixed inset-x-0 bottom-0 z-[61] flex h-[88svh] flex-col bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
         initial={{ y: "100%", opacity: 0.6 }}
@@ -197,28 +206,65 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         transition={{ type: "spring", stiffness: 380, damping: 40, mass: 0.85 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── Gallery (fixed height) ── */}
+        {/* ── Media area (fixed height) ── */}
         <div className="relative h-[220px] w-full shrink-0 overflow-hidden bg-ink sm:h-[260px] md:h-[300px]">
-          <AnimatePresence initial={false} custom={dir}>
-            <motion.img
-              key={slide}
-              src={obj.gallery[slide]}
-              alt={`${obj.name} — фото ${slide + 1}`}
-              className="absolute inset-0 h-full w-full object-cover"
-              custom={dir}
-              variants={{
-                enter: (d: number) => ({ x: d * 80, opacity: 0 }),
-                center: { x: 0, opacity: 1 },
-                exit: (d: number) => ({ x: d * -80, opacity: 0 }),
-              }}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
-            />
-          </AnimatePresence>
 
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          {/* Photo slider */}
+          {mediaTab === "photo" && (
+            <>
+              <AnimatePresence initial={false} custom={dir}>
+                <motion.img
+                  key={slide}
+                  src={obj.gallery[slide]}
+                  alt={`${obj.name} — фото ${slide + 1}`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  custom={dir}
+                  variants={{
+                    enter: (d: number) => ({ x: d * 80, opacity: 0 }),
+                    center: { x: 0, opacity: 1 },
+                    exit: (d: number) => ({ x: d * -80, opacity: 0 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
+                />
+              </AnimatePresence>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              {obj.gallery.length > 1 && (
+                <>
+                  <button onClick={prev} aria-label="Назад"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <button onClick={next} aria-label="Вперёд"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                    {obj.gallery.map((_, i) => (
+                      <button key={i} onClick={() => go(i)}
+                        className={`h-1 rounded-full transition-all duration-300 ${i === slide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {/* Photo counter */}
+              <div className="absolute bottom-3 right-4 text-[11px] font-semibold uppercase tracking-widest text-bone/50">
+                {slide + 1} / {obj.gallery.length}
+              </div>
+            </>
+          )}
+
+          {/* Video grid */}
+          {mediaTab === "video" && obj.videos && (
+            <div className="absolute inset-0 grid grid-cols-2 gap-0.5 overflow-hidden">
+              {obj.videos.map((src, i) => (
+                <VideoThumb key={src} src={src} index={i} />
+              ))}
+            </div>
+          )}
 
           {/* Status */}
           <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm">
@@ -228,81 +274,52 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
 
           {/* Flagship */}
           {obj.flagship && (
-            <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">
-              Флагман
-            </div>
+            <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">Флагман</div>
           )}
 
           {/* Close */}
-          <button
-            onClick={onClose}
-            aria-label="Закрыть"
-            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+          <button onClick={onClose} aria-label="Закрыть"
+            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
           </button>
-
-          {/* Arrows */}
-          {obj.gallery.length > 1 && (
-            <>
-              <button onClick={prev} aria-label="Назад"
-                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <button onClick={next} aria-label="Вперёд"
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </>
-          )}
-
-          {/* Dots */}
-          {obj.gallery.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-              {obj.gallery.map((_, i) => (
-                <button key={i} onClick={() => go(i)}
-                  className={`h-1 rounded-full transition-all duration-300 ${i === slide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
+
+        {/* ── Photo / Video tabs (only if videos exist) ── */}
+        {hasVideos && (
+          <div className="flex shrink-0 border-b border-bone/10">
+            {(["photo", "video"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setMediaTab(tab)}
+                className={`relative flex-1 py-3 text-eyebrow uppercase transition ${
+                  mediaTab === tab ? "text-bone" : "text-bone/35 hover:text-bone/60"
+                }`}
+              >
+                {tab === "photo" ? `Фото (${obj.gallery.length})` : `Видео (${obj.videos!.length})`}
+                {mediaTab === tab && (
+                  <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-px bg-bone" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* ── Scrollable content ── */}
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
           <div className="px-5 pb-4 pt-5 sm:px-6">
+            <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">{obj.district}</div>
+            <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">{obj.name}</h2>
 
-            {/* Header */}
-            <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">
-              {obj.district}
-            </div>
-            <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">
-              {obj.name}
-            </h2>
-
-            {/* Price pill */}
             <div className="mt-4 inline-flex items-baseline gap-1.5">
-              <span className="font-display text-3xl font-semibold tracking-tightest text-bone">
-                {obj.priceFrom} млн ₸
-              </span>
+              <span className="font-display text-3xl font-semibold tracking-tightest text-bone">{obj.priceFrom} млн ₸</span>
               <span className="text-eyebrow uppercase text-bone/40">от</span>
             </div>
 
-            {/* Description */}
             {obj.description && (
-              <p className="mt-4 text-[15px] leading-relaxed text-bone/60">
-                {obj.description}
-              </p>
+              <p className="mt-4 text-[15px] leading-relaxed text-bone/60">{obj.description}</p>
             )}
 
-            {/* Specs grid */}
-            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-none border border-bone/10">
+            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-bone/10">
               {[
                 { label: "Этажность", value: `${obj.floors} эт.` },
                 { label: "Квартир", value: `${obj.apartments}` },
@@ -310,37 +327,91 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
                 { label: "Срок сдачи", value: obj.deadline },
               ].map((s) => (
                 <div key={s.label} className="bg-ink/40 px-4 py-3">
-                  <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/35">
-                    {s.label}
-                  </div>
+                  <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/35">{s.label}</div>
                   <div className="mt-1 text-sm font-semibold text-bone">{s.value}</div>
                 </div>
               ))}
             </div>
 
-            {/* Extra padding so content isn't hidden behind sticky footer */}
+            {/* Full video list when on video tab */}
+            {mediaTab === "video" && obj.videos && (
+              <div className="mt-5 space-y-3">
+                {obj.videos.map((src, i) => (
+                  <VideoPlayer key={src} src={src} index={i} />
+                ))}
+              </div>
+            )}
+
             <div className="h-4" />
           </div>
         </div>
 
         {/* ── Sticky CTA ── */}
         <div className="shrink-0 border-t border-bone/10 bg-[#111113] px-5 pb-6 pt-4 sm:px-6">
-          <a
-            href="#contact"
-            onClick={onClose}
-            className="flex w-full items-center justify-center bg-bone py-3.5 text-eyebrow font-semibold uppercase tracking-wider text-ink transition hover:bg-bone/90 active:scale-[0.98]"
-          >
+          <a href="#contact" onClick={onClose}
+            className="flex w-full items-center justify-center bg-bone py-3.5 text-eyebrow font-semibold uppercase tracking-wider text-ink transition hover:bg-bone/90 active:scale-[0.98]">
             Записаться на показ →
           </a>
-          <button
-            onClick={onClose}
-            className="mt-2.5 w-full py-3 text-[11px] font-semibold uppercase tracking-widest text-bone/40 transition hover:text-bone/70"
-          >
+          <button onClick={onClose}
+            className="mt-2.5 w-full py-3 text-[11px] font-semibold uppercase tracking-widest text-bone/40 transition hover:text-bone/70">
             Закрыть
           </button>
         </div>
       </motion.div>
     </>
+  );
+}
+
+/* ─── VideoThumb — маленький превью в 2×2 сетке ─── */
+function VideoThumb({ src, index }: { src: string; index: number }) {
+  return (
+    <div className="relative overflow-hidden bg-ink">
+      <video src={src} className="h-full w-full object-cover opacity-70" muted playsInline preload="metadata" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex h-8 w-8 items-center justify-center bg-bone/80">
+          <svg className="ml-0.5 h-3.5 w-3.5 text-ink" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+          </svg>
+        </div>
+        <div className="absolute bottom-1.5 left-2 text-[9px] font-semibold uppercase tracking-widest text-bone/50">
+          №{index + 1}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── VideoPlayer — полноценный плеер в скролле ─── */
+function VideoPlayer({ src, index }: { src: string; index: number }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) { v.play(); setPlaying(true); }
+    else { v.pause(); setPlaying(false); }
+  };
+
+  return (
+    <div className="group relative aspect-video cursor-pointer overflow-hidden bg-ink-panel" onClick={toggle}>
+      <video ref={ref} src={src} className="h-full w-full object-cover" loop playsInline preload="metadata" onEnded={() => setPlaying(false)} />
+      <AnimatePresence>
+        {!playing && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center bg-black/40">
+            <div className="flex h-12 w-12 items-center justify-center bg-bone/90 transition group-hover:bg-bone">
+              <svg className="ml-0.5 h-4 w-4 text-ink" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+              </svg>
+            </div>
+            <div className="absolute bottom-2 left-3 text-[10px] font-semibold uppercase tracking-widest text-bone/50">
+              Видео {index + 1}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

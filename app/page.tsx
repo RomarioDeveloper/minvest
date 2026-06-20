@@ -1,5 +1,4 @@
 import BrandFilm from "@/components/BrandFilm";
-import Gorkogo46 from "@/components/Gorkogo46";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import ConstructionSpec from "@/components/ConstructionSpec";
@@ -125,9 +124,6 @@ export default function HomePage() {
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
-
-      {/* ---------- ГОРЬКОГО 46 SHOWCASE ---------- */}
-      <Gorkogo46 />
 
       {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
       <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">

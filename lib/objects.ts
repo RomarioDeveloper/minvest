@@ -9,6 +9,8 @@ export type RealtyObject = {
   image: string;
   /** Gallery slides shown in the modal */
   gallery: string[];
+  /** Optional video clips shown in the modal */
+  videos?: string[];
   floors: number;
   apartments: number;
   priceFrom: number;
@@ -78,9 +80,23 @@ export const OBJECTS: RealtyObject[] = [
     gallery: [
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.png`,
+      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.png`,
+      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/5b43565591a74ce208225cb74fbb6926_470adef1-f7ee-44e0-b9e5-db7788e4f2fc.png`,
+      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/7b3aef5a98199018116dfc82b023f7da_930f09ae-5722-462a-8880-2d498132476d.png`,
+      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/88b321f5ceeecb55f2d35ed2598c3e2f_65567578-29b5-45e8-8456-a1ea24bed0e0.png`,
       `/gorgogo47/${encodeURIComponent("Входная дверь, внутрянка")}/124ff09e7dc6c177fbe814461e08cdf1_db043c37-390e-4974-9f33-d8e943653299.png`,
+      `/gorgogo47/${encodeURIComponent("Входная дверь, внутрянка")}/4adedb6da6327883ce2ea4f732eb86fd_6a83d1d0-68a8-4c80-833c-98dfff0b3088.png`,
+      `/gorgogo47/${encodeURIComponent("Входная дверь, внутрянка")}/a1363237a0b8e8b582fb3403ecdb66ff_3ea6281a-adc0-4b89-841f-70f6c62204d0.png`,
       `/gorgogo47/${encodeURIComponent("Гаражи")}/3af31198-00f7-4aae-96c6-180b7fef755e.png`,
+      `/gorgogo47/${encodeURIComponent("Гаражи")}/add4057e-4477-40dd-8129-be50c97bb335.png`,
       `/gorgogo47/${encodeURIComponent("Детская площадка")}/298ff71b-9791-4543-b9ba-5d14ff3673e5.png`,
+      `/gorgogo47/${encodeURIComponent("Детская площадка")}/7fb8c7fc7dfcce22f1016d28564b9403_80a5003a-f79f-4372-acd2-039bc6caeaaa.png`,
+    ],
+    videos: [
+      "/gorgogo47/Video/20ccb794aeb21275b8d983568c44db6f_4b08d00e-d854-4fc9-9e76-9307d767f9df.mp4",
+      "/gorgogo47/Video/6a5922b7df7d8dd64b6d999a1af6a1a8_33eb0e04-68e5-4d3b-907e-c07ab5e89392.mp4",
+      "/gorgogo47/Video/7cbc54e11cdc649419b66c9ec647ce4d_0342ec69-5c9f-4a10-8d95-0db641b803c5.mp4",
+      "/gorgogo47/Video/8e979b8925467381f0e1b5eaa82a9948_0a55c949-cf63-4bb5-b0a8-589300d6ed64.mp4",
     ],
     floors: 5,
     apartments: 32,
