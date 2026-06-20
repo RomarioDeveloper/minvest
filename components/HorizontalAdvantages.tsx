@@ -6,7 +6,8 @@ import { useRef } from "react";
 type Advantage = {
   index: string;
   title: string;
-  body: string;
+  body?: string;
+  items?: string[];
 };
 
 const ADVANTAGES: Advantage[] = [
@@ -28,12 +29,23 @@ const ADVANTAGES: Advantage[] = [
   {
     index: "04",
     title: "Комфорт в каждой детали",
-    body: "Бесшумные лифты, трёхкамерные окна с тепло- и шумоизоляцией, функциональные планировки, гаражи и парковочные решения.",
+    items: [
+      "Современные бесшумные лифты",
+      "Трёхкамерные окна с высокой тепло- и шумоизоляцией",
+      "Удобные и функциональные планировки квартир",
+      "Собственные гаражи и парковочные решения",
+      "Коммерческие помещения на первых этажах в отдельных проектах",
+    ],
   },
   {
     index: "05",
     title: "Безопасность нового уровня",
-    body: "Закрытые территории с контролем доступа, Face ID в премиальных проектах, умные замки в квартирах и продуманная система приватности.",
+    items: [
+      "Закрытые территории с контролем доступа",
+      "Системы Face ID в премиальных проектах",
+      "Умные замки в квартирах",
+      "Продуманная система приватности и безопасности для жителей",
+    ],
   },
   {
     index: "06",
@@ -111,7 +123,18 @@ function Card({ a }: { a: Advantage }) {
         <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
-        <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
+        {a.items ? (
+          <ul className="mt-4 space-y-2">
+            {a.items.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm leading-snug text-bone-soft">
+                <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-bone/40" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
+        )}
       </div>
     </article>
   );
