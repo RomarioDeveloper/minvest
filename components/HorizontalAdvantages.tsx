@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Advantage = {
   index: string;
@@ -68,28 +68,41 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 /**
- * Pinned horizontal scroll. The section is tall; while it's pinned the row of
- * cards translates left as you scroll down — the premium "scroll → sideways"
- * trick. On touch devices it falls back to a normal horizontal swipe strip.
+ * Pinned horizontal scroll. Measures real track overflow so the last card
+ * always lands exactly in view regardless of viewport size.
  */
 export default function HorizontalAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [endX, setEndX] = useState("-60%");
+
+  useEffect(() => {
+    const measure = () => {
+      if (!trackRef.current) return;
+      const overflow = trackRef.current.scrollWidth - window.innerWidth;
+      if (overflow > 0) {
+        const pct = (overflow / trackRef.current.scrollWidth) * 100;
+        setEndX(`-${pct.toFixed(1)}%`);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  // Translate the track from 0 to the overflow width. We approximate the
-  // overflow with viewport-relative units so it works without measuring.
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-86%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", endX]);
 
   return (
     <section
       id="advantages"
       ref={sectionRef}
       className="relative bg-ink-deep"
-      style={{ height: "500vh" }}
+      style={{ height: `${ADVANTAGES.length * 55}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div className="px-6 pb-10 sm:px-10 lg:px-16">
@@ -105,8 +118,9 @@ export default function HorizontalAdvantages() {
 
         {/* Desktop: scroll-driven horizontal track */}
         <motion.div
+          ref={trackRef}
           style={{ x }}
-          className="hidden gap-6 px-6 will-change-transform sm:flex sm:px-10 lg:px-16"
+          className="hidden gap-5 px-6 will-change-transform sm:flex sm:px-10 lg:px-16"
         >
           {ADVANTAGES.map((a) => (
             <Card key={a.index} a={a} />
@@ -128,20 +142,20 @@ export default function HorizontalAdvantages() {
 
 function Card({ a }: { a: Advantage }) {
   return (
-    <article className="flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-8 sm:w-[400px]">
-      <div className="flex items-start justify-between">
-        <div className="font-display text-5xl font-semibold tracking-tightest text-bone/15">
+    <article className="flex h-[42vh] max-h-[360px] w-[72vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-7 sm:w-[300px]">
+      <div className="flex items-start justify-between gap-3">
+        <div className="font-display text-4xl font-semibold tracking-tightest text-bone/15">
           {a.index}
         </div>
-        <span className="rounded-full border border-bone/20 px-3 py-1 text-[11px] uppercase tracking-wider text-bone-dim">
+        <span className="rounded-full border border-bone/20 px-2.5 py-1 text-[10px] uppercase tracking-wider text-bone-dim">
           {a.tag}
         </span>
       </div>
       <div>
-        <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-[26px]">
+        <h3 className="font-display text-xl font-semibold leading-tight tracking-tightest text-bone sm:text-[22px]">
           {a.title}
         </h3>
-        <p className="mt-4 text-sm leading-relaxed text-bone-soft">{a.body}</p>
+        <p className="mt-3 text-sm leading-relaxed text-bone-soft">{a.body}</p>
       </div>
     </article>
   );
