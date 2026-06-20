@@ -128,7 +128,7 @@ export default function HorizontalAdvantages() {
 
 function Card({ a }: { a: Advantage }) {
   return (
-    <article className="flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-8 sm:w-[340px]">
+    <article className="flex h-[44vh] max-h-[380px] w-[72vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-7 sm:w-[240px]">
       <div className="font-display text-5xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
