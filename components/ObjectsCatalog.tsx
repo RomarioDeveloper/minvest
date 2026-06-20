@@ -165,7 +165,6 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
   const prev = () => go((slide - 1 + obj.gallery.length) % obj.gallery.length);
   const next = () => go((slide + 1) % obj.gallery.length);
 
-  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -181,26 +180,25 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
     <>
       {/* Backdrop */}
       <motion.div
-        className="fixed inset-0 z-[60] bg-ink-deep/90 backdrop-blur-md"
+        className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.35 }}
+        transition={{ duration: 0.3 }}
         onClick={onClose}
       />
 
-      {/* Panel */}
+      {/* Panel — slides up from bottom on mobile, from right on desktop */}
       <motion.div
-        className="fixed inset-x-0 bottom-0 z-[61] flex max-h-[92svh] flex-col overflow-hidden bg-ink-panel md:inset-x-auto md:inset-y-0 md:right-0 md:max-h-none md:w-[560px] md:max-w-[90vw]"
-        initial={{ y: "100%", opacity: 0 }}
+        className="fixed inset-x-0 bottom-0 z-[61] flex h-[88svh] flex-col bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
+        initial={{ y: "100%", opacity: 0.6 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
-        transition={{ type: "spring", stiffness: 320, damping: 34, mass: 0.9 }}
-        style={{ willChange: "transform" }}
+        transition={{ type: "spring", stiffness: 380, damping: 40, mass: 0.85 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── Gallery ── */}
-        <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-ink md:aspect-[4/3]">
+        {/* ── Gallery (fixed height) ── */}
+        <div className="relative h-[220px] w-full shrink-0 overflow-hidden bg-ink sm:h-[260px] md:h-[300px]">
           <AnimatePresence initial={false} custom={dir}>
             <motion.img
               key={slide}
@@ -209,124 +207,137 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
               className="absolute inset-0 h-full w-full object-cover"
               custom={dir}
               variants={{
-                enter: (d: number) => ({ x: d * 60, opacity: 0, scale: 1.04 }),
-                center: { x: 0, opacity: 1, scale: 1 },
-                exit: (d: number) => ({ x: d * -60, opacity: 0, scale: 0.97 }),
+                enter: (d: number) => ({ x: d * 80, opacity: 0 }),
+                center: { x: 0, opacity: 1 },
+                exit: (d: number) => ({ x: d * -80, opacity: 0 }),
               }}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.38, ease: [0.32, 0, 0.18, 1] }}
+              transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
             />
           </AnimatePresence>
 
-          {/* Gradient overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-panel/60 via-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-          {/* Status badge */}
-          <div className="absolute left-4 top-4 flex items-center gap-2 bg-ink/70 px-3 py-1.5 backdrop-blur-sm">
+          {/* Status */}
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm">
             <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
             <span className="text-eyebrow uppercase text-bone-soft">{STATUS_LABEL[obj.status]}</span>
           </div>
 
-          {/* Close button */}
+          {/* Flagship */}
+          {obj.flagship && (
+            <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">
+              Флагман
+            </div>
+          )}
+
+          {/* Close */}
           <button
             onClick={onClose}
             aria-label="Закрыть"
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center bg-ink/70 text-bone backdrop-blur-sm transition hover:bg-ink"
+            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
 
-          {/* Slider arrows */}
+          {/* Arrows */}
           {obj.gallery.length > 1 && (
             <>
-              <button
-                onClick={prev}
-                aria-label="Назад"
-                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center bg-ink/60 text-bone backdrop-blur-sm transition hover:bg-ink"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <button onClick={prev} aria-label="Назад"
+                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-              <button
-                onClick={next}
-                aria-label="Вперёд"
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center bg-ink/60 text-bone backdrop-blur-sm transition hover:bg-ink"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <button onClick={next} aria-label="Вперёд"
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
             </>
           )}
 
-          {/* Dot indicators */}
+          {/* Dots */}
           {obj.gallery.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
               {obj.gallery.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => go(i)}
-                  className={`h-1 rounded-full transition-all duration-300 ${
-                    i === slide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"
-                  }`}
+                <button key={i} onClick={() => go(i)}
+                  className={`h-1 rounded-full transition-all duration-300 ${i === slide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* ── Content ── */}
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          <div className="p-6 md:p-8">
-            <div className="text-eyebrow uppercase text-bone-dim">{obj.district}</div>
-            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tightest text-bone">
+        {/* ── Scrollable content ── */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <div className="px-5 pb-4 pt-5 sm:px-6">
+
+            {/* Header */}
+            <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">
+              {obj.district}
+            </div>
+            <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">
               {obj.name}
             </h2>
+
+            {/* Price pill */}
+            <div className="mt-4 inline-flex items-baseline gap-1.5">
+              <span className="font-display text-3xl font-semibold tracking-tightest text-bone">
+                {obj.priceFrom} млн ₸
+              </span>
+              <span className="text-eyebrow uppercase text-bone/40">от</span>
+            </div>
+
+            {/* Description */}
             {obj.description && (
-              <p className="mt-4 leading-relaxed text-bone-soft">{obj.description}</p>
+              <p className="mt-4 text-[15px] leading-relaxed text-bone/60">
+                {obj.description}
+              </p>
             )}
 
-            <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-bone/10 pt-6">
-              <Spec label="Этажность" value={`${obj.floors} этажей`} />
-              <Spec label="Квартир" value={`${obj.apartments}`} />
-              <Spec label="Планировки" value={obj.rooms} />
-              <Spec label="Срок сдачи" value={obj.deadline} />
-            </dl>
-
-            <div className="mt-6 flex items-center justify-between rounded-none border border-bone/10 bg-ink px-5 py-4">
-              <div>
-                <div className="text-eyebrow uppercase text-bone-dim">Цена от</div>
-                <div className="mt-1 font-display text-2xl font-semibold tracking-tightest text-bone">
-                  {obj.priceFrom} млн ₸
+            {/* Specs grid */}
+            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-none border border-bone/10">
+              {[
+                { label: "Этажность", value: `${obj.floors} эт.` },
+                { label: "Квартир", value: `${obj.apartments}` },
+                { label: "Планировки", value: obj.rooms },
+                { label: "Срок сдачи", value: obj.deadline },
+              ].map((s) => (
+                <div key={s.label} className="bg-ink/40 px-4 py-3">
+                  <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/35">
+                    {s.label}
+                  </div>
+                  <div className="mt-1 text-sm font-semibold text-bone">{s.value}</div>
                 </div>
-              </div>
-              {obj.flagship && (
-                <div className="bg-bone px-3 py-1.5 text-eyebrow uppercase text-ink">Флагман</div>
-              )}
+              ))}
             </div>
-          </div>
 
-          {/* CTA */}
-          <div className="sticky bottom-0 flex flex-col gap-3 border-t border-bone/10 bg-ink-panel p-6 md:p-8">
-            <a
-              href="#contact"
-              onClick={onClose}
-              className="flex w-full items-center justify-center gap-3 bg-bone py-4 text-eyebrow uppercase text-ink transition hover:bg-bone-soft"
-            >
-              Записаться на показ →
-            </a>
-            <button
-              onClick={onClose}
-              className="w-full border border-bone/20 py-3 text-eyebrow uppercase text-bone-soft transition hover:border-bone/50 hover:text-bone"
-            >
-              Закрыть
-            </button>
+            {/* Extra padding so content isn't hidden behind sticky footer */}
+            <div className="h-4" />
           </div>
+        </div>
+
+        {/* ── Sticky CTA ── */}
+        <div className="shrink-0 border-t border-bone/10 bg-[#111113] px-5 pb-6 pt-4 sm:px-6">
+          <a
+            href="#contact"
+            onClick={onClose}
+            className="flex w-full items-center justify-center bg-bone py-3.5 text-eyebrow font-semibold uppercase tracking-wider text-ink transition hover:bg-bone/90 active:scale-[0.98]"
+          >
+            Записаться на показ →
+          </a>
+          <button
+            onClick={onClose}
+            className="mt-2.5 w-full py-3 text-[11px] font-semibold uppercase tracking-widest text-bone/40 transition hover:text-bone/70"
+          >
+            Закрыть
+          </button>
         </div>
       </motion.div>
     </>
