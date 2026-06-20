@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 
 type Advantage = {
   index: string;
-  tag: string;
   title: string;
   body: string;
 };
@@ -13,64 +12,51 @@ type Advantage = {
 const ADVANTAGES: Advantage[] = [
   {
     index: "01",
-    tag: "Строительство",
-    title: "Экибастузский кирпич и фасад",
-    body: "Кирпичная технология с фиброцементными панелями и двойным утеплением — долговечность, энергоэффективность и эстетичный облик на десятилетия.",
+    title: "Экибастузский кирпич",
+    body: "Несущие стены 62 см с двойным утеплением и фиброцементными панелями — тепло зимой, прохладно летом, тишина круглый год.",
   },
   {
     index: "02",
-    tag: "Комфорт",
-    title: "Современные бесшумные лифты",
-    body: "Тихие скоростные лифты в каждом подъезде — никакого шума, плавный ход. Поднимают без ожидания, работают без сбоев.",
+    title: "Бесшумные лифты",
+    body: "Современные тихие лифты в каждом подъезде — плавный ход, быстрое обслуживание, без шума и ожиданий.",
   },
   {
     index: "03",
-    tag: "Комфорт",
     title: "Трёхкамерные окна",
-    body: "Высокая тепло- и шумоизоляция — зимой тепло, летом прохладно, уличный шум не слышен. Витражное и панорамное остекление в каждом проекте.",
+    body: "Высокая тепло- и шумоизоляция. Витражное и панорамное остекление — максимум естественного света в каждой квартире.",
   },
   {
     index: "04",
-    tag: "Комфорт",
     title: "Функциональные планировки",
-    body: "Удобные и продуманные планировки квартир — от студий до трёхкомнатных. Потолки от 2,8 до 3 метров, ровные перекрытия под любой дизайн.",
+    body: "От студий до трёхкомнатных. Потолки от 2,8 до 3 метров, ровные перекрытия — свобода для любого дизайна.",
   },
   {
     index: "05",
-    tag: "Комфорт",
     title: "Гаражи и парковка",
-    body: "Собственные капитальные гаражи во дворе и организованные парковочные решения — место для машины есть у каждого жителя.",
+    body: "Собственные капитальные гаражи и парковочные решения во дворе — место для машины есть у каждого жителя.",
   },
   {
     index: "06",
-    tag: "Комфорт",
-    title: "Коммерция на первых этажах",
-    body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах — инфраструктура прямо в доме: кафе, аптека, магазин.",
+    title: "Коммерция в доме",
+    body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах — кафе, аптека, магазин прямо под рукой.",
   },
   {
     index: "07",
-    tag: "Безопасность",
     title: "Закрытая территория",
-    body: "Контроль доступа на въезде и входе — только жители и их гости. Единственный шлагбаум, видеонаблюдение 24/7 по всему периметру.",
+    body: "Контроль доступа на въезде и у подъездов — только жители и их гости. Шлагбаум, видеонаблюдение 24/7.",
   },
   {
     index: "08",
-    tag: "Безопасность",
     title: "Face ID в подъезде",
-    body: "Системы распознавания лиц в премиальных проектах — вход без ключа, без кода. Быстро, удобно и надёжно для каждого жителя.",
+    body: "Системы распознавания лиц в премиальных проектах — вход без ключа и кода. Быстро, удобно, надёжно.",
   },
   {
     index: "09",
-    tag: "Безопасность",
-    title: "Умные замки в квартирах",
-    body: "Электронные замки с приложением — открытие со смартфона, временные ключи для гостей, история входов. Полный контроль без физического ключа.",
+    title: "Умные замки",
+    body: "Электронные замки с управлением со смартфона — временные ключи для гостей, история входов, полный контроль.",
   },
 ];
 
-/**
- * Pinned horizontal scroll. Measures real track overflow so the last card
- * always lands exactly in view regardless of viewport size.
- */
 export default function HorizontalAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -120,7 +106,7 @@ export default function HorizontalAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="hidden gap-5 px-6 will-change-transform sm:flex sm:px-10 lg:px-16"
+          className="hidden gap-6 px-6 will-change-transform sm:flex sm:px-10 lg:px-16"
         >
           {ADVANTAGES.map((a) => (
             <Card key={a.index} a={a} />
@@ -142,20 +128,15 @@ export default function HorizontalAdvantages() {
 
 function Card({ a }: { a: Advantage }) {
   return (
-    <article className="flex h-[42vh] max-h-[360px] w-[72vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-7 sm:w-[300px]">
-      <div className="flex items-start justify-between gap-3">
-        <div className="font-display text-4xl font-semibold tracking-tightest text-bone/15">
-          {a.index}
-        </div>
-        <span className="rounded-full border border-bone/20 px-2.5 py-1 text-[10px] uppercase tracking-wider text-bone-dim">
-          {a.tag}
-        </span>
+    <article className="flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between border border-bone/12 bg-ink-panel p-8 sm:w-[340px]">
+      <div className="font-display text-5xl font-semibold tracking-tightest text-bone/15">
+        {a.index}
       </div>
       <div>
-        <h3 className="font-display text-xl font-semibold leading-tight tracking-tightest text-bone sm:text-[22px]">
+        <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
-        <p className="mt-3 text-sm leading-relaxed text-bone-soft">{a.body}</p>
+        <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
       </div>
     </article>
   );
