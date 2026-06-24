@@ -139,6 +139,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       };
 
       const onCanScrub = () => {
+        if (canScrub) return;
         ensureUnlocked();
         canScrub = true;
         setFrameReady(true);
@@ -154,6 +155,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       video.addEventListener("loadeddata", onCanScrub);
       video.addEventListener("canplay", onCanScrub);
       video.addEventListener("seeked", onSeeked);
+      if (video.readyState >= 1) {
+        onCanScrub();
+      }
       rafId = requestAnimationFrame(tick);
 
       return () => {
@@ -224,9 +228,11 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     };
 
     const onCanScrub = () => {
+      if (scrubReady) return;
       ensureUnlocked();
       scrubReady = true;
       resizeCanvas();
+      paint(); // Do initial paint so canvas isn't blank
       queueSeek(pinProgress(section));
     };
 
@@ -240,6 +246,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     video.addEventListener("canplaythrough", onCanScrub);
     video.addEventListener("seeked", onSeeked);
     section.addEventListener("touchstart", onDesktopTouch, { passive: true });
+    if (video.readyState >= 2) {
+      onCanScrub();
+    }
 
     const tick = () => {
       queueSeek(pinProgress(section));
