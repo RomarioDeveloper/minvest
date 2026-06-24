@@ -108,6 +108,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       let lastRequested = -1;
       let lastSeekTarget = -1;
 
+      let smoothProgress = pinProgress(section);
+      let lastTime = performance.now();
+
       const queueSeek = (progress: number) => {
         if (!canScrub) return;
         const duration = video.duration;
@@ -147,11 +150,23 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         ensureUnlocked();
         canScrub = true;
         setFrameReady(true);
-        queueSeek(pinProgress(section));
+        smoothProgress = pinProgress(section);
+        queueSeek(smoothProgress);
       };
 
-      const tick = () => {
-        queueSeek(pinProgress(section));
+      const tick = (now: number) => {
+        const dt = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+
+        const targetProgress = pinProgress(section);
+        const k = 1 - Math.exp(-12 * dt);
+        smoothProgress += (targetProgress - smoothProgress) * k;
+        
+        if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
+          smoothProgress = targetProgress;
+        }
+
+        queueSeek(smoothProgress);
         rafId = requestAnimationFrame(tick);
       };
 
@@ -186,6 +201,10 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     let lastRequested = -1;
     let seeking = false;
     let scrubReady = false;
+
+    // Use a smoothed progress value to make scrubbing feel less jittery
+    let smoothProgress = pinProgress(section);
+    let lastTime = performance.now();
 
     const resizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -243,12 +262,12 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       scrubReady = true;
       resizeCanvas();
       paint(); // Do initial paint so canvas isn't blank
-      queueSeek(pinProgress(section));
+      smoothProgress = pinProgress(section);
+      queueSeek(smoothProgress);
     };
 
     const onDesktopTouch = () => {
       ensureUnlocked();
-      if (scrubReady) queueSeek(pinProgress(section));
     };
 
     video.addEventListener("loadeddata", onCanScrub);
@@ -260,8 +279,24 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       onCanScrub();
     }
 
-    const tick = () => {
-      queueSeek(pinProgress(section));
+    const tick = (now: number) => {
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+
+      const targetProgress = pinProgress(section);
+      // Exponential ease towards target for smoother scrubbing on desktop wheel/trackpad
+      const k = 1 - Math.exp(-12 * dt);
+      smoothProgress += (targetProgress - smoothProgress) * k;
+      
+      if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
+        smoothProgress = targetProgress;
+      }
+
+      queueSeek(smoothProgress);
+      // Continuous paint loop ensures we always get the latest decoded frame
+      // instead of strictly waiting for the seeked event which can lag
+      paint();
+      
       rafId = requestAnimationFrame(tick);
     };
 
