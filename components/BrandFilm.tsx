@@ -117,7 +117,8 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         if (!Number.isFinite(duration) || duration <= 0 || video.readyState < 1) return;
 
         const t = progress * Math.max(0, duration - 0.05);
-        if (Math.abs(t - lastRequested) < 0.01) return;
+        // Чуть увеличим порог, чтобы не спамить микро-перемотками
+        if (Math.abs(t - lastRequested) < 0.015) return;
         lastRequested = t;
         pending = t;
 
@@ -134,7 +135,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
       const onSeeked = () => {
         seeking = false;
-        if (pending >= 0 && Math.abs(pending - lastSeekTarget) > 0.001) {
+        if (pending >= 0 && Math.abs(pending - lastSeekTarget) > 0.005) {
           seeking = true;
           lastSeekTarget = pending;
           try {
@@ -159,7 +160,8 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         lastTime = now;
 
         const targetProgress = pinProgress(section);
-        const k = 1 - Math.exp(-12 * dt);
+        // Снижаем коэффициент (был 12, стал 5), чтобы дать больше инерции и скрыть лаги декодера
+        const k = 1 - Math.exp(-5 * dt);
         smoothProgress += (targetProgress - smoothProgress) * k;
         
         if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
@@ -201,6 +203,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     let lastRequested = -1;
     let seeking = false;
     let scrubReady = false;
+    let rvfcId = 0;
 
     // Use a smoothed progress value to make scrubbing feel less jittery
     let smoothProgress = pinProgress(section);
@@ -221,13 +224,20 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
     };
 
+    const updateFrame = () => {
+      paint();
+      if ('requestVideoFrameCallback' in video) {
+        rvfcId = (video as any).requestVideoFrameCallback(updateFrame);
+      }
+    };
+
     const queueSeek = (progress: number) => {
       if (!scrubReady) return;
       const duration = video.duration;
       if (!Number.isFinite(duration) || duration <= 0) return;
 
       const t = progress * Math.max(0, duration - 0.05);
-      if (Math.abs(t - lastRequested) < 0.005) return;
+      if (Math.abs(t - lastRequested) < 0.015) return;
       lastRequested = t;
       pendingTime = t;
 
@@ -244,8 +254,10 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     const onSeeked = () => {
       seeking = false;
-      paint();
-      if (pendingTime >= 0 && Math.abs(pendingTime - lastSeekTarget) > 0.001) {
+      if (!('requestVideoFrameCallback' in video)) {
+        paint(); // Fallback for old browsers
+      }
+      if (pendingTime >= 0 && Math.abs(pendingTime - lastSeekTarget) > 0.005) {
         seeking = true;
         lastSeekTarget = pendingTime;
         try {
@@ -261,7 +273,13 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       ensureUnlocked();
       scrubReady = true;
       resizeCanvas();
-      paint(); // Do initial paint so canvas isn't blank
+      
+      if ('requestVideoFrameCallback' in video) {
+        rvfcId = (video as any).requestVideoFrameCallback(updateFrame);
+      } else {
+        paint();
+      }
+
       smoothProgress = pinProgress(section);
       queueSeek(smoothProgress);
     };
@@ -285,7 +303,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
       const targetProgress = pinProgress(section);
       // Exponential ease towards target for smoother scrubbing on desktop wheel/trackpad
-      const k = 1 - Math.exp(-12 * dt);
+      const k = 1 - Math.exp(-5 * dt);
       smoothProgress += (targetProgress - smoothProgress) * k;
       
       if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
@@ -293,10 +311,6 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
 
       queueSeek(smoothProgress);
-      // Continuous paint loop ensures we always get the latest decoded frame
-      // instead of strictly waiting for the seeked event which can lag
-      paint();
-      
       rafId = requestAnimationFrame(tick);
     };
 
@@ -307,6 +321,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     return () => {
       cancelAnimationFrame(rafId);
+      if ('requestVideoFrameCallback' in video) {
+        (video as any).cancelVideoFrameCallback(rvfcId);
+      }
       window.removeEventListener("resize", resizeCanvas);
       window.visualViewport?.removeEventListener("resize", resizeCanvas);
       section.removeEventListener("touchstart", onTouch);
