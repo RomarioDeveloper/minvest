@@ -14,6 +14,8 @@ const ROOT = process.cwd();
 const SRC = path.join(ROOT, process.argv[2] ?? "public/hero-scroll.mp4");
 const OUT_MP4 = path.join(ROOT, process.argv[3] ?? "public/hero-scrub.mp4");
 const OUT_JPG = path.join(ROOT, process.argv[4] ?? "public/hero-scrub.jpg");
+/** Desktop: scale=1920:-2 · Mobile portrait: scale=-2:1920 */
+const VF = process.argv[5] ?? "scale=1920:-2:flags=lanczos";
 
 function ffmpegBin() {
   return process.env.FFMPEG ?? "ffmpeg";
@@ -38,7 +40,7 @@ function main() {
     "-i",
     SRC,
     "-vf",
-    "scale=1920:-2:flags=lanczos",
+    VF,
     "-c:v",
     "libx264",
     "-preset",
@@ -72,7 +74,7 @@ function main() {
     "-update",
     "1",
     "-vf",
-    "scale=1920:-2:flags=lanczos",
+    VF,
     OUT_JPG,
   ]);
 

@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
 type Props = {
   scrubSrc: string;
   poster?: string;
+  scrubSrcMobile?: string;
+  posterMobile?: string;
 };
 
 /** Scroll distance while pinned — controls how long the hero stays on screen. */
@@ -18,16 +20,12 @@ function pinProgress(section: HTMLElement): number {
   return clamp01(-section.getBoundingClientRect().top / scrollable);
 }
 
-export default function BrandFilm({ scrubSrc, poster }: Props) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
+function useScrollScrub(sectionRef: RefObject<HTMLElement | null>, videoRef: RefObject<HTMLVideoElement | null>) {
   useEffect(() => {
     const section = sectionRef.current;
     const video = videoRef.current;
     if (!section || !video) return;
 
-    // Prevent the browser from ever trying to "play" the video
     video.pause();
 
     let lastProgress = -1;
@@ -36,7 +34,6 @@ export default function BrandFilm({ scrubSrc, poster }: Props) {
     const tick = () => {
       const progress = pinProgress(section);
 
-      // Only write currentTime when it actually changes (avoids redundant seeks)
       if (Math.abs(progress - lastProgress) > 0.0004) {
         lastProgress = progress;
         const duration = video.duration;
@@ -50,7 +47,33 @@ export default function BrandFilm({ scrubSrc, poster }: Props) {
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
+  }, [sectionRef, videoRef]);
+}
+
+/** Matches Tailwind `md:` — one video per viewport, no double download. */
+function useMobileViewport() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
+
+  return isMobile;
+}
+
+export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobile }: Props) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isMobile = useMobileViewport();
+
+  useScrollScrub(sectionRef, videoRef);
+
+  const src = isMobile ? (scrubSrcMobile ?? scrubSrc) : scrubSrc;
+  const videoPoster = isMobile ? (posterMobile ?? poster) : poster;
 
   return (
     <section
@@ -60,16 +83,19 @@ export default function BrandFilm({ scrubSrc, poster }: Props) {
       aria-label="Видео о доме, управляемое скроллом"
     >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-ink">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={scrubSrc}
-          poster={poster}
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-        />
+        {isMobile !== null && (
+          <video
+            ref={videoRef}
+            key={src}
+            className="absolute inset-0 h-full w-full object-cover"
+            src={src}
+            poster={videoPoster}
+            muted
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+          />
+        )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
