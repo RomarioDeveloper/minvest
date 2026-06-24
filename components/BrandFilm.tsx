@@ -9,7 +9,7 @@ type Props = {
   posterMobile?: string;
 };
 
-const SECTION_VH_MOBILE = 350;
+const SECTION_VH_MOBILE = 300;
 const SECTION_VH_DESKTOP = 520;
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -21,7 +21,6 @@ function pinProgress(section: HTMLElement): number {
   return clamp01(-section.getBoundingClientRect().top / scrollable);
 }
 
-/** Returns false when the frame isn't ready — caller keeps the previous canvas pixels. */
 function drawVideoCover(
   ctx: CanvasRenderingContext2D,
   video: HTMLVideoElement,
@@ -86,16 +85,82 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     const section = sectionRef.current;
     const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!section || !video || !canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!section || !video) return;
 
     video.pause();
 
     let unlocked = false;
     let rafId = 0;
+    if (mobile) {
+      let canScrub = false;
+      let seeking = false;
+      let pending = -1;
+      let lastRequested = -1;
+
+      const queueSeek = (progress: number) => {
+        if (!canScrub) return;
+        const duration = video.duration;
+        if (!Number.isFinite(duration) || duration <= 0 || video.readyState < 1) return;
+
+        const t = progress * Math.max(0, duration - 0.05);
+        if (Math.abs(t - lastRequested) < 0.015) return;
+        lastRequested = t;
+        pending = t;
+
+        if (seeking) return;
+        seeking = true;
+        try {
+          video.currentTime = t;
+        } catch {
+          seeking = false;
+        }
+      };
+
+      const onSeeked = () => {
+        seeking = false;
+        if (pending >= 0 && Math.abs(video.currentTime - pending) > 0.025) {
+          seeking = true;
+          try {
+            video.currentTime = pending;
+          } catch {
+            seeking = false;
+          }
+        }
+      };
+
+      const onCanScrub = () => {
+        ensureUnlocked();
+        canScrub = true;
+        setFrameReady(true);
+        queueSeek(pinProgress(section));
+      };
+
+      const tick = () => {
+        queueSeek(pinProgress(section));
+        rafId = requestAnimationFrame(tick);
+      };
+
+      video.addEventListener("loadedmetadata", onCanScrub);
+      video.addEventListener("loadeddata", onCanScrub);
+      video.addEventListener("canplay", onCanScrub);
+      video.addEventListener("seeked", onSeeked);
+      rafId = requestAnimationFrame(tick);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        section.removeEventListener("touchstart", onTouch);
+        video.removeEventListener("loadedmetadata", onCanScrub);
+        video.removeEventListener("loadeddata", onCanScrub);
+        video.removeEventListener("canplay", onCanScrub);
+        video.removeEventListener("seeked", onSeeked);
+      };
+    }
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     let canvasW = 0;
     let canvasH = 0;
     let pendingTime = -1;
@@ -119,17 +184,13 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     const queueSeek = (progress: number) => {
       if (!scrubReady) return;
-
       const duration = video.duration;
       if (!Number.isFinite(duration) || duration <= 0) return;
 
       const t = progress * Math.max(0, duration - 0.05);
       pendingTime = t;
-
       if (seeking) return;
-
-      const skip = mobile ? 0.008 : 0.004;
-      if (Math.abs(video.currentTime - t) < skip) return;
+      if (Math.abs(video.currentTime - t) < 0.004) return;
 
       seeking = true;
       try {
@@ -142,7 +203,6 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     const onSeeked = () => {
       seeking = false;
       paint();
-
       if (pendingTime >= 0 && Math.abs(video.currentTime - pendingTime) > 0.004) {
         seeking = true;
         try {
@@ -218,7 +278,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
                 draggable={false}
               />
             )}
-            <canvas ref={canvasRef} className="absolute inset-0 z-[1] h-full w-full" aria-hidden />
+            {!mobile && <canvas ref={canvasRef} className="absolute inset-0 z-[1] h-full w-full" aria-hidden />}
             {/*
               Full-size video (opacity 0) — iOS Safari refuses to decode
               zero-size or display:none video, which caused the black screen.
@@ -226,7 +286,11 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
             <video
               ref={videoRef}
               key={src}
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-0"
+              className={
+                mobile
+                  ? "absolute inset-0 z-[1] h-full w-full object-cover"
+                  : "pointer-events-none absolute inset-0 z-0 h-full w-full opacity-0"
+              }
               src={src}
               poster={videoPoster}
               muted
