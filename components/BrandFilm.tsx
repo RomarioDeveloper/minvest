@@ -51,11 +51,14 @@ function useMobileViewport() {
 }
 
 async function unlockVideoForScrub(video: HTMLVideoElement) {
+  video.setAttribute("webkit-playsinline", "true");
+  video.playsInline = true;
+  video.muted = true;
   try {
     await video.play();
     video.pause();
   } catch {
-    /* muted + playsInline */
+    /* needs user gesture on some iOS builds */
   }
 }
 
@@ -65,67 +68,59 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
 
-  const src = isMobile ? (scrubSrcMobile ?? scrubSrc) : scrubSrc;
-  const videoPoster = isMobile ? (posterMobile ?? poster) : poster;
-  const sectionVh = isMobile ? SECTION_VH_MOBILE : SECTION_VH_DESKTOP;
+  const ready = isMobile !== null;
+  const mobile = isMobile === true;
+  const src = mobile ? (scrubSrcMobile ?? scrubSrc) : scrubSrc;
+  const videoPoster = mobile ? (posterMobile ?? poster) : poster;
+  const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
 
   useEffect(() => {
-    if (isMobile === null) return;
+    if (!ready) return;
 
     const section = sectionRef.current;
     const video = videoRef.current;
-    if (!section || !video) return;
+    const canvas = canvasRef.current;
+    if (!section || !video || !canvas) return;
 
-    const mobile = isMobile;
-    const canvas = mobile ? null : canvasRef.current;
-    const ctx = canvas?.getContext("2d") ?? null;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     video.pause();
+
     let unlocked = false;
     let rafId = 0;
     let canvasW = 0;
     let canvasH = 0;
     let pendingTime = -1;
     let seeking = false;
+    let lastPainted = -1;
 
     const resizeCanvas = () => {
-      if (!canvas || !ctx) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvasW = canvas.clientWidth;
       canvasH = canvas.clientHeight;
       canvas.width = Math.max(1, Math.round(canvasW * dpr));
       canvas.height = Math.max(1, Math.round(canvasH * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      lastPainted = -1;
     };
 
     const paint = () => {
-      if (mobile || !ctx) return;
       drawVideoCover(ctx, video, canvasW, canvasH);
     };
 
-    const seekTo = (progress: number) => {
+    const queueSeek = (progress: number) => {
       const duration = video.duration;
       if (!Number.isFinite(duration) || duration <= 0) return;
       if (video.readyState < 1) return;
 
-      const t = progress * Math.max(0, duration - 1 / 60);
-
-      if (mobile) {
-        if (Math.abs(video.currentTime - t) < 0.015) return;
-        try {
-          video.currentTime = t;
-        } catch {
-          /* iOS */
-        }
-        return;
-      }
-
+      const t = progress * Math.max(0, duration - 0.05);
       pendingTime = t;
+
       if (seeking) return;
-      if (Math.abs(video.currentTime - t) < 0.001) {
-        paint();
-        return;
-      }
+
+      const skipDelta = mobile ? 0.012 : 0.004;
+      if (Math.abs(video.currentTime - t) < skipDelta && lastPainted === t) return;
 
       seeking = true;
       try {
@@ -137,9 +132,10 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     const onSeeked = () => {
       seeking = false;
+      lastPainted = video.currentTime;
       paint();
 
-      if (pendingTime >= 0 && Math.abs(video.currentTime - pendingTime) > 0.001) {
+      if (pendingTime >= 0 && Math.abs(video.currentTime - pendingTime) > 0.004) {
         seeking = true;
         try {
           video.currentTime = pendingTime;
@@ -149,38 +145,52 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
     };
 
+    const ensureUnlocked = () => {
+      if (unlocked) return;
+      unlocked = true;
+      void unlockVideoForScrub(video);
+    };
+
     const onMeta = () => {
-      if (!unlocked) {
-        unlocked = true;
-        void unlockVideoForScrub(video);
-      }
+      ensureUnlocked();
       resizeCanvas();
-      seekTo(pinProgress(section));
+      queueSeek(pinProgress(section));
+    };
+
+    const onTouch = () => {
+      ensureUnlocked();
+      queueSeek(pinProgress(section));
     };
 
     video.addEventListener("loadedmetadata", onMeta);
     video.addEventListener("loadeddata", onMeta);
     video.addEventListener("canplay", onMeta);
     video.addEventListener("seeked", onSeeked);
+    section.addEventListener("touchstart", onTouch, { passive: true });
 
     const tick = () => {
-      seekTo(pinProgress(section));
+      queueSeek(pinProgress(section));
       rafId = requestAnimationFrame(tick);
     };
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", resizeCanvas);
+    }
     rafId = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resizeCanvas);
+      window.visualViewport?.removeEventListener("resize", resizeCanvas);
+      section.removeEventListener("touchstart", onTouch);
       video.removeEventListener("loadedmetadata", onMeta);
       video.removeEventListener("loadeddata", onMeta);
       video.removeEventListener("canplay", onMeta);
       video.removeEventListener("seeked", onSeeked);
     };
-  }, [isMobile, src]);
+  }, [ready, mobile, src]);
 
   return (
     <section
@@ -190,15 +200,13 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       aria-label="Видео о доме, управляемое скроллом"
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-        {isMobile !== null && (
+        {ready && (
           <>
-            {!isMobile && (
-              <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />
-            )}
+            <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />
             <video
               ref={videoRef}
               key={src}
-              className={isMobile ? "absolute inset-0 h-full w-full object-cover" : "hidden"}
+              className="pointer-events-none absolute h-0 w-0 opacity-0"
               src={`${src}#t=0.001`}
               poster={videoPoster}
               muted
