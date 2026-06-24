@@ -91,6 +91,16 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     let unlocked = false;
     let rafId = 0;
+    const ensureUnlocked = () => {
+      if (unlocked) return;
+      unlocked = true;
+      void unlockVideoForScrub(video);
+    };
+    const onTouch = () => {
+      ensureUnlocked();
+    };
+    section.addEventListener("touchstart", onTouch, { passive: true });
+
     if (mobile) {
       let canScrub = false;
       let seeking = false;
@@ -213,12 +223,6 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
     };
 
-    const ensureUnlocked = () => {
-      if (unlocked) return;
-      unlocked = true;
-      void unlockVideoForScrub(video);
-    };
-
     const onCanScrub = () => {
       ensureUnlocked();
       scrubReady = true;
@@ -226,7 +230,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       queueSeek(pinProgress(section));
     };
 
-    const onTouch = () => {
+    const onDesktopTouch = () => {
       ensureUnlocked();
       if (scrubReady) queueSeek(pinProgress(section));
     };
@@ -235,7 +239,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     video.addEventListener("canplay", onCanScrub);
     video.addEventListener("canplaythrough", onCanScrub);
     video.addEventListener("seeked", onSeeked);
-    section.addEventListener("touchstart", onTouch, { passive: true });
+    section.addEventListener("touchstart", onDesktopTouch, { passive: true });
 
     const tick = () => {
       queueSeek(pinProgress(section));
@@ -252,6 +256,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       window.removeEventListener("resize", resizeCanvas);
       window.visualViewport?.removeEventListener("resize", resizeCanvas);
       section.removeEventListener("touchstart", onTouch);
+      section.removeEventListener("touchstart", onDesktopTouch);
       video.removeEventListener("loadeddata", onCanScrub);
       video.removeEventListener("canplay", onCanScrub);
       video.removeEventListener("canplaythrough", onCanScrub);
