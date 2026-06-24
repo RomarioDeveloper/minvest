@@ -11,9 +11,9 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 
 const ROOT = process.cwd();
-const SRC = path.join(ROOT, "public/hero-scroll.mp4");
-const OUT_MP4 = path.join(ROOT, "public/hero-scrub.mp4");
-const OUT_JPG = path.join(ROOT, "public/hero-scrub.jpg");
+const SRC = path.join(ROOT, process.argv[2] ?? "public/hero-scroll.mp4");
+const OUT_MP4 = path.join(ROOT, process.argv[3] ?? "public/hero-scrub.mp4");
+const OUT_JPG = path.join(ROOT, process.argv[4] ?? "public/hero-scrub.jpg");
 
 function ffmpegBin() {
   return process.env.FFMPEG ?? "ffmpeg";

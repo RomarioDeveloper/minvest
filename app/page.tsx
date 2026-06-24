@@ -44,7 +44,8 @@ export default function HomePage() {
 
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
       <div id="top">
-        <BrandFilm scrubSrc="/hero-scrub.mp4" poster="/hero-scrub.jpg" />
+        {/* TEMP: scroll hero — revert to hero-scrub.mp4 when done */}
+        <BrandFilm scrubSrc="/hero-scrub-temp.mp4" poster="/hero-scrub-temp.jpg" />
       </div>
 
       {/* ---------- HERO ---------- */}
