@@ -106,6 +106,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       let seeking = false;
       let pending = -1;
       let lastRequested = -1;
+      let lastSeekTarget = -1;
 
       const queueSeek = (progress: number) => {
         if (!canScrub) return;
@@ -113,12 +114,14 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         if (!Number.isFinite(duration) || duration <= 0 || video.readyState < 1) return;
 
         const t = progress * Math.max(0, duration - 0.05);
-        if (Math.abs(t - lastRequested) < 0.015) return;
+        if (Math.abs(t - lastRequested) < 0.01) return;
         lastRequested = t;
         pending = t;
 
         if (seeking) return;
+        
         seeking = true;
+        lastSeekTarget = t;
         try {
           video.currentTime = t;
         } catch {
@@ -128,8 +131,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
       const onSeeked = () => {
         seeking = false;
-        if (pending >= 0 && Math.abs(video.currentTime - pending) > 0.025) {
+        if (pending >= 0 && Math.abs(pending - lastSeekTarget) > 0.001) {
           seeking = true;
+          lastSeekTarget = pending;
           try {
             video.currentTime = pending;
           } catch {
@@ -178,6 +182,8 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     let canvasW = 0;
     let canvasH = 0;
     let pendingTime = -1;
+    let lastSeekTarget = -1;
+    let lastRequested = -1;
     let seeking = false;
     let scrubReady = false;
 
@@ -202,11 +208,14 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       if (!Number.isFinite(duration) || duration <= 0) return;
 
       const t = progress * Math.max(0, duration - 0.05);
+      if (Math.abs(t - lastRequested) < 0.005) return;
+      lastRequested = t;
       pendingTime = t;
-      if (seeking) return;
-      if (Math.abs(video.currentTime - t) < 0.004) return;
 
+      if (seeking) return;
+      
       seeking = true;
+      lastSeekTarget = t;
       try {
         video.currentTime = t;
       } catch {
@@ -217,8 +226,9 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     const onSeeked = () => {
       seeking = false;
       paint();
-      if (pendingTime >= 0 && Math.abs(video.currentTime - pendingTime) > 0.004) {
+      if (pendingTime >= 0 && Math.abs(pendingTime - lastSeekTarget) > 0.001) {
         seeking = true;
+        lastSeekTarget = pendingTime;
         try {
           video.currentTime = pendingTime;
         } catch {
