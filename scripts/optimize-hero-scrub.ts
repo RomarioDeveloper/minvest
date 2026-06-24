@@ -14,8 +14,16 @@ const ROOT = process.cwd();
 const SRC = path.join(ROOT, process.argv[2] ?? "public/hero-scroll.mp4");
 const OUT_MP4 = path.join(ROOT, process.argv[3] ?? "public/hero-scrub.mp4");
 const OUT_JPG = path.join(ROOT, process.argv[4] ?? "public/hero-scrub.jpg");
-/** Desktop: scale=1920:-2 · Mobile portrait: scale=-2:1920 */
+/** Desktop: scale=1920:-2 · Mobile portrait: scale=-2:1920 · Pass "60" as 6th arg for interpolated fps */
 const VF = process.argv[5] ?? "scale=1920:-2:flags=lanczos";
+const TARGET_FPS = process.argv[6] ? parseInt(process.argv[6], 10) : 0;
+
+function buildVideoFilter() {
+  if (TARGET_FPS > 0) {
+    return `minterpolate=fps=${TARGET_FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1,${VF}`;
+  }
+  return VF;
+}
 
 function ffmpegBin() {
   return process.env.FFMPEG ?? "ffmpeg";
@@ -31,7 +39,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log("\n▸ hero-scrub — 1080p all-keyframe encode");
+  const vf = buildVideoFilter();
+  const label = TARGET_FPS > 0 ? `${TARGET_FPS}fps all-keyframe` : "1080p all-keyframe";
+  console.log(`\n▸ hero-scrub — ${label} encode`);
   run([
     "-y",
     "-hide_banner",
@@ -40,7 +50,7 @@ function main() {
     "-i",
     SRC,
     "-vf",
-    VF,
+    vf,
     "-c:v",
     "libx264",
     "-preset",

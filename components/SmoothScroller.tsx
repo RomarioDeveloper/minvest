@@ -20,12 +20,15 @@ export default function SmoothScroller() {
       return;
     }
 
+    // Native scroll keeps scroll-scrub video in sync on both phone and desktop.
+    return;
+
     const lenis = new Lenis({
-      duration: 1.05,
+      duration: 0.85,
       // ease-out-expo — smooth but settles quickly enough to feel responsive
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      wheelMultiplier: 0.9,
+      wheelMultiplier: 1,
       // Native touch scrolling: hijacking touch (syncTouch) feels broken on
       // phones — momentum fights the browser and pinned sections stall. The
       // canvas scrub has its own inertia, so native flicks still look smooth.
