@@ -20,9 +20,6 @@ export default function SmoothScroller() {
       return;
     }
 
-    // Native scroll keeps scroll-scrub video in sync on both phone and desktop.
-    return;
-
     const lenis = new Lenis({
       duration: 0.85,
       // ease-out-expo — smooth but settles quickly enough to feel responsive

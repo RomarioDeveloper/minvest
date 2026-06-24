@@ -104,46 +104,16 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
     if (mobile) {
       let canScrub = false;
       let seeking = false;
-      let pending = -1;
-      let lastRequested = -1;
-      let lastSeekTarget = -1;
+      let targetTime = 0;
+
+      const FPS = 30;
+      const FRAME_DURATION = 1 / FPS;
 
       let smoothProgress = pinProgress(section);
       let lastTime = performance.now();
 
-      const queueSeek = (progress: number) => {
-        if (!canScrub) return;
-        const duration = video.duration;
-        if (!Number.isFinite(duration) || duration <= 0 || video.readyState < 1) return;
-
-        const t = progress * Math.max(0, duration - 0.05);
-        // Чуть увеличим порог, чтобы не спамить микро-перемотками
-        if (Math.abs(t - lastRequested) < 0.015) return;
-        lastRequested = t;
-        pending = t;
-
-        if (seeking) return;
-        
-        seeking = true;
-        lastSeekTarget = t;
-        try {
-          video.currentTime = t;
-        } catch {
-          seeking = false;
-        }
-      };
-
       const onSeeked = () => {
         seeking = false;
-        if (pending >= 0 && Math.abs(pending - lastSeekTarget) > 0.005) {
-          seeking = true;
-          lastSeekTarget = pending;
-          try {
-            video.currentTime = pending;
-          } catch {
-            seeking = false;
-          }
-        }
       };
 
       const onCanScrub = () => {
@@ -152,23 +122,34 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         canScrub = true;
         setFrameReady(true);
         smoothProgress = pinProgress(section);
-        queueSeek(smoothProgress);
       };
 
       const tick = (now: number) => {
         const dt = Math.min((now - lastTime) / 1000, 0.05);
         lastTime = now;
 
-        const targetProgress = pinProgress(section);
-        // Снижаем коэффициент (был 12, стал 5), чтобы дать больше инерции и скрыть лаги декодера
-        const k = 1 - Math.exp(-5 * dt);
-        smoothProgress += (targetProgress - smoothProgress) * k;
-        
-        if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
-          smoothProgress = targetProgress;
-        }
+        if (canScrub) {
+          const duration = video.duration;
+          if (Number.isFinite(duration) && duration > 0) {
+            const targetProgress = pinProgress(section);
+            
+            const rawTime = targetProgress * Math.max(0, duration - 0.05);
+            targetTime = Math.round(rawTime / FRAME_DURATION) * FRAME_DURATION;
 
-        queueSeek(smoothProgress);
+            if (!seeking && Math.abs(video.currentTime - targetTime) >= FRAME_DURATION * 0.9) {
+              seeking = true;
+              try {
+                if (typeof (video as any).fastSeek === 'function') {
+                  (video as any).fastSeek(targetTime);
+                } else {
+                  video.currentTime = targetTime;
+                }
+              } catch {
+                seeking = false;
+              }
+            }
+          }
+        }
         rafId = requestAnimationFrame(tick);
       };
 
@@ -198,14 +179,14 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
     let canvasW = 0;
     let canvasH = 0;
-    let pendingTime = -1;
-    let lastSeekTarget = -1;
-    let lastRequested = -1;
     let seeking = false;
+    let targetTime = 0;
     let scrubReady = false;
     let rvfcId = 0;
 
-    // Use a smoothed progress value to make scrubbing feel less jittery
+    const FPS = 30;
+    const FRAME_DURATION = 1 / FPS;
+
     let smoothProgress = pinProgress(section);
     let lastTime = performance.now();
 
@@ -231,40 +212,10 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
     };
 
-    const queueSeek = (progress: number) => {
-      if (!scrubReady) return;
-      const duration = video.duration;
-      if (!Number.isFinite(duration) || duration <= 0) return;
-
-      const t = progress * Math.max(0, duration - 0.05);
-      if (Math.abs(t - lastRequested) < 0.015) return;
-      lastRequested = t;
-      pendingTime = t;
-
-      if (seeking) return;
-      
-      seeking = true;
-      lastSeekTarget = t;
-      try {
-        video.currentTime = t;
-      } catch {
-        seeking = false;
-      }
-    };
-
     const onSeeked = () => {
       seeking = false;
       if (!('requestVideoFrameCallback' in video)) {
         paint(); // Fallback for old browsers
-      }
-      if (pendingTime >= 0 && Math.abs(pendingTime - lastSeekTarget) > 0.005) {
-        seeking = true;
-        lastSeekTarget = pendingTime;
-        try {
-          video.currentTime = pendingTime;
-        } catch {
-          seeking = false;
-        }
       }
     };
 
@@ -281,7 +232,6 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       }
 
       smoothProgress = pinProgress(section);
-      queueSeek(smoothProgress);
     };
 
     const onDesktopTouch = () => {
@@ -301,16 +251,32 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
 
-      const targetProgress = pinProgress(section);
-      // Exponential ease towards target for smoother scrubbing on desktop wheel/trackpad
-      const k = 1 - Math.exp(-5 * dt);
-      smoothProgress += (targetProgress - smoothProgress) * k;
-      
-      if (Math.abs(targetProgress - smoothProgress) < 0.0001) {
-        smoothProgress = targetProgress;
-      }
+      if (scrubReady) {
+        const duration = video.duration;
+        if (Number.isFinite(duration) && duration > 0) {
+          const targetProgress = pinProgress(section);
+          
+          // Мы убрали сглаживание, чтобы время не ползло "микро-шагами".
+          // Теперь мы просто считаем чистый процент и округляем его до ближайшего кадра.
+          const rawTime = targetProgress * Math.max(0, duration - 0.05);
+          targetTime = Math.round(rawTime / FRAME_DURATION) * FRAME_DURATION;
 
-      queueSeek(smoothProgress);
+          // Проверяем: если мы не в процессе перемотки, и время изменилось хотя бы на 1 кадр
+          if (!seeking && Math.abs(video.currentTime - targetTime) >= FRAME_DURATION * 0.9) {
+            seeking = true;
+            try {
+              if (typeof (video as any).fastSeek === 'function') {
+                (video as any).fastSeek(targetTime);
+              } else {
+                video.currentTime = targetTime;
+              }
+            } catch {
+              seeking = false;
+            }
+          }
+        }
+      }
+      
       rafId = requestAnimationFrame(tick);
     };
 
