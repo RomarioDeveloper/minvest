@@ -125,7 +125,7 @@ export default function Preloader() {
               style={{ background: "rgba(74,52,38,0.7)", originX: 0 }}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: Math.max(0.1, progress) }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             />
           </motion.div>
         </motion.div>

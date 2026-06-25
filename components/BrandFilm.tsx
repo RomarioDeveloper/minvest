@@ -76,7 +76,9 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
     
     let cancelled = false;
     const frames: (HTMLImageElement | null)[] = Array.from({ length: frameCount }, () => null);
+    framesRef.current = frames; // СРАЗУ отдаем массив для рендера, не ждем конца загрузки!
     let done = 0;
+    let readyFired = false;
 
     setLoadedCount(0);
     setFrameReady(false);
@@ -85,35 +87,53 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
     window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: 0 }));
 
     const checkFinished = () => {
-      if (done === frameCount) {
-        framesRef.current = frames;
+      // Пускаем пользователя на сайт, как только загрузился ПЕРВЫЙ кадр!
+      // Раньше код ждал загрузки ВСЕХ 450 кадров (что занимало те самые 8-10 секунд задержки)
+      if (!readyFired && frames[0]) {
+        readyFired = true;
         window.dispatchEvent(new CustomEvent('brandfilm:ready'));
       }
     };
 
-    for (let i = 0; i < frameCount; i++) {
-      const img = new Image();
-      img.decoding = "async";
-      img.src = `${base}/${String(i + 1).padStart(4, "0")}.jpg`;
+    // Чтобы браузер не завис, пытаясь мгновенно создать 450 сетевых запросов (что вешает вкладку),
+    // мы загружаем их аккуратными "пачками" (батчами) по 15 штук за кадр анимации.
+    let currentIndex = 0;
+    const loadBatch = () => {
+      if (cancelled) return;
+      const end = Math.min(currentIndex + 15, frameCount);
       
-      img.onload = () => {
-        if (cancelled) return;
-        frames[i] = img;
-        done++;
-        setLoadedCount(done);
-        window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
-        checkFinished();
-      };
-      
-      img.onerror = () => {
-        if (cancelled) return;
-        frames[i] = null; // фоллбэк: пропускаем битый кадр
-        done++;
-        setLoadedCount(done);
-        window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
-        checkFinished();
-      };
-    }
+      for (; currentIndex < end; currentIndex++) {
+        const i = currentIndex;
+        const img = new Image();
+        img.decoding = "async"; // Асинхронный декод не блочит скролл
+        
+        img.onload = () => {
+          if (cancelled) return;
+          frames[i] = img;
+          done++;
+          setLoadedCount(done);
+          window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
+          checkFinished();
+        };
+        
+        img.onerror = () => {
+          if (cancelled) return;
+          frames[i] = null;
+          done++;
+          setLoadedCount(done);
+          window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
+          checkFinished();
+        };
+
+        img.src = `${base}/${String(i + 1).padStart(4, "0")}.jpg`;
+      }
+
+      if (currentIndex < frameCount) {
+        requestAnimationFrame(loadBatch); // Продолжаем загрузку в следующем свободном кадре
+      }
+    };
+
+    loadBatch();
 
     return () => {
       cancelled = true;
@@ -122,7 +142,7 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
 
   // 2. Логика скролла и отрисовки
   useEffect(() => {
-    if (!ready || loadedCount < frameCount * 0.1) return; // Начинаем рисовать, если есть хоть 10% кадров
+    if (!ready || loadedCount < 1) return; // Начинаем рисовать, как только загружен первый кадр
 
     const section = sectionRef.current;
     const canvas = canvasRef.current;
