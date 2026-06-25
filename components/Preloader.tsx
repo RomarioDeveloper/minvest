@@ -14,25 +14,62 @@ const MAX_SHOW_MS = 4000;
  */
 export default function Preloader() {
   const [done, setDone] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const started = performance.now();
     let timer: number;
+    let isWindowLoaded = document.readyState === "complete";
+    let isBrandfilmReady = false;
+    let finished = false;
 
-    const finish = () => {
-      const left = Math.max(0, MIN_SHOW_MS - (performance.now() - started));
-      timer = window.setTimeout(() => setDone(true), left);
+    const checkDone = () => {
+      if (finished) return;
+      // Ждём и загрузку страницы, и скачивание видео в Blob
+      if (isWindowLoaded && isBrandfilmReady) {
+        finished = true;
+        const left = Math.max(0, MIN_SHOW_MS - (performance.now() - started));
+        timer = window.setTimeout(() => setDone(true), left);
+      }
     };
 
-    const cap = window.setTimeout(() => setDone(true), MAX_SHOW_MS);
+    const onLoad = () => {
+      isWindowLoaded = true;
+      checkDone();
+    };
 
-    if (document.readyState === "complete") finish();
-    else window.addEventListener("load", finish, { once: true });
+    const onBrandfilmReady = () => {
+      isBrandfilmReady = true;
+      checkDone();
+    };
+
+    const onBrandfilmProgress = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (typeof detail === "number") {
+        setProgress(detail);
+      }
+    };
+
+    // Если видео очень тяжелое или интернет медленный — пускаем пользователя через 8 секунд в любом случае
+    const cap = window.setTimeout(() => {
+      if (!finished) {
+        finished = true;
+        setDone(true);
+      }
+    }, 8000);
+
+    if (isWindowLoaded) onLoad();
+    else window.addEventListener("load", onLoad, { once: true });
+
+    window.addEventListener("brandfilm:ready", onBrandfilmReady, { once: true });
+    window.addEventListener("brandfilm:progress", onBrandfilmProgress);
 
     return () => {
       window.clearTimeout(timer);
       window.clearTimeout(cap);
-      window.removeEventListener("load", finish);
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener("brandfilm:ready", onBrandfilmReady);
+      window.removeEventListener("brandfilm:progress", onBrandfilmProgress);
     };
   }, []);
 
@@ -87,8 +124,8 @@ export default function Preloader() {
               className="h-full"
               style={{ background: "rgba(74,52,38,0.7)", originX: 0 }}
               initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: MIN_SHOW_MS / 1000, ease: [0.4, 0, 0.2, 1] }}
+              animate={{ scaleX: Math.max(0.1, progress) }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             />
           </motion.div>
         </motion.div>

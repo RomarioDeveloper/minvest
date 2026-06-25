@@ -99,10 +99,19 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
       } else {
         setBlobUrl(src); // фоллбэк на прямую ссылку при ошибке
       }
+      window.dispatchEvent(new CustomEvent('brandfilm:ready'));
     };
 
     xhr.onerror = () => {
-      if (!cancelled) setBlobUrl(src);
+      if (cancelled) return;
+      setBlobUrl(src);
+      window.dispatchEvent(new CustomEvent('brandfilm:ready'));
+    };
+
+    xhr.onprogress = (e) => {
+      if (e.lengthComputable) {
+        window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: e.loaded / e.total }));
+      }
     };
 
     xhr.send();
