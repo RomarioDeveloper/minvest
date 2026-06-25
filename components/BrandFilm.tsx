@@ -69,6 +69,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
   const [frameReady, setFrameReady] = useState(false);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
 
   const ready = isMobile !== null;
   const mobile = isMobile === true;
@@ -78,10 +79,42 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
 
   useEffect(() => {
     setFrameReady(false);
+    setBlobUrl(null);
   }, [src]);
 
+  // Предзагрузка видео в память (Blob), чтобы полностью исключить лаги буферизации
+  // при первом скролле (когда браузер пытается тянуть куски файла по сети).
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !src) return;
+    let cancelled = false;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", src, true);
+    xhr.responseType = "blob";
+
+    xhr.onload = () => {
+      if (cancelled) return;
+      if (xhr.status === 200) {
+        setBlobUrl(URL.createObjectURL(xhr.response));
+      } else {
+        setBlobUrl(src); // фоллбэк на прямую ссылку при ошибке
+      }
+    };
+
+    xhr.onerror = () => {
+      if (!cancelled) setBlobUrl(src);
+    };
+
+    xhr.send();
+
+    return () => {
+      cancelled = true;
+      xhr.abort();
+    };
+  }, [ready, src]);
+
+  useEffect(() => {
+    if (!ready || !blobUrl) return;
 
     const section = sectionRef.current;
     const video = videoRef.current;
@@ -198,7 +231,7 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
         window.visualViewport?.removeEventListener("resize", resizeCanvas);
       }
     };
-  }, [ready, mobile, src]);
+  }, [ready, mobile, blobUrl]);
 
   return (
     <section
@@ -224,21 +257,23 @@ export default function BrandFilm({ scrubSrc, poster, scrubSrcMobile, posterMobi
               Full-size video (opacity 0) — iOS Safari refuses to decode
               zero-size or display:none video, which caused the black screen.
             */}
-            <video
-              ref={videoRef}
-              key={src}
-              className={
-                mobile
-                  ? "absolute inset-0 z-[1] h-full w-full object-cover"
-                  : "pointer-events-none absolute inset-0 z-0 h-full w-full opacity-0"
-              }
-              src={src}
-              poster={videoPoster}
-              muted
-              playsInline
-              preload="auto"
-              disablePictureInPicture
-            />
+            {blobUrl && (
+              <video
+                ref={videoRef}
+                key={blobUrl}
+                className={
+                  mobile
+                    ? "absolute inset-0 z-[1] h-full w-full object-cover"
+                    : "pointer-events-none absolute inset-0 z-0 h-full w-full opacity-0"
+                }
+                src={blobUrl}
+                poster={videoPoster}
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+              />
+            )}
           </>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
