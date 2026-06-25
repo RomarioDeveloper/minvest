@@ -46,9 +46,10 @@ export default function HomePage() {
       <div id="top">
         {/* TEMP: scroll hero — revert to hero-scrub.mp4 when done */}
         <BrandFilm
-          scrubSrc="/hero-scrub-temp-kf.mp4"
+          frameBase="/hero-desktop-frames"
+          frameBaseMobile="/hero-mobile-frames"
+          frameCount={449}
           poster="/hero-scrub-temp.jpg"
-          scrubSrcMobile="/hero-scrub-mobile-temp-kf.mp4"
           posterMobile="/hero-scrub-mobile-temp.jpg"
         />
       </div>
