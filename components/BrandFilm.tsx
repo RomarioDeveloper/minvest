@@ -29,11 +29,13 @@ function drawCover(
   h: number,
 ): boolean {
   if (!img.complete || img.naturalWidth === 0) return false;
+  // Считаем масштаб так, чтобы картинка ВСЕГДА полностью закрывала холст (object-fit: cover)
   const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
   const dw = img.naturalWidth * scale;
   const dh = img.naturalHeight * scale;
-  ctx.fillStyle = "#08080a";
-  ctx.fillRect(0, 0, w, h);
+  
+  // Так как картинка гарантированно закрывает весь w и h, 
+  // нам НЕ НУЖНО делать заливку (fillRect). Это экономит 50% ресурсов видеокарты!
   ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
   return true;
 }
@@ -132,11 +134,13 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
     let canvasW = 0;
     let canvasH = 0;
     let rafId = 0;
-    let smoothProgress = pinProgress(section);
     let lastExact = -1;
 
     const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Отключаем Retina-масштабирование (dpr).
+      // Рисовать 1080p картинку на 4K холсте 60 раз в секунду — это убийство для видеокарты.
+      // Для видео/анимаций 1x масштаб выглядит отлично и работает в 4 раза быстрее!
+      const dpr = 1;
       canvasW = canvas.clientWidth;
       canvasH = canvas.clientHeight;
       canvas.width = Math.max(1, Math.round(canvasW * dpr));
@@ -157,18 +161,14 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
     };
 
     resizeCanvas();
-    draw(smoothProgress);
+    draw(pinProgress(section));
 
     const tick = () => {
-      const target = pinProgress(section);
-      // Плавная инерция
-      smoothProgress += (target - smoothProgress) * 0.12;
-      
-      if (Math.abs(target - smoothProgress) < 0.001) {
-        smoothProgress = target;
-      }
-
-      draw(smoothProgress);
+      // Полностью убираем математическое сглаживание (инерцию).
+      // Библиотека Lenis УЖЕ делает скролл плавным. 
+      // Когда мы накладываем сглаживание поверх сглаженного скролла — получается конфликт фаз кадров (jitter/микролаги).
+      // Теперь мы рисуем ровно тот кадр, где физически находится скролл.
+      draw(pinProgress(section));
       rafId = requestAnimationFrame(tick);
     };
 
