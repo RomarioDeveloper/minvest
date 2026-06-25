@@ -119,20 +119,12 @@ export default function HorizontalAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="hidden gap-6 px-6 will-change-transform sm:flex sm:px-10 lg:px-16"
+          className="flex gap-4 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
         >
           {ADVANTAGES.map((a, i) => (
             <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
           ))}
         </motion.div>
-
-        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] sm:hidden">
-          {ADVANTAGES.map((a, i) => (
-            <div key={a.index} className="snap-start">
-              <Card a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
