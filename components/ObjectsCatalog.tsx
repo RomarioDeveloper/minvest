@@ -100,7 +100,7 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
         <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-bone/10 pt-5 text-sm">
           <Spec label="Этажность" value={`${obj.floors} этажей`} />
           <Spec label="Квартир" value={`${obj.apartments}`} />
-          <Spec label="Планировки" value={obj.rooms} />
+          <Spec label="Квадратура" value={obj.rooms} />
           <Spec label="Срок сдачи" value={obj.deadline} />
         </dl>
         <div className="mt-6 flex items-end justify-between border-t border-bone/10 pt-5">
@@ -263,7 +263,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
               {[
                 { label: "Этажность", value: `${obj.floors} эт.` },
                 { label: "Квартир", value: `${obj.apartments}` },
-                { label: "Планировки", value: obj.rooms },
+                { label: "Квадратура", value: obj.rooms },
                 { label: "Срок сдачи", value: obj.deadline },
               ].map((s) => (
                 <div key={s.label} className="bg-ink/40 px-4 py-3">
