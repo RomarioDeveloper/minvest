@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 type Props = {
   imageSrc: string;
@@ -57,6 +57,26 @@ export default function EditorialSpread({
     offset: ["start end", "end start"],
   });
 
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsRevealed(true);
+          observer.unobserve(el);
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px" } // Reveal when 15% into viewport
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Image: depth illusion
   const imgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
   const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.18, 1.06, 1.18]);
@@ -85,6 +105,15 @@ export default function EditorialSpread({
       ref={sectionRef}
       className={`relative w-full overflow-hidden bg-ink ${heightClasses[height]}`}
     >
+      <div 
+        className="absolute inset-0 z-20 pointer-events-none"
+        style={{
+          background: "#08080a",
+          transformOrigin: "bottom",
+          transform: isRevealed ? "scaleY(0)" : "scaleY(1)",
+          transition: "transform 1.2s cubic-bezier(0.76, 0, 0.24, 1)"
+        }}
+      />
       <motion.img
         src={imageSrc}
         alt={imageAlt}

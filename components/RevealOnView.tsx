@@ -25,9 +25,13 @@ export default function RevealOnView({
   once = true,
   className,
   as: Tag = "div",
-}: Props) {
+  variant = "default",
+}: Props & { variant?: "default" | "shutter" | "block" }) {
   const ref = useRef<HTMLElement | null>(null);
 
+  // Set up staggered delays for initial entry based on DOM order.
+  // We can't easily query selectors during SSR, so we add a generic sequential delay
+  // if multiple RevealOnView components enter the viewport at once.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -35,14 +39,14 @@ export default function RevealOnView({
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            el.dataset.reveal = "in";
+            el.classList.add("is-revealed");
             if (once) io.disconnect();
           } else if (!once) {
-            el.dataset.reveal = "out";
+            el.classList.remove("is-revealed");
           }
         }
       },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -56,7 +60,7 @@ export default function RevealOnView({
   return (
     <Tag
       ref={ref as never}
-      data-reveal=""
+      data-reveal={variant}
       className={className}
       style={style}
     >

@@ -91,20 +91,20 @@ export default function HomePage() {
           </RevealOnView>
 
           <div className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
-            <RevealOnView delay={200} className="border-t border-bone/15 pt-4">
+            <RevealOnView variant="block" delay={150} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
               <StatsCountUp
                 to={6}
                 className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
               />
               <div className="mt-2 text-eyebrow uppercase text-bone-dim">этажей</div>
             </RevealOnView>
-            <RevealOnView delay={280} className="border-t border-bone/15 pt-4">
+            <RevealOnView variant="block" delay={300} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
               <span className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
                 ≈ <StatsCountUp to={40} />
               </span>
               <div className="mt-2 text-eyebrow uppercase text-bone-dim">квартир</div>
             </RevealOnView>
-            <RevealOnView delay={360} className="border-t border-bone/15 pt-4">
+            <RevealOnView variant="block" delay={450} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
               <StatsCountUp
                 to={100}
                 suffix="%"
@@ -112,7 +112,7 @@ export default function HomePage() {
               />
               <div className="mt-2 text-eyebrow uppercase text-bone-dim">закрытая территория</div>
             </RevealOnView>
-            <RevealOnView delay={440} className="border-t border-bone/15 pt-4">
+            <RevealOnView variant="block" delay={600} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
               <div className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
                 24 / 7
               </div>
@@ -149,114 +149,126 @@ export default function HomePage() {
       </section>
 
       {/* ---------- EDITORIAL: NIGHT FACADE ---------- */}
-      <div id="facade">
-        <EditorialSpread
-          imageSrc="/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp"
-          imageAlt="Ночной вид жилого дома с подсветкой"
-          eyebrow="Архитектура"
-          title={
-            <>
-              Тёплый свет
-              <br />
-              в каждом окне.
-            </>
-          }
-          body={
-            <>
-              Вентилируемый фасад с крупноформатными плитами, контрастные тёмные углы и
-              вертикальная шахта остекления. Архитектурная подсветка фасада и пешеходных
-              дорожек включается с наступлением сумерек.
-            </>
-          }
-          placement="bottom-left"
-          height="screen"
-          meta={[
-            { label: "Высота", value: "6 этажей" },
-            { label: "Фасад", value: "HPL-панели" },
-            { label: "Остекление", value: "2-камерное" },
-            { label: "Освещение", value: "Архитектурное" },
-          ]}
-        />
+      <div id="facade" className="relative">
+        <RevealOnView variant="shutter" offset={0} as="div">
+          <EditorialSpread
+            imageSrc="/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp"
+            imageAlt="Ночной вид жилого дома с подсветкой"
+            eyebrow="Архитектура"
+            title={
+              <>
+                Тёплый свет
+                <br />
+                в каждом окне.
+              </>
+            }
+            body={
+              <>
+                Вентилируемый фасад с крупноформатными плитами, контрастные тёмные углы и
+                вертикальная шахта остекления. Архитектурная подсветка фасада и пешеходных
+                дорожек включается с наступлением сумерек.
+              </>
+            }
+            placement="bottom-left"
+            height="screen"
+            meta={[
+              { label: "Высота", value: "6 этажей" },
+              { label: "Фасад", value: "HPL-панели" },
+              { label: "Остекление", value: "2-камерное" },
+              { label: "Освещение", value: "Архитектурное" },
+            ]}
+          />
+        </RevealOnView>
       </div>
 
       {/* ---------- EDITORIAL: YARD / AERIAL ---------- */}
-      <div id="yard">
-        <EditorialSpread
-          imageSrc="/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp"
-          imageAlt="Аэросъёмка двора и закрытой территории"
-          eyebrow="Закрытый двор"
-          title={
-            <>
-              Только для тех,
-              <br />
-              кто здесь живёт.
-            </>
-          }
-          body={
-            <>
-              Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
-              периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
-              бывает у дома без забора.
-            </>
-          }
-          placement="bottom-right"
-          height="tall"
-        />
+      <div id="yard" className="relative">
+        <RevealOnView variant="shutter" offset={0} as="div">
+          <EditorialSpread
+            imageSrc="/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp"
+            imageAlt="Аэросъёмка двора и закрытой территории"
+            eyebrow="Закрытый двор"
+            title={
+              <>
+                Только для тех,
+                <br />
+                кто здесь живёт.
+              </>
+            }
+            body={
+              <>
+                Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
+                периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
+                бывает у дома без забора.
+              </>
+            }
+            placement="bottom-right"
+            height="tall"
+          />
+        </RevealOnView>
       </div>
 
       {/* ---------- TWO-UP: GARAGES + PLAYGROUND ---------- */}
-      <TwoUpFeature
-        left={{
-          imageSrc: "/photos/garages/3af31198-00f7-4aae-96c6-180b7fef755e.webp",
-          imageAlt: "Капитальные кирпичные гаражи во дворе",
-          eyebrow: "Гаражи",
-          title: <>Капитальный кирпич. Свой бокс на машину.</>,
-          body: (
-            <>
-              Отдельные секции внутри двора, тёплая отделка кирпичом, антивандальные
-              ворота. Можно оставлять без присмотра.
-            </>
-          ),
-        }}
-        right={{
-          imageSrc: "/photos/playground/298ff71b-9791-4543-b9ba-5d14ff3673e5.webp",
-          imageAlt: "Детская площадка во дворе",
-          eyebrow: "Детская площадка",
-          title: <>Безопасное покрытие. Тёплый свет вечером.</>,
-          body: (
-            <>
-              Прорезиненное покрытие, современные игровые формы, прямой обзор с балконов
-              и от подъезда.
-            </>
-          ),
-        }}
-      />
+      <div className="relative border-t border-bone/10 bg-ink-deep">
+        <RevealOnView variant="shutter" offset={0} as="div">
+          <TwoUpFeature
+            left={{
+              imageSrc: "/photos/garages/3af31198-00f7-4aae-96c6-180b7fef755e.webp",
+              imageAlt: "Капитальные кирпичные гаражи во дворе",
+              eyebrow: "Гаражи",
+              title: <>Капитальный кирпич. Свой бокс на машину.</>,
+              body: (
+                <>
+                  Отдельные секции внутри двора, тёплая отделка кирпичом, антивандальные
+                  ворота. Можно оставлять без присмотра.
+                </>
+              ),
+            }}
+            right={{
+              imageSrc: "/photos/playground/298ff71b-9791-4543-b9ba-5d14ff3673e5.webp",
+              imageAlt: "Детская площадка во дворе",
+              eyebrow: "Детская площадка",
+              title: <>Безопасное покрытие. Тёплый свет вечером.</>,
+              body: (
+                <>
+                  Прорезиненное покрытие, современные игровые формы, прямой обзор с балконов
+                  и от подъезда.
+                </>
+              ),
+            }}
+          />
+        </RevealOnView>
+      </div>
 
       {/* ---------- LIVING YARD (looped videos) ---------- */}
-      <TwoUpVideo
-        left={{
-          src: "/video/yard-day",
-          eyebrow: "Двор днём",
-          title: <>Вода, игры и солнце.</>,
-          body: (
-            <>
-              Сухой фонтан, игровые формы и навесы от солнца. Двор, в котором
-              дети проводят весь день — на виду у родителей.
-            </>
-          ),
-        }}
-        right={{
-          src: "/video/yard-evening",
-          eyebrow: "Двор вечером",
-          title: <>Тёплый свет после заката.</>,
-          body: (
-            <>
-              Вечером двор подсвечивается мягким светом: дорожки, зелень и
-              площадка видны с каждого балкона.
-            </>
-          ),
-        }}
-      />
+      <div className="relative">
+        <RevealOnView variant="shutter" offset={0} as="div">
+          <TwoUpVideo
+            left={{
+              src: "/video/yard-day",
+              eyebrow: "Двор днём",
+              title: <>Вода, игры и солнце.</>,
+              body: (
+                <>
+                  Сухой фонтан, игровые формы и навесы от солнца. Двор, в котором
+                  дети проводят весь день — на виду у родителей.
+                </>
+              ),
+            }}
+            right={{
+              src: "/video/yard-evening",
+              eyebrow: "Двор вечером",
+              title: <>Тёплый свет после заката.</>,
+              body: (
+                <>
+                  Вечером двор подсвечивается мягким светом: дорожки, зелень и
+                  площадка видны с каждого балкона.
+                </>
+              ),
+            }}
+          />
+        </RevealOnView>
+      </div>
 
       {/* ---------- CONSTRUCTION SPEC ---------- */}
       <ConstructionSpec />
@@ -271,26 +283,28 @@ export default function HomePage() {
       <CompanyAdvantages />
 
       {/* ---------- CLOSING SPREAD ---------- */}
-      <EditorialSpread
-        imageSrc="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp"
-        imageAlt="Жилой дом и территория на закате"
-        eyebrow="Дом — это решение надолго"
-        title={
-          <>
-            Приезжайте посмотреть
-            <br />
-            <span className="text-bone-mute">в любой день недели.</span>
-          </>
-        }
-        body={
-          <>
-            Менеджер встретит на территории, проведёт по этажам, покажет планировки и
-            свободные квартиры. Без скриптов и без давления.
-          </>
-        }
-        placement="bottom-left"
-        height="tall"
-      />
+      <RevealOnView variant="shutter" offset={0} as="div" className="relative">
+        <EditorialSpread
+          imageSrc="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp"
+          imageAlt="Жилой дом и территория на закате"
+          eyebrow="Дом — это решение надолго"
+          title={
+            <>
+              Приезжайте посмотреть
+              <br />
+              <span className="text-bone-mute">в любой день недели.</span>
+            </>
+          }
+          body={
+            <>
+              Менеджер встретит на территории, проведёт по этажам, покажет планировки и
+              свободные квартиры. Без скриптов и без давления.
+            </>
+          }
+          placement="bottom-left"
+          height="tall"
+        />
+      </RevealOnView>
 
       {/* ---------- CONTACT ---------- */}
       <section
