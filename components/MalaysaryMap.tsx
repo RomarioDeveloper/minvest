@@ -9,6 +9,7 @@ const LOCATIONS = [
   { lat: 52.2703, lng: 76.9515, label: "Естая, 90",     address: "ул. Естая, 90" },
   { lat: 52.2610, lng: 76.9480, label: "Бектурова, 348", address: "ул. Бектурова, 348" },
   { lat: 52.2595, lng: 76.9460, label: "Бектурова, 356", address: "ул. Бектурова, 356" },
+  { lat: 52.283833, lng: 77.001001, label: "Офис продаж", address: "ул. Луначарского, 10, 2 этаж" },
 ];
 
 export default function MalaysaryMap() {
@@ -32,7 +33,7 @@ export default function MalaysaryMap() {
       });
 
       const map = L.map(mapRef.current!, {
-        center: [52.272, 76.952],
+        center: [52.276, 76.965], // Смещенный центр, чтобы было видно и объекты, и офис
         zoom: 13,
         zoomControl: true,
         scrollWheelZoom: false,
@@ -50,15 +51,15 @@ export default function MalaysaryMap() {
         }
       ).addTo(map);
 
-      // Custom SVG marker icon
-      const customIcon = L.divIcon({
+      // Custom SVG marker icon (houses for objects, special icon for office)
+      const getCustomIcon = (isOffice: boolean) => L.divIcon({
         className: "",
-        html: `
+        html: isOffice ? `
           <div style="
-            width: 36px;
-            height: 36px;
-            background: #f4f4f5;
-            border: 2px solid rgba(244,244,245,0.3);
+            width: 32px;
+            height: 32px;
+            background: #d4af37;
+            border: 2px solid rgba(212,175,55,0.3);
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
             box-shadow: 0 4px 16px rgba(0,0,0,0.5);
@@ -67,21 +68,52 @@ export default function MalaysaryMap() {
             justify-content: center;
           ">
             <div style="
-              width: 10px;
-              height: 10px;
+              width: 12px;
+              height: 12px;
               background: #08080a;
               border-radius: 50%;
               transform: rotate(45deg);
             "></div>
           </div>
+        ` : `
+          <div style="
+            width: 24px;
+            height: 24px;
+            background: #f4f4f5;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+          ">
+            <!-- Треугольник снизу (указатель) -->
+            <div style="
+              position: absolute;
+              bottom: -4px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 0;
+              height: 0;
+              border-left: 5px solid transparent;
+              border-right: 5px solid transparent;
+              border-top: 5px solid #f4f4f5;
+            "></div>
+            <!-- Иконка домика внутри -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#08080a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
         `,
-        iconSize: [36, 36],
-        iconAnchor: [18, 36],
-        popupAnchor: [0, -40],
+        iconSize: isOffice ? [32, 32] : [24, 24],
+        iconAnchor: isOffice ? [16, 32] : [12, 28],
+        popupAnchor: [0, -32],
       });
 
       LOCATIONS.forEach((loc) => {
-        const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
+        const isOffice = loc.label === "Офис продаж";
+        const marker = L.marker([loc.lat, loc.lng], { icon: getCustomIcon(isOffice) });
         marker.addTo(map);
         marker.bindPopup(
           `<div style="font-family:sans-serif;min-width:160px;">
