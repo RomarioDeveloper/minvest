@@ -158,8 +158,6 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
 
     const resizeCanvas = () => {
       // Отключаем Retina-масштабирование (dpr).
-      // Рисовать 1080p картинку на 4K холсте 60 раз в секунду — это убийство для видеокарты.
-      // Для видео/анимаций 1x масштаб выглядит отлично и работает в 4 раза быстрее!
       const dpr = 1;
       canvasW = canvas.clientWidth;
       canvasH = canvas.clientHeight;
@@ -184,10 +182,6 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
     draw(pinProgress(section));
 
     const tick = () => {
-      // Полностью убираем математическое сглаживание (инерцию).
-      // Библиотека Lenis УЖЕ делает скролл плавным. 
-      // Когда мы накладываем сглаживание поверх сглаженного скролла — получается конфликт фаз кадров (jitter/микролаги).
-      // Теперь мы рисуем ровно тот кадр, где физически находится скролл.
       draw(pinProgress(section));
       rafId = requestAnimationFrame(tick);
     };
