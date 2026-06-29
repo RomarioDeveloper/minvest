@@ -117,12 +117,13 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
 
 /* ─── Modal ─── */
 function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void }) {
-  const [mediaTab, setMediaTab] = useState<"photo" | "video">("photo");
+  const [mediaTab, setMediaTab] = useState<"photo" | "video" | "layouts">("photo");
   const [slide, setSlide] = useState(0);
   const [dir, setDir] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [fsVideo, setFsVideo] = useState<string | null>(null);
   const hasVideos = !!obj.videos?.length;
+  const hasLayouts = !!obj.layouts?.length;
 
   const go = useCallback((next: number) => {
     setDir(next > slide ? 1 : -1);
@@ -222,7 +223,22 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             </div>
           )}
 
-          <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm">
+          {mediaTab === "layouts" && obj.layouts && (
+            <div className="absolute inset-0 bg-[#08080a] p-5 overflow-x-auto whitespace-nowrap flex items-center gap-5 scroll-smooth">
+              {obj.layouts.map((src, i) => (
+                <div key={i} className="relative h-full w-auto shrink-0 bg-white/5 rounded-xl border border-bone/10 transition hover:border-bone/30 cursor-zoom-in group" onClick={() => setLightbox(i)}>
+                  <img src={src} alt={`Планировка ${i + 1}`} className="h-full w-auto object-contain p-2 mix-blend-screen" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-bone">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm z-10">
             <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
             <span className="text-eyebrow uppercase text-bone-soft">{STATUS_LABEL[obj.status]}</span>
           </div>
@@ -236,15 +252,27 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         </div>
 
         {/* ── Tabs ── */}
-        {hasVideos && (
-          <div className="flex shrink-0 border-b border-bone/10">
-            {(["photo", "video"] as const).map((tab) => (
-              <button key={tab} onClick={() => setMediaTab(tab)}
-                className={`relative flex-1 py-3 text-eyebrow uppercase transition ${mediaTab === tab ? "text-bone" : "text-bone/35 hover:text-bone/60"}`}>
-                {tab === "photo" ? `Фото (${obj.gallery.length})` : `Видео (${obj.videos!.length})`}
-                {mediaTab === tab && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-px bg-bone" />}
+        {(hasVideos || hasLayouts) && (
+          <div className="flex shrink-0 border-b border-bone/10 bg-ink-panel/50">
+            <button onClick={() => setMediaTab("photo")}
+              className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "photo" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
+              Фото ({obj.gallery.length})
+              {mediaTab === "photo" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
+            </button>
+            {hasVideos && (
+              <button onClick={() => setMediaTab("video")}
+                className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "video" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
+                Видео ({obj.videos!.length})
+                {mediaTab === "video" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
               </button>
-            ))}
+            )}
+            {hasLayouts && (
+              <button onClick={() => setMediaTab("layouts")}
+                className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "layouts" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
+                Планировки ({obj.layouts!.length})
+                {mediaTab === "layouts" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
+              </button>
+            )}
           </div>
         )}
 
@@ -299,8 +327,11 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightbox !== null && (
+        {lightbox !== null && mediaTab === "photo" && (
           <PhotoLightbox images={obj.gallery} startIndex={lightbox} onClose={() => setLightbox(null)} />
+        )}
+        {lightbox !== null && mediaTab === "layouts" && obj.layouts && (
+          <PhotoLightbox images={obj.layouts} startIndex={lightbox} onClose={() => setLightbox(null)} />
         )}
       </AnimatePresence>
 

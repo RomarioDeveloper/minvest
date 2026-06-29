@@ -11,6 +11,8 @@ export type RealtyObject = {
   gallery: string[];
   /** Optional video clips shown in the modal */
   videos?: string[];
+  /** Optional layouts/floorplans shown in the modal */
+  layouts?: string[];
   floors: number;
   apartments: number;
   priceFrom: number;
@@ -48,6 +50,10 @@ export const OBJECTS: RealtyObject[] = [
     deadline: "IV кв. 2026",
     rooms: "1–3 комнаты",
     flagship: true,
+    layouts: [
+      "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
+      "/photos/exterior/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.webp"
+    ]
   },
   {
     slug: "dyusenova-306",
