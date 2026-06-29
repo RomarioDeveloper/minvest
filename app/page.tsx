@@ -371,55 +371,81 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-14 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-            {/* Logo + tagline */}
-            <div>
-              <img
-                src="/logo-light.webp"
-                alt="Malaysary Invest"
-                className="h-16 w-auto opacity-90"
-              />
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-bone-dim">
-                Застройщик комфортной среды для жизни в Павлодаре.
-              </p>
-            </div>
-
-            {/* Contacts */}
-            <div className="grid gap-6 sm:grid-cols-3 sm:gap-10">
-              <div>
-                <div className="text-eyebrow uppercase text-bone-dim">Телефон</div>
-                <a href="tel:+77072343333" className="mt-2 block text-bone transition hover:text-bone-mute">
-                  8 707 234 33 33
-                </a>
-              </div>
-              <div>
-                <div className="text-eyebrow uppercase text-bone-dim">Instagram</div>
+      <footer className="border-t border-bone/10 bg-ink-deep px-6 py-12 md:py-16 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-7xl flex flex-col justify-between min-h-[240px]">
+          
+          {/* Top/Middle Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-4 flex-1 pb-16">
+            
+            {/* Left Column - Socials & Legal */}
+            <div className="flex flex-col justify-between items-start">
+              <div className="flex gap-8 text-[10px] font-semibold tracking-widest uppercase text-bone-soft">
                 <a
                   href="https://instagram.com/malaysary_invest"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 block text-bone transition hover:text-bone-mute"
+                  className="border-b border-transparent transition hover:border-bone hover:text-bone pb-1"
                 >
-                  @malaysary_invest
+                  Instagram
+                </a>
+                <a
+                  href="https://wa.me/77072343333"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-b border-transparent transition hover:border-bone hover:text-bone pb-1"
+                >
+                  WhatsApp
                 </a>
               </div>
-              <div>
-                <div className="text-eyebrow uppercase text-bone-dim">Офис</div>
-                <div className="mt-2 text-bone leading-relaxed">
-                  г. Павлодар<br />
-                  ул. Луначарского, 10<br />
-                  <span className="text-bone-mute">2 этаж, каб. 2</span>
-                </div>
+              <div className="mt-16 md:mt-0 text-[10px] leading-[1.6] text-bone-dim/60 max-w-[280px]">
+                <p>Материалы, представленные на сайте,<br />не являются публичной офертой.</p>
+                <p className="mt-3">Изображения — визуализация проекта.</p>
+              </div>
+            </div>
+
+            {/* Center Column - Logo */}
+            <div className="flex flex-col items-center justify-start md:justify-center pt-2 md:pt-0">
+              <img
+                src="/logo-light.webp"
+                alt="Malaysary Invest"
+                className="h-10 md:h-12 w-auto opacity-90"
+              />
+              <div className="mt-6 text-[9px] uppercase tracking-[0.2em] text-bone-dim/50 text-center">
+                Застройщик комфортной среды
+              </div>
+            </div>
+
+            {/* Right Column - Contacts */}
+            <div className="flex flex-col justify-between items-start md:items-end text-left md:text-right">
+              <a
+                href="tel:+77072343333"
+                className="font-display text-2xl md:text-[26px] font-light tracking-wide text-bone transition hover:text-bone-mute"
+              >
+                +7 (707) 234-33-33
+              </a>
+              <div className="mt-10 md:mt-0 text-[10px] leading-[1.6] text-bone-dim/80">
+                <p>
+                  Офис продаж:<br />
+                  г. Павлодар, ул. Луначарского, 10
+                </p>
+                <p className="mt-3 text-bone-dim/60">
+                  пн-пт: 09:00–18:00, сб-вс: выходной
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-bone/10 pt-6 text-eyebrow uppercase text-bone-dim sm:flex-row sm:items-center">
-            <div>© {new Date().getFullYear()} MALAYSARY INVEST</div>
-            <div className="text-bone-dim/60">Изображения — визуализация проекта.</div>
+          {/* Bottom Bar */}
+          <div className="flex flex-col items-start justify-between gap-5 border-t border-bone/10 pt-6 text-[9px] uppercase tracking-wider text-bone-dim/50 sm:flex-row sm:items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-12">
+              <span>© {new Date().getFullYear()} «MALAYSARY INVEST». Все права защищены.</span>
+              <a href="#" className="border-b border-bone-dim/30 transition hover:text-bone-dim hover:border-bone-dim pb-0.5">
+                Правовая информация
+              </a>
+            </div>
+            <div>Сделано в IGLOBAL</div>
           </div>
+          
         </div>
       </footer>
     </main>
