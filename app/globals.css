@@ -128,4 +128,22 @@
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+
+  /* Custom scrollbar for horizontal scrolling containers */
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(244, 244, 245, 0.2);
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(244, 244, 245, 0.4);
+  }
 }

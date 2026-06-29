@@ -224,7 +224,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
           )}
 
           {mediaTab === "layouts" && obj.layouts && (
-            <div className="absolute inset-0 bg-[#08080a] p-5 overflow-x-auto whitespace-nowrap flex items-center gap-5 scroll-smooth">
+            <div className="absolute inset-0 bg-[#08080a] p-5 overflow-x-auto whitespace-nowrap flex items-center gap-5 scroll-smooth custom-scrollbar">
               {obj.layouts.map((src, i) => (
                 <div key={i} className="relative h-full w-auto shrink-0 bg-white/5 rounded-xl border border-bone/10 transition hover:border-bone/30 cursor-zoom-in group" onClick={() => setLightbox(i)}>
                   <img src={src} alt={`Планировка ${i + 1}`} className="h-full w-auto object-contain p-2 mix-blend-screen" />
