@@ -1,4 +1,5 @@
 import BrandFilm from "@/components/BrandFilm";
+import CatalogEntrance from "@/components/CatalogEntrance";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
@@ -124,6 +125,9 @@ export default function HomePage() {
 
       {/* ---------- ADVANTAGES (horizontal scroll) ---------- */}
       <HorizontalAdvantages />
+
+      {/* ---------- CATALOG ENTRANCE CTA ---------- */}
+      <CatalogEntrance />
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
