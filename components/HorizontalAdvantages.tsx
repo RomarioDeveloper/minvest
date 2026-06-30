@@ -2,7 +2,6 @@
 
 import {
   motion,
-  useMotionTemplate,
   useScroll,
   useTransform,
   type MotionValue,
@@ -14,9 +13,6 @@ type Advantage = {
   title: string;
   body: string;
   icon: (props: { className?: string }) => ReactNode;
-  /** Optional looping background clip for the card */
-  video?: string;
-  videoPosition?: string;
 };
 
 const ADVANTAGES: Advantage[] = [
@@ -25,36 +21,30 @@ const ADVANTAGES: Advantage[] = [
     title: "Бесшумные лифты",
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
-    video: "/16744999619190.mp4",
   },
   {
     index: "02",
     title: "Трёхкамерные окна",
     body: "Трёхкамерные окна с высокой тепло- и шумоизоляцией.",
     icon: IconWindow,
-    video: "/16745009121910.mp4",
   },
   {
     index: "03",
     title: "Удобные планировки",
     body: "Удобные и функциональные планировки квартир.",
     icon: IconLayout,
-    video: "/16745042872950.mp4",
   },
   {
     index: "04",
     title: "Гаражи и парковки",
     body: "Собственные гаражи и парковочные решения.",
     icon: IconGarage,
-    video: "/16745051196022.mp4",
-    videoPosition: "center top",
   },
   {
     index: "05",
     title: "Коммерческие помещения",
     body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
     icon: IconStore,
-    video: "/16745019476598.mp4",
   },
   {
     index: "06",
@@ -115,7 +105,7 @@ export default function HorizontalAdvantages() {
       style={{ height: `${CARD_COUNT * 55}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="px-6 pb-10 sm:px-10 lg:px-16">
+        <div className="px-6 pb-8 sm:px-10 lg:px-16">
           <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
           <h2
             className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
@@ -129,7 +119,7 @@ export default function HorizontalAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="flex gap-4 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
+          className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
         >
           {ADVANTAGES.map((a, i) => (
             <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
@@ -163,144 +153,34 @@ function Card({
   const ringScale = useTransform(active, [0, 1], [0.6, 1.35]);
   const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
 
-  const cardScale = useTransform(active, [0, 1], [0.92, 1]);
-  const cardY = useTransform(active, [0, 1], [12, 0]);
-  const borderOpacity = useTransform(active, [0, 1], [0.12, 0.55]);
-  const glowOpacity = useTransform(active, [0, 1], [0, 1]);
-  const videoScale = useTransform(active, [0, 1], [1.14, 1.02]);
-  const videoFilter = useTransform(
-    active,
-    [0, 1],
-    ["brightness(0.5) saturate(0.65) contrast(0.95)", "brightness(1.12) saturate(1.25) contrast(1.08)"],
-  );
-  const shadowBlur = useTransform(active, [0, 1], [0, 48]);
-  const shadowAlpha = useTransform(active, [0, 1], [0, 0.18]);
-  const frameShadow = useMotionTemplate`0 0 ${shadowBlur}px rgba(244, 244, 245, ${shadowAlpha})`;
-
   const Icon = a.icon;
-  const hasVideo = !!a.video;
-
-  if (hasVideo) {
-    return (
-      <motion.article
-        style={{ scale: cardScale, y: cardY }}
-        className="relative flex h-[48vh] max-h-[460px] w-[82vw] shrink-0 flex-col overflow-hidden bg-[#0a0a0c] p-5 sm:w-[440px] sm:p-6"
-      >
-        <motion.div
-          style={{ opacity: borderOpacity }}
-          className="pointer-events-none absolute inset-0 border border-bone/40"
-        />
-        <motion.div
-          style={{ opacity: glowOpacity }}
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(244,244,245,0.14),transparent_62%)]"
-        />
-
-        <div className="relative z-10 font-display text-5xl font-semibold tracking-tightest text-bone/20">
-          {a.index}
-        </div>
-
-        <div className="relative z-10 mt-3 flex flex-1 items-center justify-center">
-          <motion.div
-            style={{ boxShadow: frameShadow }}
-            className="relative aspect-[16/10] w-full overflow-hidden border border-bone/25 bg-black"
-          >
-            <motion.div
-              style={{ scale: videoScale, filter: videoFilter }}
-              className="absolute inset-0 origin-center"
-            >
-              <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
-            </motion.div>
-            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/15" />
-            <motion.div
-              style={{ opacity: glowOpacity }}
-              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bone/70 to-transparent"
-            />
-            <motion.div
-              style={{ opacity: glowOpacity }}
-              className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-bone/80">Live</span>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        <div className="relative z-10 mt-5 border-t border-bone/10 pt-5">
-          <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-[1.75rem]">
-            {a.title}
-          </h3>
-          <p className="mt-3 text-pretty text-sm leading-relaxed text-bone-soft sm:text-[15px]">{a.body}</p>
-        </div>
-      </motion.article>
-    );
-  }
 
   return (
-    <motion.article
-      style={{ scale: cardScale, y: cardY }}
-      className="relative flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-8 sm:w-[420px]"
-    >
-      <div className="relative z-10 font-display text-5xl font-semibold tracking-tightest text-bone/15">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+      <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
 
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <motion.div
           style={{ scale: ringScale, opacity: ringOpacity }}
-          className="absolute h-36 w-36 rounded-full border border-bone/20 bg-bone/[0.03]"
+          className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]"
         />
         <motion.div
           style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
-          className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
+          className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
         >
-          <Icon className="h-9 w-9 text-bone/80" />
+          <Icon className="h-11 w-11 text-bone/80" />
         </motion.div>
       </div>
 
-      <div className="relative z-10 bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent pt-10">
-        <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
+      <div className="relative z-10 bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent pt-12">
+        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
-        <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">{a.body}</p>
       </div>
-    </motion.article>
-  );
-}
-
-function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { rootMargin: "120px" },
-    );
-
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <video
-      ref={ref}
-      src={src}
-      className="absolute inset-0 h-full w-full object-cover"
-      style={{ objectPosition }}
-      muted
-      loop
-      playsInline
-      preload="metadata"
-      disablePictureInPicture
-    />
+    </article>
   );
 }
 

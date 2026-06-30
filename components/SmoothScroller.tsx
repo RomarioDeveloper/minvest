@@ -20,6 +20,14 @@ export default function SmoothScroller() {
       return;
     }
 
+    // Native touch momentum is smoother for pinned canvas sections; Lenis only
+    // adds an extra RAF loop on phones without improving the feel.
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const narrow = window.matchMedia("(max-width: 767px)").matches;
+    if (coarsePointer || narrow) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 0.85,
       // ease-out-expo — smooth but settles quickly enough to feel responsive
