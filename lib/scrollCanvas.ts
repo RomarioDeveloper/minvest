@@ -7,12 +7,6 @@ export function pinProgress(section: HTMLElement): number {
   return clamp01(-section.getBoundingClientRect().top / scrollable);
 }
 
-export function canvasDpr(mobile: boolean): number {
-  const raw = window.devicePixelRatio || 1;
-  if (mobile) return Math.min(raw, 2);
-  return Math.min(raw, 2);
-}
-
 export function findNearestLoadedFrame(
   frames: (HTMLImageElement | null)[],
   target: number,
@@ -72,46 +66,32 @@ export function drawContain(
   return true;
 }
 
-/** Scroll/resize-driven updates. Falls back to a short RAF burst after each scroll tick. */
-export function bindScrollCanvas(
-  section: HTMLElement,
-  onUpdate: () => void,
+/** RAF loop that pauses when section leaves the viewport. */
+export function usePinRafLoop(
+  section: HTMLElement | null,
+  onTick: () => void,
 ): () => void {
+  if (!section) return () => {};
+
   let rafId = 0;
-  let ticking = false;
-  let burstLeft = 0;
+  let active = true;
 
   const tick = () => {
-    ticking = false;
-    onUpdate();
-    if (burstLeft > 0) {
-      burstLeft--;
-      rafId = requestAnimationFrame(tick);
-      ticking = true;
-    }
-  };
-
-  const schedule = (burst = 0) => {
-    if (burst > burstLeft) burstLeft = burst;
-    if (ticking) return;
-    ticking = true;
+    if (active) onTick();
     rafId = requestAnimationFrame(tick);
   };
 
-  const onScroll = () => schedule(8);
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  window.visualViewport?.addEventListener("scroll", onScroll, { passive: true });
-  window.visualViewport?.addEventListener("resize", onScroll, { passive: true });
-
-  schedule(1);
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      active = entry.isIntersecting;
+    },
+    { rootMargin: "100px 0px" },
+  );
+  observer.observe(section);
+  rafId = requestAnimationFrame(tick);
 
   return () => {
     cancelAnimationFrame(rafId);
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("resize", onScroll);
-    window.visualViewport?.removeEventListener("scroll", onScroll);
-    window.visualViewport?.removeEventListener("resize", onScroll);
+    observer.disconnect();
   };
 }
