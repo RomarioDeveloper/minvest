@@ -51,6 +51,7 @@ export default function HomePage() {
           frameBase="/hero-desktop-frames"
           frameBaseMobile="/hero-mobile-frames"
           frameCount={449}
+          videoSrcMobile="/hero-scrub-mobile-temp-kf30.mp4"
           poster="/hero-scrub-temp.jpg"
           posterMobile="/hero-scrub-mobile-temp.jpg"
         />

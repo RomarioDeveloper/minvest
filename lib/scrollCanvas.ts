@@ -9,7 +9,7 @@ export function pinProgress(section: HTMLElement): number {
 
 export function canvasDpr(mobile: boolean): number {
   const raw = window.devicePixelRatio || 1;
-  if (mobile) return Math.min(raw, 1.5);
+  if (mobile) return Math.min(raw, 2);
   return Math.min(raw, 2);
 }
 

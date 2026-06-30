@@ -23,6 +23,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
+        <link
+          rel="preload"
+          as="video"
+          href="/hero-scrub-mobile-temp-kf30.mp4"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero-scrub-mobile-temp.jpg"
+          media="(max-width: 767px)"
+        />
       </head>
       <body>
         <SmoothScroller />

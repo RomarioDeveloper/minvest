@@ -1,44 +1,27 @@
 "use client";
 
+import {
+  bindScrollCanvas,
+  canvasDpr,
+  drawCover,
+  findNearestLoadedFrame,
+  pinProgress,
+  priorityFrameOrder,
+} from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
   frameBase: string;
   frameBaseMobile?: string;
   frameCount: number;
+  /** All-keyframe MP4 — sharp hardware decode on phones (preferred over JPEG canvas). */
+  videoSrcMobile?: string;
   poster?: string;
   posterMobile?: string;
 };
 
 const SECTION_VH_MOBILE = 300;
 const SECTION_VH_DESKTOP = 520;
-
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
-
-function pinProgress(section: HTMLElement): number {
-  const viewport = window.visualViewport?.height ?? window.innerHeight;
-  const scrollable = section.offsetHeight - viewport;
-  if (scrollable <= 0) return 0;
-  return clamp01(-section.getBoundingClientRect().top / scrollable);
-}
-
-function drawCover(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  w: number,
-  h: number,
-): boolean {
-  if (!img.complete || img.naturalWidth === 0) return false;
-  // Считаем масштаб так, чтобы картинка ВСЕГДА полностью закрывала холст (object-fit: cover)
-  const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
-  const dw = img.naturalWidth * scale;
-  const dh = img.naturalHeight * scale;
-  
-  // Так как картинка гарантированно закрывает весь w и h, 
-  // нам НЕ НУЖНО делать заливку (fillRect). Это экономит 50% ресурсов видеокарты!
-  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
-  return true;
-}
 
 function useMobileViewport() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -54,13 +37,123 @@ function useMobileViewport() {
   return isMobile;
 }
 
-export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, poster, posterMobile }: Props) {
+function BrandFilmVideo({
+  src,
+  poster,
+  sectionVh,
+}: {
+  src: string;
+  poster?: string;
+  sectionVh: number;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
+  const lastFrameRef = useRef(-1);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    let fired = false;
+    const onProgress = () => {
+      if (!video.duration) return;
+      const buffered =
+        video.buffered.length > 0 ? video.buffered.end(video.buffered.length - 1) / video.duration : 0;
+      window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: buffered }));
+    };
+    const onReady = () => {
+      onProgress();
+      if (fired) return;
+      fired = true;
+      setReady(true);
+      window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+    };
+
+    video.addEventListener("progress", onProgress);
+    video.addEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
+    if (video.readyState >= 2) onReady();
+
+    return () => {
+      video.removeEventListener("progress", onProgress);
+      video.removeEventListener("loadeddata", onReady);
+      video.removeEventListener("canplay", onReady);
+    };
+  }, [src]);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    if (!section || !video || !ready) return;
+
+    const fps = 30;
+
+    const scrub = () => {
+      if (!video.duration) return;
+      const progress = pinProgress(section);
+      const frame = Math.min(
+        Math.round(progress * (Math.floor(video.duration * fps) - 1)),
+        Math.floor(video.duration * fps) - 1,
+      );
+      if (frame === lastFrameRef.current) return;
+      lastFrameRef.current = frame;
+      video.currentTime = frame / fps;
+    };
+
+    scrub();
+    return bindScrollCanvas(section, scrub);
+  }, [ready]);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative w-full bg-ink"
+      style={{ height: `${sectionVh}dvh` }}
+      aria-label="Видео о доме, управляемое скроллом"
+    >
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
+        {poster && !ready && (
+          <img
+            src={poster}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+            draggable={false}
+          />
+        )}
+        <video
+          ref={videoRef}
+          src={src}
+          className="absolute inset-0 z-[1] h-full w-full object-cover"
+          muted
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
+      </div>
+    </section>
+  );
+}
+
+function BrandFilmCanvas({
+  frameBase,
+  frameBaseMobile,
+  frameCount,
+  poster,
+  posterMobile,
+}: Omit<Props, "videoSrcMobile">) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
-  
-  // Ref for loaded frames
+
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const loadingRef = useRef<Set<number>>(new Set());
+  const frameReadyRef = useRef(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [frameReady, setFrameReady] = useState(false);
 
@@ -70,132 +163,152 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
   const videoPoster = mobile ? (posterMobile ?? poster) : poster;
   const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
 
-  // 1. Предзагрузка всех кадров
   useEffect(() => {
     if (!ready || !base) return;
-    
+
     let cancelled = false;
     const frames: (HTMLImageElement | null)[] = Array.from({ length: frameCount }, () => null);
-    framesRef.current = frames; // СРАЗУ отдаем массив для рендера, не ждем конца загрузки!
+    framesRef.current = frames;
+    loadingRef.current = new Set();
+    frameReadyRef.current = false;
     let done = 0;
     let readyFired = false;
+    let queueIndex = 0;
+    let priority: number[] = [];
 
     setLoadedCount(0);
     setFrameReady(false);
-    
-    // Эвенты для прилоадера (показываем реальный прогресс загрузки картинок)
-    window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: 0 }));
+    window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
+
+    const rebuildPriority = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const center = Math.round(pinProgress(section) * (frameCount - 1));
+      priority = priorityFrameOrder(center, frameCount);
+      queueIndex = 0;
+    };
 
     const checkFinished = () => {
-      // Пускаем пользователя на сайт, как только загрузился ПЕРВЫЙ кадр!
-      // Раньше код ждал загрузки ВСЕХ 450 кадров (что занимало те самые 8-10 секунд задержки)
       if (!readyFired && frames[0]) {
         readyFired = true;
-        window.dispatchEvent(new CustomEvent('brandfilm:ready'));
+        window.dispatchEvent(new CustomEvent("brandfilm:ready"));
       }
     };
 
-    // Чтобы браузер не завис, пытаясь мгновенно создать 450 сетевых запросов (что вешает вкладку),
-    // мы загружаем их аккуратными "пачками" (батчами) по 15 штук за кадр анимации.
-    let currentIndex = 0;
+    const loadFrame = (i: number) => {
+      if (cancelled || frames[i] || loadingRef.current.has(i)) return;
+      loadingRef.current.add(i);
+
+      const img = new Image();
+      img.decoding = "async";
+
+      const finish = () => {
+        if (cancelled) return;
+        loadingRef.current.delete(i);
+        done++;
+        setLoadedCount(done);
+        window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: done / frameCount }));
+        checkFinished();
+      };
+
+      img.onload = () => {
+        frames[i] = img;
+        finish();
+      };
+      img.onerror = () => {
+        frames[i] = null;
+        finish();
+      };
+
+      img.src = `${base}/${String(i + 1).padStart(4, "0")}.jpg`;
+    };
+
     const loadBatch = () => {
       if (cancelled) return;
-      const end = Math.min(currentIndex + 15, frameCount);
-      
-      for (; currentIndex < end; currentIndex++) {
-        const i = currentIndex;
-        const img = new Image();
-        img.decoding = "async"; // Асинхронный декод не блочит скролл
-        
-        img.onload = () => {
-          if (cancelled) return;
-          frames[i] = img;
-          done++;
-          setLoadedCount(done);
-          window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
-          checkFinished();
-        };
-        
-        img.onerror = () => {
-          if (cancelled) return;
-          frames[i] = null;
-          done++;
-          setLoadedCount(done);
-          window.dispatchEvent(new CustomEvent('brandfilm:progress', { detail: done / frameCount }));
-          checkFinished();
-        };
+      if (queueIndex === 0) rebuildPriority();
 
-        img.src = `${base}/${String(i + 1).padStart(4, "0")}.jpg`;
+      const batchSize = mobile ? 20 : 15;
+      let loaded = 0;
+
+      while (loaded < batchSize && queueIndex < priority.length) {
+        loadFrame(priority[queueIndex]);
+        queueIndex++;
+        loaded++;
       }
 
-      if (currentIndex < frameCount) {
-        requestAnimationFrame(loadBatch); // Продолжаем загрузку в следующем свободном кадре
-      }
+      if (queueIndex < priority.length) requestAnimationFrame(loadBatch);
     };
 
+    rebuildPriority();
     loadBatch();
+
+    const reprioritize = () => {
+      if (cancelled) return;
+      rebuildPriority();
+      queueIndex = 0;
+      requestAnimationFrame(loadBatch);
+    };
+
+    window.addEventListener("scroll", reprioritize, { passive: true });
+    window.visualViewport?.addEventListener("scroll", reprioritize, { passive: true });
 
     return () => {
       cancelled = true;
+      window.removeEventListener("scroll", reprioritize);
+      window.visualViewport?.removeEventListener("scroll", reprioritize);
     };
-  }, [ready, base, frameCount]);
+  }, [ready, base, frameCount, mobile]);
 
-  // 2. Логика скролла и отрисовки
   useEffect(() => {
-    if (!ready || loadedCount < 1) return; // Начинаем рисовать, как только загружен первый кадр
+    if (!ready || loadedCount < 1) return;
 
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     if (!section || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     let canvasW = 0;
     let canvasH = 0;
-    let rafId = 0;
     let lastExact = -1;
 
     const resizeCanvas = () => {
-      // Отключаем Retina-масштабирование (dpr).
-      const dpr = 1;
+      const dpr = canvasDpr(mobile);
       canvasW = canvas.clientWidth;
       canvasH = canvas.clientHeight;
       canvas.width = Math.max(1, Math.round(canvasW * dpr));
       canvas.height = Math.max(1, Math.round(canvasH * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      lastExact = -1; // Форсируем перерисовку
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      lastExact = -1;
     };
 
-    const draw = (progress: number) => {
+    const draw = () => {
+      const progress = pinProgress(section);
       const exact = Math.min(frameCount - 1, Math.max(0, Math.round(progress * (frameCount - 1))));
-      if (exact === lastExact) return; // Не рисуем тот же кадр дважды
-      
-      const frame = framesRef.current[exact];
+      if (exact === lastExact) return;
+
+      const frame = findNearestLoadedFrame(framesRef.current, exact);
       if (frame && drawCover(ctx, frame, canvasW, canvasH)) {
         lastExact = exact;
-        if (!frameReady) setFrameReady(true);
+        if (!frameReadyRef.current) {
+          frameReadyRef.current = true;
+          setFrameReady(true);
+        }
       }
     };
 
     resizeCanvas();
-    draw(pinProgress(section));
-
-    const tick = () => {
-      draw(pinProgress(section));
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
+    const unbind = bindScrollCanvas(section, draw);
     window.addEventListener("resize", resizeCanvas);
-    window.visualViewport?.addEventListener("resize", resizeCanvas);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      unbind();
       window.removeEventListener("resize", resizeCanvas);
-      window.visualViewport?.removeEventListener("resize", resizeCanvas);
     };
-  }, [ready, loadedCount, frameCount, frameReady]);
+  }, [ready, loadedCount, frameCount, mobile]);
 
   return (
     <section
@@ -223,4 +336,37 @@ export default function BrandFilm({ frameBase, frameBaseMobile, frameCount, post
       </div>
     </section>
   );
+}
+
+export default function BrandFilm(props: Props) {
+  const isMobile = useMobileViewport();
+
+  if (isMobile === null) {
+    const poster = props.posterMobile ?? props.poster;
+    return (
+      <section
+        className="relative w-full bg-ink"
+        style={{ height: `${SECTION_VH_MOBILE}dvh` }}
+        aria-hidden
+      >
+        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
+          {poster && (
+            <img src={poster} alt="" className="absolute inset-0 h-full w-full object-cover" draggable={false} />
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  if (isMobile && props.videoSrcMobile) {
+    return (
+      <BrandFilmVideo
+        src={props.videoSrcMobile}
+        poster={props.posterMobile ?? props.poster}
+        sectionVh={SECTION_VH_MOBILE}
+      />
+    );
+  }
+
+  return <BrandFilmCanvas {...props} />;
 }

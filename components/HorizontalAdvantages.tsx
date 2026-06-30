@@ -178,8 +178,7 @@ function Card({
           className="pointer-events-none absolute inset-0 overflow-hidden"
         >
           <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/10 to-ink-panel/95" />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
         </motion.div>
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -196,7 +195,7 @@ function Card({
         </div>
       )}
 
-      <div className="relative z-10 bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent pt-12">
+      <div className={`relative z-10 pt-12 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
         <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
