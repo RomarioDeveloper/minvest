@@ -81,7 +81,7 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Горького",
     status: "soon",
     tagline: "5-ти этажный дом бизнес класса.",
-    description: "В свободной планировке 2-х и 3-х комнатные квартиры площадью 52 и 57 кв.м. Цена: 500 тысяч за кв.м.",
+    description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
     image: `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
     gallery: [
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
@@ -108,7 +108,7 @@ export const OBJECTS: RealtyObject[] = [
     apartments: 32,
     priceFrom: 26,
     deadline: "III кв. 2026",
-    rooms: "2–3 комнаты",
+    rooms: "52–57 м²",
   },
   {
     slug: "estaya-90",
@@ -116,7 +116,7 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Естая",
     status: "sales",
     tagline: "6-ти этажный дом бизнес класса.",
-    description: "Коммерческие помещения: цокольный и первый этаж (цена: 550 тысяч за кв.м). Квартиры в планировках 2-х комнатные от 65 до 84 кв.м (цена: 450 тыс за кв.м).",
+    description: "Коммерческие помещения: цокольный и первый этаж (цена: 550 тысяч за кв.м). Квартиры в планировках 2-х комнатные (цена: 450 тыс за кв.м).",
     image: "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
     gallery: [
       "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
@@ -128,7 +128,7 @@ export const OBJECTS: RealtyObject[] = [
     apartments: 84,
     priceFrom: 29.25,
     deadline: "IV кв. 2026",
-    rooms: "2 комнаты",
+    rooms: "65–84 м²",
   },
   {
     slug: "bekturova-348",
@@ -136,7 +136,7 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Бектурова",
     status: "done",
     tagline: "12-ти этажный дом комфорт класса, 1-но подъездный.",
-    description: "Квадратура от 35 до 44 кв.м. Цена: 350 тысяч тенге за кв.м. Коммерческие помещения на первом и втором этажах (цена: 400 тысяч за кв.м).",
+    description: "Цена: 350 тысяч тенге за кв.м. Коммерческие помещения на первом и втором этажах (цена: 400 тысяч за кв.м).",
     image: "/photos/exterior/da54d15b01f2b830a33dabea43642029_7cbfc151-4e98-4a94-953b-af8989eb8808.webp",
     gallery: [
       "/photos/exterior/da54d15b01f2b830a33dabea43642029_7cbfc151-4e98-4a94-953b-af8989eb8808.webp",
@@ -148,7 +148,7 @@ export const OBJECTS: RealtyObject[] = [
     apartments: 46,
     priceFrom: 12.25,
     deadline: "IV кв. 2026",
-    rooms: "Студии",
+    rooms: "35–44 м²",
   },
   {
     slug: "bekturova-356",
@@ -156,7 +156,7 @@ export const OBJECTS: RealtyObject[] = [
     district: "ул. Бектурова",
     status: "soon",
     tagline: "П-образный 5-ти подъездный 9-ти этажный дом комфорт класса.",
-    description: "Квадратуры от 38 до 89 кв.м. Цена: 300 тысяч за кв.м.",
+    description: "Цена: 300 тысяч за кв.м.",
     image: "/photos/exterior/dd54c08850a98fb706a805585bb226ca_591ee229-3407-4d4a-a44e-e3e9afb8ac00.webp",
     gallery: [
       "/photos/exterior/dd54c08850a98fb706a805585bb226ca_591ee229-3407-4d4a-a44e-e3e9afb8ac00.webp",
@@ -168,6 +168,6 @@ export const OBJECTS: RealtyObject[] = [
     apartments: 72,
     priceFrom: 11.4,
     deadline: "IV кв. 2027",
-    rooms: "1–4 комнаты",
+    rooms: "38–89 м²",
   },
 ];
