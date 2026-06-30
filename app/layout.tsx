@@ -25,12 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link
           rel="preload"
-          as="video"
-          href="/hero-scrub-mobile-temp-kf30.mp4"
-          media="(max-width: 767px)"
-        />
-        <link
-          rel="preload"
           as="image"
           href="/hero-scrub-mobile-temp.jpg"
           media="(max-width: 767px)"

@@ -72,46 +72,46 @@ export function drawContain(
   return true;
 }
 
-/** Scroll/resize-driven updates — no idle RAF loop. */
+/** Scroll/resize-driven updates. Falls back to a short RAF burst after each scroll tick. */
 export function bindScrollCanvas(
   section: HTMLElement,
   onUpdate: () => void,
 ): () => void {
   let rafId = 0;
   let ticking = false;
-  let visible = true;
+  let burstLeft = 0;
 
-  const schedule = () => {
-    if (!visible || ticking) return;
-    ticking = true;
-    rafId = requestAnimationFrame(() => {
-      ticking = false;
-      onUpdate();
-    });
+  const tick = () => {
+    ticking = false;
+    onUpdate();
+    if (burstLeft > 0) {
+      burstLeft--;
+      rafId = requestAnimationFrame(tick);
+      ticking = true;
+    }
   };
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      visible = entry.isIntersecting;
-      if (visible) schedule();
-    },
-    { rootMargin: "50% 0px" },
-  );
-  observer.observe(section);
+  const schedule = (burst = 0) => {
+    if (burst > burstLeft) burstLeft = burst;
+    if (ticking) return;
+    ticking = true;
+    rafId = requestAnimationFrame(tick);
+  };
 
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule, { passive: true });
-  window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
-  window.visualViewport?.addEventListener("resize", schedule, { passive: true });
+  const onScroll = () => schedule(8);
 
-  schedule();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  window.visualViewport?.addEventListener("scroll", onScroll, { passive: true });
+  window.visualViewport?.addEventListener("resize", onScroll, { passive: true });
+
+  schedule(1);
 
   return () => {
     cancelAnimationFrame(rafId);
-    observer.disconnect();
-    window.removeEventListener("scroll", schedule);
-    window.removeEventListener("resize", schedule);
-    window.visualViewport?.removeEventListener("scroll", schedule);
-    window.visualViewport?.removeEventListener("resize", schedule);
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onScroll);
+    window.visualViewport?.removeEventListener("scroll", onScroll);
+    window.visualViewport?.removeEventListener("resize", onScroll);
   };
 }

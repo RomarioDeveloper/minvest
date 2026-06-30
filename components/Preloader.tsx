@@ -77,7 +77,11 @@ export default function Preloader() {
   // overflow: hidden) keeps its virtual scroll position in sync — flipping
   // overflow on <html> desynced touch scrolling and froze pinned sections.
   useEffect(() => {
-    if (done) return;
+    if (done) {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      return;
+    }
     type LenisLike = { stop: () => void; start: () => void };
     const w = window as unknown as { __lenis?: LenisLike };
     const lenis = w.__lenis;
@@ -86,8 +90,10 @@ export default function Preloader() {
       return () => lenis.start();
     }
     document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     return () => {
       document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
     };
   }, [done]);
 

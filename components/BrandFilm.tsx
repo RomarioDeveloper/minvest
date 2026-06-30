@@ -14,8 +14,6 @@ type Props = {
   frameBase: string;
   frameBaseMobile?: string;
   frameCount: number;
-  /** All-keyframe MP4 — sharp hardware decode on phones (preferred over JPEG canvas). */
-  videoSrcMobile?: string;
   poster?: string;
   posterMobile?: string;
 };
@@ -37,116 +35,13 @@ function useMobileViewport() {
   return isMobile;
 }
 
-function BrandFilmVideo({
-  src,
-  poster,
-  sectionVh,
-}: {
-  src: string;
-  poster?: string;
-  sectionVh: number;
-}) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
-  const lastFrameRef = useRef(-1);
-
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
-
-    const video = videoRef.current;
-    if (!video) return;
-
-    let fired = false;
-    const onProgress = () => {
-      if (!video.duration) return;
-      const buffered =
-        video.buffered.length > 0 ? video.buffered.end(video.buffered.length - 1) / video.duration : 0;
-      window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: buffered }));
-    };
-    const onReady = () => {
-      onProgress();
-      if (fired) return;
-      fired = true;
-      setReady(true);
-      window.dispatchEvent(new CustomEvent("brandfilm:ready"));
-    };
-
-    video.addEventListener("progress", onProgress);
-    video.addEventListener("loadeddata", onReady);
-    video.addEventListener("canplay", onReady);
-    if (video.readyState >= 2) onReady();
-
-    return () => {
-      video.removeEventListener("progress", onProgress);
-      video.removeEventListener("loadeddata", onReady);
-      video.removeEventListener("canplay", onReady);
-    };
-  }, [src]);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const video = videoRef.current;
-    if (!section || !video || !ready) return;
-
-    const fps = 30;
-
-    const scrub = () => {
-      if (!video.duration) return;
-      const progress = pinProgress(section);
-      const frame = Math.min(
-        Math.round(progress * (Math.floor(video.duration * fps) - 1)),
-        Math.floor(video.duration * fps) - 1,
-      );
-      if (frame === lastFrameRef.current) return;
-      lastFrameRef.current = frame;
-      video.currentTime = frame / fps;
-    };
-
-    scrub();
-    return bindScrollCanvas(section, scrub);
-  }, [ready]);
-
-  return (
-    <section
-      ref={sectionRef}
-      className="relative w-full bg-ink"
-      style={{ height: `${sectionVh}dvh` }}
-      aria-label="Видео о доме, управляемое скроллом"
-    >
-      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-        {poster && !ready && (
-          <img
-            src={poster}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 h-full w-full object-cover"
-            draggable={false}
-          />
-        )}
-        <video
-          ref={videoRef}
-          src={src}
-          className="absolute inset-0 z-[1] h-full w-full object-cover"
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          aria-hidden
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
-      </div>
-    </section>
-  );
-}
-
-function BrandFilmCanvas({
+export default function BrandFilm({
   frameBase,
   frameBaseMobile,
   frameCount,
   poster,
   posterMobile,
-}: Omit<Props, "videoSrcMobile">) {
+}: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
@@ -310,6 +205,27 @@ function BrandFilmCanvas({
     };
   }, [ready, loadedCount, frameCount, mobile]);
 
+  if (!ready) {
+    return (
+      <section
+        className="relative w-full bg-ink"
+        style={{ height: `${SECTION_VH_MOBILE}dvh` }}
+        aria-hidden
+      >
+        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
+          {videoPoster && (
+            <img
+              src={videoPoster}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+              draggable={false}
+            />
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -318,55 +234,22 @@ function BrandFilmCanvas({
       aria-label="Видео о доме, управляемое скроллом"
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-        {ready && (
-          <>
-            {videoPoster && !frameReady && (
-              <img
-                src={videoPoster}
-                alt=""
-                aria-hidden
-                className="absolute inset-0 h-full w-full object-cover"
-                draggable={false}
-              />
-            )}
-            <canvas ref={canvasRef} className="absolute inset-0 z-[1] h-full w-full object-cover" aria-hidden />
-          </>
+        {videoPoster && !frameReady && (
+          <img
+            src={videoPoster}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            draggable={false}
+          />
         )}
+        <canvas
+          ref={canvasRef}
+          className="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover"
+          aria-hidden
+        />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
   );
-}
-
-export default function BrandFilm(props: Props) {
-  const isMobile = useMobileViewport();
-
-  if (isMobile === null) {
-    const poster = props.posterMobile ?? props.poster;
-    return (
-      <section
-        className="relative w-full bg-ink"
-        style={{ height: `${SECTION_VH_MOBILE}dvh` }}
-        aria-hidden
-      >
-        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-          {poster && (
-            <img src={poster} alt="" className="absolute inset-0 h-full w-full object-cover" draggable={false} />
-          )}
-        </div>
-      </section>
-    );
-  }
-
-  if (isMobile && props.videoSrcMobile) {
-    return (
-      <BrandFilmVideo
-        src={props.videoSrcMobile}
-        poster={props.posterMobile ?? props.poster}
-        sectionVh={SECTION_VH_MOBILE}
-      />
-    );
-  }
-
-  return <BrandFilmCanvas {...props} />;
 }
