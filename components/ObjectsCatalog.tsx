@@ -105,8 +105,8 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
         </dl>
         <div className="mt-6 flex items-end justify-between border-t border-bone/10 pt-5">
           <div>
-            <div className="text-eyebrow uppercase text-bone-dim">Цена от</div>
-            <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom} млн ₸</div>
+            <div className="text-eyebrow uppercase text-bone-dim">Цена</div>
+            <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</div>
           </div>
           <span className="text-eyebrow uppercase text-bone-mute transition group-hover:text-bone">Подробнее →</span>
         </div>
@@ -282,8 +282,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">{obj.district}</div>
             <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">{obj.name}</h2>
             <div className="mt-4 inline-flex items-baseline gap-1.5">
-              <span className="font-display text-3xl font-semibold tracking-tightest text-bone">{obj.priceFrom} млн ₸</span>
-              <span className="text-eyebrow uppercase text-bone/40">от</span>
+              <span className="font-display text-2xl sm:text-3xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</span>
             </div>
             {obj.description && <p className="mt-4 text-[15px] leading-relaxed text-bone/60">{obj.description}</p>}
 

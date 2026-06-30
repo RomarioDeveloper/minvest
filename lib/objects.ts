@@ -15,7 +15,7 @@ export type RealtyObject = {
   layouts?: string[];
   floors: number;
   apartments: number;
-  priceFrom: number;
+  priceFrom: string;
   deadline: string;
   rooms: string;
   flagship?: boolean;
@@ -46,7 +46,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 6,
     apartments: 40,
-    priceFrom: 18,
+    priceFrom: "от 18 млн ₸",
     deadline: "IV кв. 2026",
     rooms: "1–3 комнаты",
     flagship: true,
@@ -71,7 +71,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 7,
     apartments: 58,
-    priceFrom: 21,
+    priceFrom: "от 21 млн ₸",
     deadline: "II кв. 2027",
     rooms: "1–4 комнаты",
   },
@@ -106,7 +106,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 5,
     apartments: 32,
-    priceFrom: 26,
+    priceFrom: "500 000 ₸/м²",
     deadline: "III кв. 2026",
     rooms: "52–57 м²",
   },
@@ -126,7 +126,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 6,
     apartments: 84,
-    priceFrom: 29.25,
+    priceFrom: "от 450 000 ₸/м²",
     deadline: "IV кв. 2026",
     rooms: "65–84 м²",
   },
@@ -146,7 +146,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 12,
     apartments: 46,
-    priceFrom: 12.25,
+    priceFrom: "от 350 000 ₸/м²",
     deadline: "IV кв. 2026",
     rooms: "35–44 м²",
   },
@@ -166,7 +166,7 @@ export const OBJECTS: RealtyObject[] = [
     ],
     floors: 9,
     apartments: 72,
-    priceFrom: 11.4,
+    priceFrom: "300 000 ₸/м²",
     deadline: "IV кв. 2027",
     rooms: "38–89 м²",
   },
