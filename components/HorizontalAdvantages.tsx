@@ -13,6 +13,9 @@ type Advantage = {
   title: string;
   body: string;
   icon: (props: { className?: string }) => ReactNode;
+  /** Optional looping background clip for the card */
+  video?: string;
+  videoPosition?: string;
 };
 
 const ADVANTAGES: Advantage[] = [
@@ -21,30 +24,36 @@ const ADVANTAGES: Advantage[] = [
     title: "Бесшумные лифты",
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
+    video: "/16744999619190.mp4",
   },
   {
     index: "02",
     title: "Трёхкамерные окна",
     body: "Трёхкамерные окна с высокой тепло- и шумоизоляцией.",
     icon: IconWindow,
+    video: "/16745009121910.mp4",
   },
   {
     index: "03",
     title: "Удобные планировки",
     body: "Удобные и функциональные планировки квартир.",
     icon: IconLayout,
+    video: "/16745042872950.mp4",
   },
   {
     index: "04",
     title: "Гаражи и парковки",
     body: "Собственные гаражи и парковочные решения.",
     icon: IconGarage,
+    video: "/16745051196022.mp4",
+    videoPosition: "center top",
   },
   {
     index: "05",
     title: "Коммерческие помещения",
     body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
     icon: IconStore,
+    video: "/16745019476598.mp4",
   },
   {
     index: "06",
@@ -153,8 +162,11 @@ function Card({
   const iconY = useTransform(active, [0, 1], [18, 0]);
   const ringScale = useTransform(active, [0, 1], [0.6, 1.35]);
   const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
+  const videoScale = useTransform(active, [0, 1], [1.08, 1]);
+  const videoOpacity = useTransform(active, [0, 1], [0.35, 1]);
 
   const Icon = a.icon;
+  const hasVideo = !!a.video;
 
   return (
     <article className="relative flex h-[44vh] max-h-[420px] w-[78vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-8 sm:w-[420px]">
@@ -162,19 +174,31 @@ function Card({
         {a.index}
       </div>
 
-      {/* Center icon — animates on scroll */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <motion.div
-          style={{ scale: ringScale, opacity: ringOpacity }}
-          className="absolute h-36 w-36 rounded-full border border-bone/20 bg-bone/[0.03]"
-        />
-        <motion.div
-          style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
-          className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
-        >
-          <Icon className="h-9 w-9 text-bone/80" />
-        </motion.div>
-      </div>
+      {hasVideo ? (
+        <>
+          <motion.div
+            style={{ scale: videoScale, opacity: videoOpacity }}
+            className="pointer-events-none absolute inset-0 overflow-hidden"
+          >
+            <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
+            <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/10 to-ink-panel/95" />
+            <div className="absolute inset-0 bg-black/20" />
+          </motion.div>
+        </>
+      ) : (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <motion.div
+            style={{ scale: ringScale, opacity: ringOpacity }}
+            className="absolute h-36 w-36 rounded-full border border-bone/20 bg-bone/[0.03]"
+          />
+          <motion.div
+            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
+            className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
+          >
+            <Icon className="h-9 w-9 text-bone/80" />
+          </motion.div>
+        </div>
+      )}
 
       <div className="relative z-10 bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent pt-10">
         <h3 className="font-display text-2xl font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
@@ -183,6 +207,40 @@ function Card({
         <p className="mt-4 text-pretty leading-relaxed text-bone-soft">{a.body}</p>
       </div>
     </article>
+  );
+}
+
+function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { rootMargin: "120px" },
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      className="absolute inset-0 h-full w-full object-cover"
+      style={{ objectPosition }}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      disablePictureInPicture
+    />
   );
 }
 
