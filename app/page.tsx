@@ -5,6 +5,7 @@ import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
+import LayoutScrollBlock from "@/components/LayoutScrollBlock";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
 import PurchaseTerms from "@/components/PurchaseTerms";
@@ -128,6 +129,14 @@ export default function HomePage() {
 
       {/* ---------- CATALOG ENTRANCE CTA ---------- */}
       <CatalogEntrance />
+
+      {/* ---------- LAYOUTS SCROLL (wide format) ---------- */}
+      <LayoutScrollBlock
+        frameBase="/layout-frames"
+        frameBaseMobile="/layout-frames-mobile"
+        frameCount={300}
+        poster="/layout-scroll-poster.jpg"
+      />
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />

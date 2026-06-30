@@ -9,7 +9,8 @@
     "optimize:frames": "tsx scripts/optimize-frames.ts",
     "optimize:render": "tsx scripts/optimize-render.ts",
     "optimize:entrance": "tsx scripts/optimize-entrance.ts",
-    "optimize:hero-scrub": "tsx scripts/optimize-hero-scrub.ts"
+    "optimize:hero-scrub": "tsx scripts/optimize-hero-scrub.ts",
+    "extract:layout-frames": "tsx scripts/extract-layout-frames.ts"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
