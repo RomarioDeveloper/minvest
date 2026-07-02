@@ -46,11 +46,9 @@ export default function HomePage() {
 
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
       <div id="top">
-        {/* TEMP: scroll hero — revert to hero-scrub.mp4 when done */}
         <BrandFilm
-          frameBase="/hero-desktop-frames"
-          frameBaseMobile="/hero-mobile-frames"
-          frameCount={449}
+          videoSrc="/hero-scrub-desktop.mp4"
+          videoSrcMobile="/hero-scrub-mobile.mp4"
           poster="/hero-scrub-temp.jpg"
           posterMobile="/hero-scrub-mobile-temp.jpg"
         />

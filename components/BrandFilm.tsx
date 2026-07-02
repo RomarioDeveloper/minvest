@@ -1,22 +1,18 @@
 "use client";
 
-import { findNearestLoadedFrame, pinProgress, priorityFrameOrder } from "@/lib/scrollCanvas";
+import { pinProgress } from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  frameBase: string;
-  frameBaseMobile?: string;
-  frameCount: number;
+  /** Video encoded with all-keyframes (g=1) — required for instant seeking. */
+  videoSrc: string;
+  videoSrcMobile?: string;
   poster?: string;
   posterMobile?: string;
 };
 
 const SECTION_VH_MOBILE = 300;
 const SECTION_VH_DESKTOP = 520;
-
-function frameSrc(base: string, index: number) {
-  return `${base}/${String(index + 1).padStart(4, "0")}.jpg`;
-}
 
 function useMobileViewport() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -32,183 +28,143 @@ function useMobileViewport() {
   return isMobile;
 }
 
+/**
+ * Scroll-scrubbed fullscreen video (the Apple / TAG Heuer technique):
+ *
+ *   1. The MP4 is fetched into a Blob first — after that every seek reads
+ *      from memory, so there is zero network jitter while scrolling.
+ *   2. The file is encoded with every frame as a keyframe (g=1), which makes
+ *      currentTime / fastSeek land instantly on the exact frame — full
+ *      source quality, no JPEG re-compression, no canvas scaling.
+ *   3. Scroll progress is eased with a framerate-independent lerp, so wheel
+ *      steps and touch flicks turn into weighted, cinematic motion.
+ */
 export default function BrandFilm({
-  frameBase,
-  frameBaseMobile,
-  frameCount,
+  videoSrc,
+  videoSrcMobile,
   poster,
   posterMobile,
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isMobile = useMobileViewport();
 
-  const framesRef = useRef<(HTMLImageElement | null)[]>([]);
-  const onTickRef = useRef<() => void>(() => {});
-  const [frameReady, setFrameReady] = useState(false);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [videoReady, setVideoReady] = useState(false);
 
   const ready = isMobile !== null;
   const mobile = isMobile === true;
-  const base = mobile ? (frameBaseMobile ?? frameBase) : frameBase;
+  const src = mobile ? (videoSrcMobile ?? videoSrc) : videoSrc;
   const videoPoster = mobile ? (posterMobile ?? poster) : poster;
   const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
 
-  // Load frames once — priority from current position, never restart on scroll.
+  // Download the video into a Blob with progress for the preloader.
   useEffect(() => {
-    if (!ready || !base) return;
+    if (!ready || !src) return;
 
     let cancelled = false;
-    const frames: (HTMLImageElement | null)[] = Array.from({ length: frameCount }, () => null);
-    framesRef.current = frames;
-    let done = 0;
-    let readyFired = false;
+    let objectUrl: string | null = null;
 
-    setFrameReady(false);
+    setVideoReady(false);
+    setBlobUrl(null);
     window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
 
-    const section = sectionRef.current;
-    const center = section ? Math.round(pinProgress(section) * (frameCount - 1)) : 0;
-    const order = priorityFrameOrder(center, frameCount);
-    let queueIndex = 0;
+    (async () => {
+      try {
+        const res = await fetch(src);
+        if (!res.ok || !res.body) throw new Error(`fetch failed: ${res.status}`);
 
-    const checkFinished = () => {
-      if (readyFired) return;
-      const first = order[0];
-      if (frames[first]) {
-        readyFired = true;
-        setFrameReady(true);
-        window.dispatchEvent(new CustomEvent("brandfilm:ready"));
-      }
-    };
+        const total = Number(res.headers.get("content-length")) || 0;
+        const reader = res.body.getReader();
+        const chunks: BlobPart[] = [];
+        let received = 0;
 
-    const loadFrame = (i: number) => {
-      const img = new Image();
-      img.decoding = "async";
-      img.onload = () => {
-        if (cancelled) return;
-        frames[i] = img;
-        done++;
-        if (done % 8 === 0 || done === frameCount) {
-          window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: done / frameCount }));
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (cancelled) {
+            reader.cancel();
+            return;
+          }
+          chunks.push(value);
+          received += value.byteLength;
+          if (total > 0) {
+            window.dispatchEvent(
+              new CustomEvent("brandfilm:progress", { detail: received / total }),
+            );
+          }
         }
-        checkFinished();
-      };
-      img.onerror = () => {
+
         if (cancelled) return;
-        done++;
-        checkFinished();
-      };
-      img.src = frameSrc(base, i);
-    };
-
-    const loadBatch = () => {
-      if (cancelled) return;
-      const batchSize = mobile ? 8 : 12;
-      let loaded = 0;
-
-      while (loaded < batchSize && queueIndex < order.length) {
-        loadFrame(order[queueIndex]);
-        queueIndex++;
-        loaded++;
+        objectUrl = URL.createObjectURL(new Blob(chunks, { type: "video/mp4" }));
+        window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 1 }));
+        setBlobUrl(objectUrl);
+      } catch {
+        // Blob download failed (offline, dev reload) — stream straight from
+        // the network instead of blocking the page behind the preloader.
+        if (!cancelled) setBlobUrl(src);
       }
-
-      if (queueIndex < order.length) requestAnimationFrame(loadBatch);
-    };
-
-    loadBatch();
+    })();
 
     return () => {
       cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [ready, base, frameCount, mobile]);
+  }, [ready, src]);
 
-  // Mobile: swap <img> src — no canvas, no drawImage, GPU-friendly.
+  // Scrub loop: eased progress → seek, never queueing seeks on top of
+  // each other (waiting for `seeked` keeps Safari from stuttering).
   useEffect(() => {
-    if (!ready || !mobile) return;
-
-    let lastExact = -1;
-    let lastSrc = "";
-
-    onTickRef.current = () => {
-      const section = sectionRef.current;
-      const img = imgRef.current;
-      if (!section || !img) return;
-
-      const exact = Math.min(
-        frameCount - 1,
-        Math.max(0, Math.round(pinProgress(section) * (frameCount - 1))),
-      );
-      if (exact === lastExact) return;
-
-      const frame = findNearestLoadedFrame(framesRef.current, exact);
-      const src = frame?.src ?? frameSrc(base, exact);
-      if (src === lastSrc) return;
-
-      lastExact = exact;
-      lastSrc = src;
-      img.src = src;
-    };
-  }, [ready, mobile, base, frameCount]);
-
-  // Desktop: canvas cover at 2× DPR.
-  useEffect(() => {
-    if (!ready || mobile) return;
+    if (!ready || !blobUrl) return;
 
     const section = sectionRef.current;
-    const canvas = canvasRef.current;
-    if (!section || !canvas) return;
-
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
-    let canvasW = 0;
-    let canvasH = 0;
-    let lastExact = -1;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    const resizeCanvas = () => {
-      canvasW = canvas.clientWidth;
-      canvasH = canvas.clientHeight;
-      canvas.width = Math.max(1, Math.round(canvasW * dpr));
-      canvas.height = Math.max(1, Math.round(canvasH * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      lastExact = -1;
-    };
-
-    onTickRef.current = () => {
-      const exact = Math.min(
-        frameCount - 1,
-        Math.max(0, Math.round(pinProgress(section) * (frameCount - 1))),
-      );
-      if (exact === lastExact) return;
-
-      const frame = findNearestLoadedFrame(framesRef.current, exact);
-      if (!frame) return;
-
-      const scale = Math.max(canvasW / frame.naturalWidth, canvasH / frame.naturalHeight);
-      const dw = frame.naturalWidth * scale;
-      const dh = frame.naturalHeight * scale;
-      ctx.drawImage(frame, (canvasW - dw) / 2, (canvasH - dh) / 2, dw, dh);
-      lastExact = exact;
-    };
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    return () => window.removeEventListener("resize", resizeCanvas);
-  }, [ready, mobile, frameCount]);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || !ready) return;
+    const video = videoRef.current;
+    if (!section || !video) return;
 
     let rafId = 0;
     let active = true;
+    let duration = 0;
+    let smooth = pinProgress(section);
+    let lastTime = performance.now();
+    let seekPending = false;
 
-    const tick = () => {
-      if (active) onTickRef.current();
+    const onLoaded = () => {
+      duration = video.duration || 0;
+      // Land on the current scroll position immediately.
+      smooth = pinProgress(section);
+      if (duration > 0) video.currentTime = smooth * duration;
+      setVideoReady(true);
+      window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+    };
+
+    const onSeeked = () => {
+      seekPending = false;
+    };
+
+    const seek = (t: number) => {
+      if (seekPending) return;
+      seekPending = true;
+      // fastSeek is exact here because every frame is a keyframe.
+      if ("fastSeek" in video) video.fastSeek(t);
+      else (video as HTMLVideoElement).currentTime = t;
+    };
+
+    const tick = (now: number) => {
       rafId = requestAnimationFrame(tick);
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+      if (!active || duration === 0) return;
+
+      const target = pinProgress(section);
+      // Framerate-independent ease toward the scroll position — absorbs
+      // discrete wheel steps into weighted, continuous motion.
+      const k = 1 - Math.exp(-6 * dt);
+      smooth += (target - smooth) * k;
+      if (Math.abs(target - smooth) < 0.0004) smooth = target;
+
+      const t = smooth * duration;
+      // Skip sub-frame seeks (~30fps source) to avoid useless decode work.
+      if (Math.abs(video.currentTime - t) > 1 / 60) seek(t);
     };
 
     const observer = new IntersectionObserver(
@@ -218,30 +174,22 @@ export default function BrandFilm({
       { rootMargin: "100px 0px" },
     );
     observer.observe(section);
+
+    video.addEventListener("loadedmetadata", onLoaded);
+    video.addEventListener("seeked", onSeeked);
+    if (video.readyState >= 1) onLoaded();
+
+    video.src = blobUrl;
+    video.load();
     rafId = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(rafId);
       observer.disconnect();
+      video.removeEventListener("loadedmetadata", onLoaded);
+      video.removeEventListener("seeked", onSeeked);
     };
-  }, [ready, mobile]);
-
-  if (!ready) {
-    return (
-      <section className="relative w-full bg-ink" style={{ height: `${SECTION_VH_MOBILE}dvh` }} aria-hidden>
-        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-          {videoPoster && (
-            <img
-              src={videoPoster}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-              draggable={false}
-            />
-          )}
-        </div>
-      </section>
-    );
-  }
+  }, [ready, blobUrl]);
 
   return (
     <section
@@ -251,7 +199,7 @@ export default function BrandFilm({
       aria-label="Видео о доме, управляемое скроллом"
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-        {videoPoster && !frameReady && (
+        {videoPoster && !videoReady && (
           <img
             src={videoPoster}
             alt=""
@@ -260,23 +208,16 @@ export default function BrandFilm({
             draggable={false}
           />
         )}
-        {mobile ? (
-          <img
-            ref={imgRef}
-            src={videoPoster ?? frameSrc(base, 0)}
-            alt=""
-            aria-hidden
-            className="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover"
-            draggable={false}
-            decoding="async"
-          />
-        ) : (
-          <canvas
-            ref={canvasRef}
-            className="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover"
-            aria-hidden
-          />
-        )}
+        <video
+          ref={videoRef}
+          className={`pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-300 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden
+        />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
