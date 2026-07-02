@@ -47,8 +47,10 @@ export default function HomePage() {
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
       <div id="top">
         <BrandFilm
-          videoSrc="/hero-scrub-desktop.mp4"
-          videoSrcMobile="/hero-scrub-mobile.mp4"
+          frameBase="/hero-desktop-frames"
+          frameBaseMobile="/hero-mobile-frames"
+          frameCount={300}
+          frameCountMobile={181}
           poster="/hero-scrub-temp.jpg"
           posterMobile="/hero-scrub-mobile-temp.jpg"
         />
