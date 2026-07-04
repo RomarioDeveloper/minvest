@@ -29,6 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="/hero-scrub-mobile-temp.jpg"
           media="(max-width: 767px)"
         />
+        {/* Всегда начинаем с верха страницы: браузерное восстановление скролла
+            ломает пиннед-секции и скролл-анимации при перезагрузке. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `history.scrollRestoration="manual";window.scrollTo(0,0);window.addEventListener("pageshow",function(e){if(e.persisted)window.scrollTo(0,0)});`,
+          }}
+        />
       </head>
       <body>
         <SmoothScroller />

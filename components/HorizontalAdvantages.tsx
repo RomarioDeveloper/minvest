@@ -82,7 +82,61 @@ const ADVANTAGES: Advantage[] = [
 
 const CARD_COUNT = ADVANTAGES.length;
 
+function useMobileViewport() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  return isMobile;
+}
+
 export default function HorizontalAdvantages() {
+  const isMobile = useMobileViewport();
+
+  // JS-driven scroll scrubbing stutters on phones (async touch scroll +
+  // per-frame style writes), so mobile gets native swipe with scroll-snap.
+  if (isMobile !== false) return <MobileAdvantages />;
+
+  return <DesktopAdvantages />;
+}
+
+function Heading() {
+  return (
+    <div className="px-6 pb-8 sm:px-10 lg:px-16">
+      <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+      <h2
+        className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+        style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+      >
+        Почему выбирают
+        <span className="text-bone-mute"> Malaysary Invest.</span>
+      </h2>
+    </div>
+  );
+}
+
+function MobileAdvantages() {
+  return (
+    <section id="advantages" className="bg-ink-deep py-20">
+      <Heading />
+      <div
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {ADVANTAGES.map((a) => (
+          <StaticCard key={a.index} a={a} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DesktopAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [endX, setEndX] = useState(0);
@@ -113,16 +167,7 @@ export default function HorizontalAdvantages() {
       style={{ height: `${CARD_COUNT * 55}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="px-6 pb-8 sm:px-10 lg:px-16">
-          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-          <h2
-            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-          >
-            Почему выбирают
-            <span className="text-bone-mute"> Malaysary Invest.</span>
-          </h2>
-        </div>
+        <Heading />
 
         <motion.div
           ref={trackRef}
@@ -192,6 +237,40 @@ function Card({
           >
             <Icon className="h-11 w-11 text-bone/80" />
           </motion.div>
+        </div>
+      )}
+
+      <div className={`relative z-10 pt-12 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
+        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
+          {a.title}
+        </h3>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">{a.body}</p>
+      </div>
+    </article>
+  );
+}
+
+function StaticCard({ a }: { a: Advantage }) {
+  const Icon = a.icon;
+  const hasVideo = !!a.video;
+
+  return (
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+      <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
+        {a.index}
+      </div>
+
+      {hasVideo ? (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
+          <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
+        </div>
+      ) : (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="absolute h-44 w-44 scale-[1.35] rounded-full border border-bone/20 bg-bone/[0.03] opacity-35" />
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04]">
+            <Icon className="h-11 w-11 text-bone/80" />
+          </div>
         </div>
       )}
 

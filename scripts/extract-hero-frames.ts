@@ -24,13 +24,25 @@ const OUT_MOBILE = path.join(ROOT, "public/hero-mobile-frames");
 const POSTER_DESKTOP = path.join(ROOT, "public/hero-scrub-temp.jpg");
 const POSTER_MOBILE = path.join(ROOT, "public/hero-scrub-mobile-temp.jpg");
 
-/** Desktop source is 60fps — every 3rd frame ≈ 20fps timeline. */
+/** Desktop source is 60fps — every 3rd frame ≈ 20fps sqstimeline. */
 const STEP_DESKTOP = 3;
 /** Mobile source is 24fps — every 2nd frame ≈ 12fps timeline. */
 const STEP_MOBILE = 2;
 
+/** Retina fullscreen wants more than 1920 — used when the source allows it. */
+const MAX_DESKTOP_WIDTH = 2560;
+
 function ffmpeg(args: string[]) {
   execFileSync("ffmpeg", args, { stdio: "inherit" });
+}
+
+function sourceWidth(src: string): number {
+  const out = execFileSync(
+    "ffprobe",
+    ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width", "-of", "csv=p=0", src],
+    { encoding: "utf8" },
+  );
+  return parseInt(out.trim(), 10) || 1920;
 }
 
 async function extract(
@@ -116,11 +128,12 @@ async function main() {
     }
   }
 
-  console.log("\n▸ desktop @1920 webp");
+  const desktopW = Math.min(MAX_DESKTOP_WIDTH, sourceWidth(SRC_DESKTOP));
+  console.log(`\n▸ desktop @${desktopW} webp`);
   const desktop = await extract(
     SRC_DESKTOP,
     OUT_DESKTOP,
-    `select='not(mod(n\\,${STEP_DESKTOP}))',scale=1920:-2:flags=lanczos`,
+    `select='not(mod(n\\,${STEP_DESKTOP}))',scale=${desktopW}:-2:flags=lanczos`,
     80,
   );
 

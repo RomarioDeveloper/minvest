@@ -147,6 +147,7 @@ export default function BrandFilm({
     let lastExact = -1;
     let smooth = pinProgress(section);
     let lastTime = performance.now();
+    let velocity = 0;
 
     const resizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -155,6 +156,8 @@ export default function BrandFilm({
       canvas.width = Math.max(1, Math.round(canvasW * dpr));
       canvas.height = Math.max(1, Math.round(canvasH * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       lastExact = -1;
     };
 
@@ -178,22 +181,30 @@ export default function BrandFilm({
       return -1;
     };
 
+    // Blending two offset frames reads as motion blur when the camera moves
+    // fast — so cross-blend only below this speed (frames per RAF tick).
+    // Above it a single crisp frame looks sharper and the eye can't tell.
+    const BLEND_MAX_VELOCITY = 0.6;
+
     const draw = () => {
       const exact = smooth * (count - 1);
       if (Math.abs(exact - lastExact) < 0.004) return;
 
       const frames = framesRef.current;
-      const iRaw = Math.min(count - 1, Math.floor(exact));
+      const blend = velocity < BLEND_MAX_VELOCITY;
+      const iRaw = Math.min(count - 1, blend ? Math.floor(exact) : Math.round(exact));
       const i = nearestLoaded(iRaw);
       if (i === -1) return;
 
-      const a = frames[i]!;
-      const next = i + 1 < count ? frames[i + 1] : null;
-      const frac = i === iRaw ? exact - iRaw : 0;
+      drawFrame(frames[i]!, 1);
 
-      drawFrame(a, 1);
-      // Cross-blend into the next frame for sub-frame smoothness.
-      if (next && frac > 0.01) drawFrame(next, frac);
+      if (blend && i === iRaw) {
+        // Sub-frame cross-blend — only while settling, where it adds
+        // smoothness without ghosting.
+        const next = i + 1 < count ? frames[i + 1] : null;
+        const frac = exact - iRaw;
+        if (next && frac > 0.01) drawFrame(next, frac);
+      }
 
       lastExact = exact;
     };
@@ -208,8 +219,10 @@ export default function BrandFilm({
       // Framerate-independent ease toward the scroll position — turns
       // discrete wheel steps into weighted, cinematic motion.
       const k = 1 - Math.exp(-5 * dt);
+      const prev = smooth;
       smooth += (target - smooth) * k;
       if (Math.abs(target - smooth) < 0.0004) smooth = target;
+      velocity = Math.abs(smooth - prev) * (count - 1);
 
       draw();
     };
