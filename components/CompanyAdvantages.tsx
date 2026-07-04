@@ -36,11 +36,12 @@ export default function CompanyAdvantages() {
       className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">
-        <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+        <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
           О компании
         </RevealOnView>
         <RevealOnView
           as="div"
+          variant="blur"
           delay={120}
           className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
         >
@@ -68,7 +69,12 @@ export default function CompanyAdvantages() {
         {/* Perks */}
         <div className="mt-20 grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
           {PERKS.map((p, i) => (
-            <RevealOnView key={p.title} delay={140 + i * 80} className="flex gap-5">
+            <RevealOnView
+              key={p.title}
+              variant={i % 2 === 0 ? "slide-left" : "slide-right"}
+              delay={140 + i * 80}
+              className="flex gap-5"
+            >
               <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-bone" />
               <div>
                 <h3 className="font-display text-xl font-semibold tracking-tightest text-bone">

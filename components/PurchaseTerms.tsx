@@ -37,11 +37,12 @@ export default function PurchaseTerms() {
       className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">
-        <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+        <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
           Условия покупки
         </RevealOnView>
         <RevealOnView
           as="div"
+          variant="blur"
           delay={120}
           className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
         >
@@ -54,7 +55,7 @@ export default function PurchaseTerms() {
 
         <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
           {TERMS.map((t, i) => (
-            <RevealOnView key={t.title} delay={160 + i * 90} className="h-full">
+            <RevealOnView key={t.title} variant="block" delay={160 + i * 90} className="h-full">
               <div className="flex h-full flex-col border border-bone/12 bg-ink-panel p-8">
                 <div className="text-eyebrow uppercase text-bone-mute">{t.title}</div>
                 <div className="mt-6 flex items-baseline gap-2">

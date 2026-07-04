@@ -141,14 +141,16 @@ export default function EditorialSpread({
           className="max-w-2xl will-change-transform"
           style={{ y: copyY, opacity: copyOpacity }}
         >
-          <RevealLine progress={scrollYProgress} from={0.05} to={0.18}>
+          {/* Eyebrow wipes in horizontally like a caption being typed */}
+          <RevealLine progress={scrollYProgress} from={0.05} to={0.18} mode="wipe">
             <div className="flex items-baseline gap-3 text-eyebrow uppercase text-bone-mute">
               <span className="h-[1px] w-8 bg-bone/40" />
               <span>{eyebrow}</span>
             </div>
           </RevealLine>
 
-          <RevealLine progress={scrollYProgress} from={0.1} to={0.28}>
+          {/* Title resolves out of blur instead of sliding */}
+          <RevealLine progress={scrollYProgress} from={0.1} to={0.28} mode="blur">
             <h2
               className="mt-5 font-display font-semibold text-bone tracking-tightest text-balance"
               style={{ fontSize: "clamp(36px, 6vw, 92px)", lineHeight: 0.95 }}
@@ -166,11 +168,18 @@ export default function EditorialSpread({
             </div>
           </RevealLine>
 
+          {/* Meta cells cascade in from the side, one after another */}
           {meta && meta.length > 0 && (
-            <RevealLine progress={scrollYProgress} from={0.22} to={0.42}>
-              <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
-                {meta.map((m) => (
-                  <div key={m.label} className="border-t border-bone/15 pt-3">
+            <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
+              {meta.map((m, i) => (
+                <RevealLine
+                  key={m.label}
+                  progress={scrollYProgress}
+                  from={0.2 + i * 0.035}
+                  to={0.38 + i * 0.035}
+                  mode="slide"
+                >
+                  <div className="border-t border-bone/15 pt-3">
                     <div className="text-eyebrow uppercase text-bone-dim">
                       {m.label}
                     </div>
@@ -178,9 +187,9 @@ export default function EditorialSpread({
                       {m.value}
                     </div>
                   </div>
-                ))}
-              </div>
-            </RevealLine>
+                </RevealLine>
+              ))}
+            </div>
           )}
         </motion.div>
       </div>
@@ -190,25 +199,46 @@ export default function EditorialSpread({
 
 /**
  * Per-line reveal driven by the parent section's scroll progress.
- * Each child block fades + slides from a slight offset over its own
- * sub-range of the scroll, so the copy "writes itself in" as the section
- * enters view — not all at once.
+ * Each child block enters over its own sub-range of the scroll, so the copy
+ * "writes itself in" as the section enters view — not all at once.
+ * `mode` picks how it enters: rise from below (default), horizontal wipe,
+ * blur-into-focus, or slide from the side.
  */
 function RevealLine({
   progress,
   from,
   to,
+  mode = "rise",
   children,
 }: {
   progress: MotionValue<number>;
   from: number;
   to: number;
+  mode?: "rise" | "wipe" | "blur" | "slide";
   children: React.ReactNode;
 }) {
   const opacity = useTransform(progress, [from - 0.03, from, to, to + 0.02], [0, 0, 1, 1]);
   const y = useTransform(progress, [from, to], [24, 0]);
+  const x = useTransform(progress, [from, to], [40, 0]);
+  const clipPath = useTransform(
+    progress,
+    [from, to],
+    ["inset(0 100% 0 0)", "inset(0 0% 0 0)"],
+  );
+  const filter = useTransform(progress, [from, to], ["blur(12px)", "blur(0px)"]);
+
+  // Only attach the expensive per-frame styles the chosen mode actually uses.
+  const style =
+    mode === "wipe"
+      ? { opacity, clipPath }
+      : mode === "blur"
+        ? { opacity, filter }
+        : mode === "slide"
+          ? { opacity, x }
+          : { opacity, y };
+
   return (
-    <motion.div style={{ opacity, y }} className="will-change-transform">
+    <motion.div style={style} className="will-change-transform">
       {children}
     </motion.div>
   );

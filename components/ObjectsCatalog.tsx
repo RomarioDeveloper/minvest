@@ -35,8 +35,8 @@ export default function ObjectsCatalog() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <RevealOnView className="text-eyebrow uppercase text-bone-mute">Каталог объектов</RevealOnView>
-            <RevealOnView as="div" delay={120} className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone">
+            <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">Каталог объектов</RevealOnView>
+            <RevealOnView as="div" variant="blur" delay={120} className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone">
               <h2 style={{ fontSize: "clamp(34px, 5.4vw, 72px)", lineHeight: 0.98 }}>
                 Проекты<br />
                 <span className="text-bone-mute">Malaysary Invest.</span>
@@ -55,7 +55,7 @@ export default function ObjectsCatalog() {
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((o, i) => (
-            <RevealOnView key={o.slug} delay={120 + i * 80} className="h-full">
+            <RevealOnView key={o.slug} variant="zoom" delay={120 + i * 80} className="h-full">
               <ObjectCard obj={o} onOpen={() => setSelected(o)} />
             </RevealOnView>
           ))}

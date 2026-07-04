@@ -75,11 +75,12 @@ export default function HomePage() {
       {/* ---------- INTRO STATS ---------- */}
       <section className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Знакомство
           </RevealOnView>
           <RevealOnView
             as="div"
+            variant="blur"
             delay={120}
             className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
@@ -144,11 +145,12 @@ export default function HomePage() {
       {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
       <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Флагман · Корпус 1
           </RevealOnView>
           <RevealOnView
             as="div"
+            variant="blur"
             delay={120}
             className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
@@ -196,7 +198,7 @@ export default function HomePage() {
 
       {/* ---------- EDITORIAL: YARD / AERIAL ---------- */}
       <div id="yard" className="relative">
-        <RevealOnView variant="shutter" offset={0} as="div">
+        <RevealOnView variant="shutter-left" offset={0} as="div">
           <EditorialSpread
             imageSrc="/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp"
             imageAlt="Аэросъёмка двора и закрытой территории"
@@ -223,7 +225,7 @@ export default function HomePage() {
 
       {/* ---------- TWO-UP: GARAGES + PLAYGROUND ---------- */}
       <div className="relative border-t border-bone/10 bg-ink-deep">
-        <RevealOnView variant="shutter" offset={0} as="div">
+        <RevealOnView variant="shutter-right" offset={0} as="div">
           <TwoUpFeature
             left={{
               imageSrc: "/photos/garages/3af31198-00f7-4aae-96c6-180b7fef755e.webp",
@@ -255,7 +257,7 @@ export default function HomePage() {
 
       {/* ---------- LIVING YARD (looped videos) ---------- */}
       <div className="relative">
-        <RevealOnView variant="shutter" offset={0} as="div">
+        <RevealOnView variant="zoom" offset={0} as="div">
           <TwoUpVideo
             left={{
               src: "/video/yard-day",
@@ -296,7 +298,7 @@ export default function HomePage() {
       <CompanyAdvantages />
 
       {/* ---------- CLOSING SPREAD ---------- */}
-      <RevealOnView variant="shutter" offset={0} as="div" className="relative">
+      <RevealOnView variant="shutter-right" offset={0} as="div" className="relative">
         <EditorialSpread
           imageSrc="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp"
           imageAlt="Жилой дом и территория на закате"
@@ -325,11 +327,12 @@ export default function HomePage() {
         className="relative border-t border-bone/10 bg-ink-deep px-6 py-28 sm:px-10 sm:py-36 lg:px-16"
       >
         <div className="mx-auto max-w-7xl">
-          <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Контакты
           </RevealOnView>
           <RevealOnView
             as="div"
+            variant="blur"
             delay={120}
             className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
@@ -341,7 +344,7 @@ export default function HomePage() {
           </RevealOnView>
 
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <RevealOnView delay={200} className="border-t border-bone/15 pt-5">
+            <RevealOnView variant="slide-left" delay={200} className="border-t border-bone/15 pt-5">
               <div className="text-eyebrow uppercase text-bone-dim">Телефон</div>
               <a
                 href="tel:+77072343333"
@@ -350,7 +353,7 @@ export default function HomePage() {
                 8 707 234 33 33
               </a>
             </RevealOnView>
-            <RevealOnView delay={280} className="border-t border-bone/15 pt-5">
+            <RevealOnView variant="slide-left" delay={280} className="border-t border-bone/15 pt-5">
               <div className="text-eyebrow uppercase text-bone-dim">Instagram</div>
               <a
                 href="https://instagram.com/malaysary_invest"
@@ -361,7 +364,7 @@ export default function HomePage() {
                 @malaysary_invest
               </a>
             </RevealOnView>
-            <RevealOnView delay={360} className="border-t border-bone/15 pt-5">
+            <RevealOnView variant="slide-left" delay={360} className="border-t border-bone/15 pt-5">
               <div className="text-eyebrow uppercase text-bone-dim">Офис продаж</div>
               <div className="mt-2 font-display text-xl font-semibold leading-snug tracking-tightest text-bone">
                 г. Павлодар,<br />
@@ -389,7 +392,7 @@ export default function HomePage() {
           </RevealOnView>
 
           {/* Sales office map */}
-          <RevealOnView delay={200} className="mt-16">
+          <RevealOnView variant="zoom" delay={200} className="mt-16">
             <div className="text-eyebrow uppercase text-bone-dim">Наши объекты на карте</div>
             <div className="mt-5 overflow-hidden border border-bone/15">
               <MalaysaryMap />

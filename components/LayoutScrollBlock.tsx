@@ -27,9 +27,10 @@ function drawContain(
   img: HTMLImageElement,
   w: number,
   h: number,
+  zoom = 1,
 ): boolean {
   if (!img.complete || img.naturalWidth === 0) return false;
-  const scale = Math.min(w / img.naturalWidth, h / img.naturalHeight);
+  const scale = Math.min(w / img.naturalWidth, h / img.naturalHeight) * zoom;
   const dw = img.naturalWidth * scale;
   const dh = img.naturalHeight * scale;
   ctx.fillStyle = "#050506";
@@ -135,6 +136,10 @@ export default function LayoutScrollBlock({
     let canvasH = 0;
     let rafId = 0;
     let lastExact = -1;
+    // The frames are 16:9 with wide black margins around the house, so on a
+    // narrow phone plain "contain" renders it tiny. Zooming crops only the
+    // empty margins while keeping the house and dimension labels in frame.
+    const zoom = mobile ? 1.25 : 1;
 
     const resizeCanvas = () => {
       canvasW = canvas.clientWidth;
@@ -149,7 +154,7 @@ export default function LayoutScrollBlock({
       if (exact === lastExact) return;
 
       const frame = framesRef.current[exact];
-      if (frame && drawContain(ctx, frame, canvasW, canvasH)) {
+      if (frame && drawContain(ctx, frame, canvasW, canvasH, zoom)) {
         lastExact = exact;
         if (!frameReady) setFrameReady(true);
       }
@@ -172,7 +177,7 @@ export default function LayoutScrollBlock({
       window.removeEventListener("resize", resizeCanvas);
       window.visualViewport?.removeEventListener("resize", resizeCanvas);
     };
-  }, [ready, loadedCount, frameCount, frameReady]);
+  }, [ready, loadedCount, frameCount, frameReady, mobile]);
 
   return (
     <section
@@ -183,8 +188,10 @@ export default function LayoutScrollBlock({
       aria-label="Планировки квартир, управляемые скроллом"
     >
       <div className="sticky top-0 flex h-[100dvh] w-full items-center supports-[height:100svh]:h-[100svh]">
-        <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 py-20 sm:px-10 lg:flex-row lg:items-center lg:gap-12 lg:px-16 lg:py-24">
-          <div className="relative aspect-[16/10] w-full overflow-hidden border border-bone/10 bg-[#050506] lg:aspect-[16/9] lg:flex-[1.35]">
+        <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 pb-8 pt-24 sm:px-10 lg:flex-row lg:items-center lg:gap-12 lg:px-16 lg:py-24">
+          {/* On phones the canvas goes full-bleed and takes all free height;
+              on lg it returns to the framed 16:9 column next to the text. */}
+          <div className="relative -mx-6 min-h-0 flex-1 overflow-hidden border-y border-bone/10 bg-[#050506] sm:-mx-10 lg:mx-0 lg:aspect-[16/9] lg:w-full lg:flex-[1.35] lg:border">
             {ready && framePoster && !frameReady && (
               <img
                 src={framePoster}
@@ -197,10 +204,10 @@ export default function LayoutScrollBlock({
             <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />
           </div>
 
-          <div className="mt-8 flex flex-col justify-center lg:mt-0 lg:flex-1">
+          <div className="mt-6 flex flex-col justify-center lg:mt-0 lg:flex-1">
             <div className="text-eyebrow uppercase text-bone-mute">Планировки</div>
             <h2
-              className="mt-5 font-display font-semibold tracking-tightest text-bone"
+              className="mt-4 font-display font-semibold tracking-tightest text-bone lg:mt-5"
               style={{ fontSize: "clamp(28px, 3.8vw, 52px)", lineHeight: 1.02 }}
             >
               Самые удобные
@@ -209,7 +216,7 @@ export default function LayoutScrollBlock({
               <br />
               <span className="text-bone-mute">планировки.</span>
             </h2>
-            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-bone-soft">
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-bone-soft lg:mt-6">
               Листайте вниз, чтобы посмотреть варианты планировок. Свободная планировка,
               продуманные метражи и комфортные решения для разного образа жизни.
             </p>

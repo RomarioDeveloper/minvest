@@ -53,11 +53,12 @@ export default function ConstructionSpec() {
       className="relative bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">
-        <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+        <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
           Конструктив
         </RevealOnView>
         <RevealOnView
           as="div"
+          variant="blur"
           delay={120}
           className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
         >
@@ -70,7 +71,12 @@ export default function ConstructionSpec() {
 
         <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
           {ITEMS.map((item, i) => (
-            <RevealOnView key={item.index} delay={120 + i * 90} className="h-full">
+            <RevealOnView
+              key={item.index}
+              variant={i % 2 === 0 ? "slide-left" : "slide-right"}
+              delay={120 + i * 90}
+              className="h-full"
+            >
               <article className="group flex h-full flex-col overflow-hidden border border-bone/12 bg-ink-panel md:flex-row">
                 <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:w-2/5">
                   <img

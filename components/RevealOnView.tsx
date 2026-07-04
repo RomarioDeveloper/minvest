@@ -26,7 +26,19 @@ export default function RevealOnView({
   className,
   as: Tag = "div",
   variant = "default",
-}: Props & { variant?: "default" | "shutter" | "block" }) {
+}: Props & {
+  variant?:
+    | "default"
+    | "shutter"
+    | "shutter-left"
+    | "shutter-right"
+    | "block"
+    | "slide-left"
+    | "slide-right"
+    | "blur"
+    | "wipe"
+    | "zoom";
+}) {
   const ref = useRef<HTMLElement | null>(null);
 
   // Set up staggered delays for initial entry based on DOM order.

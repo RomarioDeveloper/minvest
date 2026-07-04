@@ -17,11 +17,12 @@ export default function TradeIn() {
     >
       <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-2 lg:items-center">
         <div>
-          <RevealOnView className="text-eyebrow uppercase text-bone-mute">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Trade-in
           </RevealOnView>
           <RevealOnView
             as="div"
+            variant="blur"
             delay={120}
             className="mt-6 font-display font-semibold tracking-tightest text-balance text-bone"
           >
@@ -48,7 +49,7 @@ export default function TradeIn() {
 
         <div className="grid grid-cols-1 gap-px overflow-hidden border border-bone/12 bg-bone/10 sm:grid-cols-2">
           {STEPS.map((s, i) => (
-            <RevealOnView key={s.n} delay={140 + i * 90} className="bg-ink-panel">
+            <RevealOnView key={s.n} variant="slide-right" delay={140 + i * 90} className="bg-ink-panel">
               <div className="flex h-full flex-col gap-4 p-7">
                 <span className="font-display text-3xl font-semibold tracking-tightest text-bone/20">
                   {s.n}
