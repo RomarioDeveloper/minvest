@@ -3,6 +3,7 @@
 import {
   motion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
@@ -98,45 +99,9 @@ function useMobileViewport() {
 
 export default function HorizontalAdvantages() {
   const isMobile = useMobileViewport();
+  // Until the viewport is known (SSR / first paint) render the lighter mobile variant.
+  const mobile = isMobile !== false;
 
-  // JS-driven scroll scrubbing stutters on phones (async touch scroll +
-  // per-frame style writes), so mobile gets native swipe with scroll-snap.
-  if (isMobile !== false) return <MobileAdvantages />;
-
-  return <DesktopAdvantages />;
-}
-
-function Heading() {
-  return (
-    <div className="px-6 pb-8 sm:px-10 lg:px-16">
-      <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-      <h2
-        className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-        style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-      >
-        Почему выбирают
-        <span className="text-bone-mute"> Malaysary Invest.</span>
-      </h2>
-    </div>
-  );
-}
-
-function MobileAdvantages() {
-  return (
-    <section id="advantages" className="bg-ink-deep py-20">
-      <Heading />
-      <div
-        className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {ADVANTAGES.map((a) => (
-          <StaticCard key={a.index} a={a} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DesktopAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [endX, setEndX] = useState(0);
@@ -150,14 +115,26 @@ function DesktopAdvantages() {
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, []);
+  }, [mobile]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, endX]);
+  // On phones touch scrolling fires uneven, coalesced scroll events, so raw
+  // progress produces visible steps. A spring resamples it every frame on the
+  // animation loop, turning those steps into one continuous glide. Desktop
+  // already gets smooth deltas from Lenis, so it stays raw (1:1 with wheel).
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    mass: 0.4,
+    restDelta: 0.0005,
+  });
+  const progress = mobile ? smoothProgress : scrollYProgress;
+
+  const x = useTransform(progress, [0, 1], [0, endX]);
 
   return (
     <section
@@ -167,16 +144,31 @@ function DesktopAdvantages() {
       style={{ height: `${CARD_COUNT * 55}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <Heading />
+        <div className="px-6 pb-8 sm:px-10 lg:px-16">
+          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          <h2
+            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+          >
+            Почему выбирают
+            <span className="text-bone-mute"> Malaysary Invest.</span>
+          </h2>
+        </div>
 
         <motion.div
           ref={trackRef}
           style={{ x }}
           className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
         >
-          {ADVANTAGES.map((a, i) => (
-            <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
-          ))}
+          {ADVANTAGES.map((a, i) =>
+            mobile ? (
+              // Static cards on mobile: per-card scroll-linked transforms
+              // (7 motion values x 9 cards) are what caused the jank.
+              <StaticCard key={a.index} a={a} />
+            ) : (
+              <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
+            ),
+          )}
         </motion.div>
       </div>
     </section>
@@ -255,7 +247,7 @@ function StaticCard({ a }: { a: Advantage }) {
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
