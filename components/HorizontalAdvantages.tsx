@@ -110,8 +110,12 @@ export default function HorizontalAdvantages() {
 
   useEffect(() => {
     const measure = () => {
-      if (!trackRef.current) return;
-      const overflow = trackRef.current.scrollWidth - window.innerWidth;
+      if (!trackRef.current || !sectionRef.current) return;
+      // Calculate the maximum scroll distance so the last card aligns with the right edge
+      // of the container (which is max-w-7xl + padding).
+      const trackWidth = trackRef.current.scrollWidth;
+      const containerWidth = trackRef.current.parentElement?.offsetWidth || window.innerWidth;
+      const overflow = trackWidth - containerWidth;
       setEndX(overflow > 0 ? -overflow : 0);
     };
     measure();
@@ -137,15 +141,14 @@ export default function HorizontalAdvantages() {
   const progress = mobile ? smoothProgress : scrollYProgress;
 
   const stepped = useTransform(progress, (v) => steppedProgress(v, CARD_COUNT, 0.62));
-  const x = useTransform(stepped, (v) => v * endX);
+  const x = useTransform(progress, (v) => v * endX);
 
   return (
     <section
       id="advantages"
       ref={sectionRef}
-      data-scroll-snap-steps={CARD_COUNT}
       className="relative bg-ink-deep"
-      style={{ height: `${CARD_COUNT * 55}vh` }}
+      style={{ height: `${CARD_COUNT * 40}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
@@ -159,11 +162,12 @@ export default function HorizontalAdvantages() {
           </h2>
         </div>
 
-        <motion.div
-          ref={trackRef}
-          style={{ x }}
-          className="flex gap-5 px-[6vw] will-change-transform sm:gap-6 sm:px-[calc(50vw-260px)]"
-        >
+        <div className="mx-auto w-full max-w-7xl overflow-hidden">
+          <motion.div
+            ref={trackRef}
+            style={{ x }}
+            className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
+          >
           {ADVANTAGES.map((a, i) =>
             mobile ? (
               // Static cards on mobile: per-card scroll-linked transforms
