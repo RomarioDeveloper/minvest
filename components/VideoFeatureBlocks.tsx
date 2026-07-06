@@ -27,11 +27,69 @@ export default function VideoFeatureBlocks() {
         title="Экибастузский кирпич"
         video="/16744999619190.mp4"
       />
-      <FeatureBlock
+      <SplitFeatureBlock
         title="Объекты которые находятся на этапе ввода в эксплуатацию"
-        video="/16745042872950.mp4"
+        video="/objects-commissioning.mp4"
       />
     </div>
+  );
+}
+
+function SplitFeatureBlock({ title, video }: BlockProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const videoY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.12]);
+  const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["40px", "0px", "-20px", "-60px"]);
+  const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
+
+  return (
+    <section
+      ref={sectionRef}
+      data-scroll-snap
+      className="relative flex h-[100svh] min-h-[560px] w-full flex-col md:flex-row overflow-hidden bg-ink"
+    >
+      {/* Mobile background video */}
+      <motion.div
+        className="absolute inset-0 will-change-transform md:hidden"
+        style={{ y: videoY, scale: videoScale }}
+      >
+        <BackgroundVideo src={video} />
+      </motion.div>
+
+      {/* Mobile gradient wash */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent md:hidden" />
+
+      {/* Text Container */}
+      <div className="relative z-10 flex h-full w-full items-end p-6 sm:p-10 md:w-1/2 md:items-center md:p-16 lg:p-24">
+        <motion.div
+          className="max-w-4xl will-change-transform"
+          style={{ y: copyY, opacity: copyOpacity }}
+        >
+          <h2
+            className="font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(32px, 4vw, 64px)", lineHeight: 0.98 }}
+          >
+            {title}
+          </h2>
+        </motion.div>
+      </div>
+
+      {/* Desktop Video Container */}
+      <div className="relative hidden h-full w-1/2 overflow-hidden md:block">
+        <motion.div
+          className="absolute inset-0 will-change-transform"
+          style={{ y: videoY, scale: videoScale }}
+        >
+          <BackgroundVideo src={video} />
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
