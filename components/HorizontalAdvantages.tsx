@@ -166,15 +166,13 @@ export default function HorizontalAdvantages() {
         </h2>
       </div>
 
-      {WIDE_ADVANTAGES.map((a, i) => (
+      {WIDE_ADVANTAGES.map((a) => (
         <AdvantageWideBlock
           key={a.index}
-          index={a.index}
           title={a.title}
           body={a.body}
           video={a.video!}
           videoPosition={a.videoPosition}
-          reverse={i % 2 === 1}
         />
       ))}
 

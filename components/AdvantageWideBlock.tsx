@@ -4,21 +4,17 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 type Props = {
-  index: string;
   title: string;
   body: string;
   video: string;
   videoPosition?: string;
-  reverse?: boolean;
 };
 
 export default function AdvantageWideBlock({
-  index,
   title,
   body,
   video,
   videoPosition = "center",
-  reverse = false,
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -27,49 +23,48 @@ export default function AdvantageWideBlock({
     offset: ["start end", "end start"],
   });
 
-  const videoY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
-  const copyY = useTransform(scrollYProgress, [0, 0.3, 1], [40, 0, -30]);
-  const copyOpacity = useTransform(scrollYProgress, [0.08, 0.25, 0.85, 1], [0, 1, 1, 0]);
+  const videoY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.12]);
+  const washOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.55, 0.8, 0.8, 0.55]);
+  const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["32px", "0px", "-12px", "-40px"]);
+  const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full border-t border-bone/10 bg-ink-deep"
+      className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink"
     >
-      <div
-        className={`mx-auto flex max-w-[1600px] flex-col lg:min-h-[85svh] lg:flex-row lg:items-stretch ${
-          reverse ? "lg:flex-row-reverse" : ""
-        }`}
+      <motion.div
+        className="absolute inset-0 will-change-transform"
+        style={{ y: videoY, scale: videoScale }}
       >
-        <div className="flex items-start gap-6 px-6 pt-10 sm:px-10 lg:w-[52%] lg:px-16 lg:py-16">
-          <span className="hidden shrink-0 font-display text-5xl font-semibold tracking-tightest text-bone/20 lg:block lg:text-6xl">
-            {index}
-          </span>
+        <WideBlockVideo src={video} objectPosition={videoPosition} />
+      </motion.div>
 
-          <motion.div
-            style={{ y: videoY, scale: videoScale }}
-            className="relative aspect-[16/10] w-full overflow-hidden will-change-transform lg:aspect-auto lg:min-h-[420px] lg:flex-1"
-          >
-            <WideBlockVideo src={video} objectPosition={videoPosition} />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-deep/30 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-ink-deep/20" />
-          </motion.div>
-        </div>
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          opacity: washOpacity,
+          background:
+            "linear-gradient(to top, rgba(8,8,10,0.92) 0%, rgba(8,8,10,0.35) 42%, rgba(8,8,10,0) 68%)",
+        }}
+      />
 
+      <div className="relative z-10 flex h-full w-full items-end p-6 sm:p-10 lg:p-16">
         <motion.div
+          className="max-w-2xl will-change-transform"
           style={{ y: copyY, opacity: copyOpacity }}
-          className="flex flex-1 flex-col justify-center px-6 pb-12 pt-8 will-change-transform sm:px-10 lg:px-16 lg:py-16"
         >
-          <span className="font-display text-5xl font-semibold tracking-tightest text-bone/15 lg:hidden">
-            {index}
-          </span>
           <h3
-            className="mt-4 font-display font-semibold tracking-tightest text-balance text-bone lg:mt-0"
-            style={{ fontSize: "clamp(28px, 3.8vw, 52px)", lineHeight: 1.05 }}
+            className="font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(32px, 5.5vw, 72px)", lineHeight: 0.98 }}
           >
             {title}
           </h3>
-          <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">
+          <p
+            className="mt-5 max-w-xl text-pretty text-bone-soft"
+            style={{ fontSize: "clamp(15px, 1.15vw, 18px)", lineHeight: 1.6 }}
+          >
             {body}
           </p>
         </motion.div>
