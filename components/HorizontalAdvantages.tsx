@@ -148,7 +148,7 @@ export default function HorizontalAdvantages() {
       style={{ height: `${CARD_COUNT * 55}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="px-6 pb-8 sm:px-10 lg:px-16">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
           <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
           <h2
             className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
@@ -162,7 +162,7 @@ export default function HorizontalAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
+          className="flex gap-5 px-[6vw] will-change-transform sm:gap-6 sm:px-[calc(50vw-260px)]"
         >
           {ADVANTAGES.map((a, i) =>
             mobile ? (
