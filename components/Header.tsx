@@ -6,17 +6,27 @@ import { useEffect, useState } from "react";
 export default function Header() {
   const { scrollY } = useScroll();
   const [isMounted, setIsMounted] = useState(false);
+  const [threshold, setThreshold] = useState(1000);
 
   useEffect(() => {
     setIsMounted(true);
+    const updateThreshold = () => {
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      // BrandFilm is 300vh on mobile, 520vh on desktop
+      // We want the header to appear after this section finishes
+      setThreshold(window.innerHeight * (isMobile ? 3 : 5.2));
+    };
+    updateThreshold();
+    window.addEventListener("resize", updateThreshold);
+    return () => window.removeEventListener("resize", updateThreshold);
   }, []);
 
-  // Fade in header after scrolling past 100px
-  const opacity = useTransform(scrollY, [100, 300], [0, 1]);
+  // Fade in header after scrolling past the BrandFilm section
+  const opacity = useTransform(scrollY, [threshold - 100, threshold + 100], [0, 1]);
   // Slide down slightly
-  const y = useTransform(scrollY, [100, 300], [-20, 0]);
+  const y = useTransform(scrollY, [threshold - 100, threshold + 100], [-20, 0]);
   // Only apply pointer events when visible
-  const pointerEvents = useTransform(scrollY, (val) => (val > 150 ? "auto" : "none"));
+  const pointerEvents = useTransform(scrollY, (val) => (val > threshold ? "auto" : "none"));
 
   return (
     <motion.header
@@ -27,10 +37,6 @@ export default function Header() {
         pointerEvents: isMounted ? pointerEvents : "none",
       }}
     >
-      {/* Background blur that fades in */}
-      <div className="absolute inset-0 -z-10 bg-ink/40 backdrop-blur-md" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/80 to-transparent" />
-
       <a href="#top" className="relative flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
         <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
         <span className="hidden sm:inline">MALAYSARY INVEST</span>
