@@ -43,12 +43,15 @@ export default function MalaysaryMap() {
         }
       ).addTo(map);
 
-      const markerIcon = L.icon({
-        iconUrl: "/map-marker.png",
-        iconRetinaUrl: "/map-marker@2x.png",
-        iconSize: [56, 56],
-        iconAnchor: [28, 28],
-        popupAnchor: [0, -30],
+      const markerHeight = 24;
+      const markerWidth = Math.round(markerHeight * (187 / 120));
+
+      const markerIcon = L.divIcon({
+        className: "",
+        html: `<img src="/logo-mark.webp" alt="" width="${markerWidth}" height="${markerHeight}" draggable="false" style="display:block;filter:drop-shadow(0 1px 4px rgba(0,0,0,.45));" />`,
+        iconSize: [markerWidth, markerHeight],
+        iconAnchor: [markerWidth / 2, markerHeight / 2],
+        popupAnchor: [0, -Math.round(markerHeight / 2) - 4],
       });
 
       const bounds = L.latLngBounds([]);
