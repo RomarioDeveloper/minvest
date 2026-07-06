@@ -221,10 +221,6 @@ export default function LayoutScrollBlock({
               Листайте вниз, чтобы посмотреть варианты планировок. Свободная планировка,
               продуманные метражи и комфортные решения для разного образа жизни.
             </p>
-            <div className="mt-8 hidden items-center gap-3 text-[11px] font-semibold uppercase tracking-widest text-current opacity-40 transition-colors duration-1000 lg:flex">
-              <span className="inline-block h-px w-10 bg-current opacity-20" />
-              Листайте для просмотра
-            </div>
           </div>
         </div>
       </div>
