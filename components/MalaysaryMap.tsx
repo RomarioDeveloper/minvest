@@ -2,14 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
+/** Координаты совпадают с филиалами Malaysary Invest в 2ГИС. */
 const LOCATIONS = [
-  { lat: 52.2871, lng: 76.9638, label: "Дюсенова, 304", address: "ул. Дюсенова, 304" },
-  { lat: 52.2855, lng: 76.9620, label: "Дюсенова, 306", address: "ул. Дюсенова, 306" },
-  { lat: 52.2777, lng: 76.9445, label: "Горького, 46",  address: "ул. Горького, 46" },
-  { lat: 52.2703, lng: 76.9515, label: "Естая, 90",     address: "ул. Естая, 90" },
-  { lat: 52.2610, lng: 76.9480, label: "Бектурова, 348", address: "ул. Бектурова, 348" },
-  { lat: 52.2595, lng: 76.9460, label: "Бектурова, 356", address: "ул. Бектурова, 356" },
-  { lat: 52.283833, lng: 77.001001, label: "Офис продаж", address: "ул. Луначарского, 10, 2 этаж" },
+  { lat: 52.261471, lng: 76.947641, label: "Дюсенова, 304", address: "ул. Генерала Дюсенова, 304" },
+  { lat: 52.260749, lng: 76.947619, label: "Дюсенова, 306", address: "ул. Генерала Дюсенова, 306" },
+  { lat: 52.271532, lng: 76.945941, label: "Горького, 46", address: "ул. Горького, 46" },
+  { lat: 52.281397, lng: 76.954259, label: "Естая, 90", address: "ул. Естая, 90" },
+  { lat: 52.261685, lng: 76.949892, label: "Бектурова, 348", address: "ул. Академика Бектурова, 348" },
+  { lat: 52.261449, lng: 76.949094, label: "Бектурова, 356", address: "ул. Академика Бектурова, 356" },
+  { lat: 52.277323, lng: 76.941557, label: "Офис продаж", address: "ул. Луначарского, 10, 2 этаж" },
 ];
 
 export default function MalaysaryMap() {
@@ -23,17 +24,8 @@ export default function MalaysaryMap() {
     import("leaflet").then((L) => {
       if (!mapRef.current || mapInstanceRef.current) return;
 
-      // Fix default marker icons for Next.js
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      });
-
       const map = L.map(mapRef.current!, {
-        center: [52.276, 76.965], // Смещенный центр, чтобы было видно и объекты, и офис
+        center: [52.271, 76.948],
         zoom: 13,
         zoomControl: true,
         scrollWheelZoom: false,
@@ -51,70 +43,20 @@ export default function MalaysaryMap() {
         }
       ).addTo(map);
 
-      // Custom SVG marker icon (houses for objects, special icon for office)
-      const getCustomIcon = (isOffice: boolean) => L.divIcon({
-        className: "",
-        html: isOffice ? `
-          <div style="
-            width: 32px;
-            height: 32px;
-            background: #d4af37;
-            border: 2px solid rgba(212,175,55,0.3);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          ">
-            <div style="
-              width: 12px;
-              height: 12px;
-              background: #08080a;
-              border-radius: 50%;
-              transform: rotate(45deg);
-            "></div>
-          </div>
-        ` : `
-          <div style="
-            width: 24px;
-            height: 24px;
-            background: #f4f4f5;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-          ">
-            <!-- Треугольник снизу (указатель) -->
-            <div style="
-              position: absolute;
-              bottom: -4px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 0;
-              height: 0;
-              border-left: 5px solid transparent;
-              border-right: 5px solid transparent;
-              border-top: 5px solid #f4f4f5;
-            "></div>
-            <!-- Иконка домика внутри -->
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#08080a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </div>
-        `,
-        iconSize: isOffice ? [32, 32] : [24, 24],
-        iconAnchor: isOffice ? [16, 32] : [12, 28],
-        popupAnchor: [0, -32],
+      const markerIcon = L.icon({
+        iconUrl: "/map-marker.png",
+        iconRetinaUrl: "/map-marker@2x.png",
+        iconSize: [56, 56],
+        iconAnchor: [28, 28],
+        popupAnchor: [0, -30],
       });
 
+      const bounds = L.latLngBounds([]);
+
       LOCATIONS.forEach((loc) => {
-        const isOffice = loc.label === "Офис продаж";
-        const marker = L.marker([loc.lat, loc.lng], { icon: getCustomIcon(isOffice) });
+        const marker = L.marker([loc.lat, loc.lng], { icon: markerIcon });
         marker.addTo(map);
+        bounds.extend([loc.lat, loc.lng]);
         marker.bindPopup(
           `<div style="font-family:sans-serif;min-width:160px;">
             <div style="font-weight:700;font-size:13px;color:#08080a;margin-bottom:4px;">${loc.label}</div>
@@ -123,6 +65,8 @@ export default function MalaysaryMap() {
           { closeButton: false }
         );
       });
+
+      map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
     });
 
     return () => {
