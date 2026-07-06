@@ -272,4 +272,12 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(244, 244, 245, 0.4);
   }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
