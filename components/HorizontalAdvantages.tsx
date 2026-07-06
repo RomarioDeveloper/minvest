@@ -53,7 +53,7 @@ const ADVANTAGES: Advantage[] = [
     title: "Коммерческие помещения",
     body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
     icon: IconStore,
-    video: "/16745019476598.mp4",
+    video: "/commercial.mp4",
   },
   {
     index: "06",
