@@ -38,14 +38,14 @@ const ADVANTAGES: Advantage[] = [
     title: "Удобные планировки",
     body: "Удобные и функциональные планировки квартир.",
     icon: IconLayout,
-    video: "/16745042872950.mp4",
+    video: "/sleek-modern-kitchen-interior-design-2025-12-17-13-06-28-utc.mp4",
   },
   {
     index: "04",
     title: "Гаражи и парковки",
     body: "Собственные гаражи и парковочные решения.",
     icon: IconGarage,
-    video: "/16745051196022.mp4",
+    video: "/car-parked-crooked-in-empty-parking-lot-aerial-2025-12-17-21-25-21-utc.mp4",
     videoPosition: "center top",
   },
   {
