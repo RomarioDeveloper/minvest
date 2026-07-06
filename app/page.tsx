@@ -443,7 +443,7 @@ export default function HomePage() {
               <img
                 src="/logo-light.webp"
                 alt="Malaysary Invest"
-                className="h-10 md:h-12 w-auto opacity-90"
+                className="h-14 md:h-[68px] w-auto opacity-90"
               />
               <div className="mt-6 text-[9px] uppercase tracking-[0.2em] text-bone-dim/50 text-center">
                 Застройщик комфортной среды
