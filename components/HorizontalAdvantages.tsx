@@ -99,42 +99,56 @@ function useMobileViewport() {
 }
 
 export default function HorizontalAdvantages() {
-  const isMobile = useMobileViewport();
-  // Until the viewport is known (SSR / first paint) render the lighter mobile variant.
-  const mobile = isMobile !== false;
-
+  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
 
-  const { scrollXProgress } = useScroll({
-    container: trackRef,
+  useEffect(() => {
+    const measure = () => {
+      if (trackRef.current) {
+        setScrollRange(trackRef.current.scrollWidth - window.innerWidth);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
   });
 
-  return (
-    <section id="advantages" className="relative bg-ink-deep py-24 sm:py-32">
-      <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
 
-      <div className="mx-auto w-full max-w-7xl overflow-hidden">
-        <div
-          ref={trackRef}
-          className="flex gap-5 overflow-x-auto px-6 pb-12 pt-4 snap-x snap-mandatory hide-scrollbar sm:gap-6 sm:px-10 lg:px-16"
-        >
-          {ADVANTAGES.map((a, i) =>
-            mobile ? (
-              <StaticCard key={a.index} a={a} />
-            ) : (
-              <Card key={a.index} a={a} cardIndex={i} scrollProgress={scrollXProgress} />
-            ),
-          )}
+  return (
+    <section
+      id="advantages"
+      ref={sectionRef}
+      className="relative bg-ink-deep"
+      style={{ height: `${CARD_COUNT * 40}vh` }}
+    >
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
+          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          <h2
+            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+          >
+            Почему выбирают
+            <span className="text-bone-mute"> Malaysary Invest.</span>
+          </h2>
         </div>
+
+        <motion.div
+          ref={trackRef}
+          style={{ x }}
+          className="flex gap-5 px-[6vw] sm:gap-6 sm:px-[calc(50vw-260px)] will-change-transform"
+        >
+          {ADVANTAGES.map((a, i) => (
+            <Card key={a.index} a={a} cardIndex={i} scrollProgress={scrollYProgress} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
@@ -169,7 +183,7 @@ function Card({
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
@@ -212,7 +226,7 @@ function StaticCard({ a }: { a: Advantage }) {
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
