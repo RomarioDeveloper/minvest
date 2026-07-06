@@ -25,7 +25,7 @@ export default function HomePage() {
       {/* ---------- NAV ---------- */}
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 backdrop-blur-[2px] sm:px-10">
         <a href="#top" className="flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
-          <img src="/logo-mark.png" alt="" aria-hidden className="h-8 w-auto" />
+          <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
           <span className="hidden sm:inline">MALAYSARY INVEST</span>
           <span className="sm:hidden">MALAYSARY</span>
         </a>
