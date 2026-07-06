@@ -184,7 +184,7 @@ export default function LayoutScrollBlock({
       ref={sectionRef}
       data-scroll-snap-step-vh={mobile ? 70 : 75}
       id="layouts"
-      className="relative w-full bg-ink"
+      className="relative w-full bg-transparent"
       style={{ height: `${sectionVh}dvh` }}
       aria-label="Планировки квартир, управляемые скроллом"
     >
@@ -192,7 +192,7 @@ export default function LayoutScrollBlock({
         <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 pb-8 pt-24 sm:px-10 lg:flex-row lg:items-center lg:gap-12 lg:px-16 lg:py-24">
           {/* On phones the canvas goes full-bleed and takes all free height;
               on lg it returns to the framed 16:9 column next to the text. */}
-          <div className="relative -mx-6 min-h-0 flex-1 overflow-hidden border-y border-bone/10 bg-[#050506] sm:-mx-10 lg:mx-0 lg:aspect-[16/9] lg:w-full lg:flex-[1.35] lg:border">
+          <div className="relative -mx-6 min-h-0 flex-1 overflow-hidden border-y border-current/10 bg-[#050506] sm:-mx-10 lg:mx-0 lg:aspect-[16/9] lg:w-full lg:flex-[1.35] lg:border transition-colors duration-1000">
             {ready && framePoster && !frameReady && (
               <img
                 src={framePoster}
@@ -206,23 +206,23 @@ export default function LayoutScrollBlock({
           </div>
 
           <div className="mt-6 flex flex-col justify-center lg:mt-0 lg:flex-1">
-            <div className="text-eyebrow uppercase text-bone-mute">Планировки</div>
+            <div className="text-eyebrow uppercase text-current opacity-60 transition-colors duration-1000">Планировки</div>
             <h2
-              className="mt-4 font-display font-semibold tracking-tightest text-bone lg:mt-5"
+              className="mt-4 font-display font-semibold tracking-tightest text-current transition-colors duration-1000 lg:mt-5"
               style={{ fontSize: "clamp(28px, 3.8vw, 52px)", lineHeight: 1.02 }}
             >
               Самые удобные
               <br />
               квадратуры и гибкие
               <br />
-              <span className="text-bone-mute">планировки.</span>
+              <span className="opacity-50">планировки.</span>
             </h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-bone-soft lg:mt-6">
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-current opacity-70 transition-colors duration-1000 lg:mt-6">
               Листайте вниз, чтобы посмотреть варианты планировок. Свободная планировка,
               продуманные метражи и комфортные решения для разного образа жизни.
             </p>
-            <div className="mt-8 hidden items-center gap-3 text-[11px] font-semibold uppercase tracking-widest text-bone/40 lg:flex">
-              <span className="inline-block h-px w-10 bg-bone/20" />
+            <div className="mt-8 hidden items-center gap-3 text-[11px] font-semibold uppercase tracking-widest text-current opacity-40 transition-colors duration-1000 lg:flex">
+              <span className="inline-block h-px w-10 bg-current opacity-20" />
               Листайте для просмотра
             </div>
           </div>
