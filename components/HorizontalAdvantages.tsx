@@ -24,14 +24,14 @@ const ADVANTAGES: Advantage[] = [
     title: "Бесшумные лифты",
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
-    video: "/16744999619190.mp4",
+    video: "/01.mp4",
   },
   {
     index: "02",
     title: "Трёхкамерные окна",
     body: "Трёхкамерные окна с высокой тепло- и шумоизоляцией.",
     icon: IconWindow,
-    video: "/16745009121910.mp4",
+    video: "/okna.mp4",
   },
   {
     index: "03",
