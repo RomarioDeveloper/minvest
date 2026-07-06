@@ -81,6 +81,7 @@ const ADVANTAGES: Advantage[] = [
     title: "Приватность и безопасность",
     body: "Продуманная система приватности и безопасности для жителей.",
     icon: IconShield,
+    video: "/security-guard.mp4",
   },
 ];
 
