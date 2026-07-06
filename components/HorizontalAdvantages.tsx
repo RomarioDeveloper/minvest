@@ -3,11 +3,9 @@
 import {
   motion,
   useScroll,
-  useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { steppedProgress } from "@/lib/scrollStep";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -105,80 +103,38 @@ export default function HorizontalAdvantages() {
   // Until the viewport is known (SSR / first paint) render the lighter mobile variant.
   const mobile = isMobile !== false;
 
-  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [endX, setEndX] = useState(0);
 
-  useEffect(() => {
-    const measure = () => {
-      if (!trackRef.current || !sectionRef.current) return;
-      // Calculate the maximum scroll distance so the last card aligns with the right edge
-      // of the container (which is max-w-7xl + padding).
-      const trackWidth = trackRef.current.scrollWidth;
-      const containerWidth = trackRef.current.parentElement?.offsetWidth || window.innerWidth;
-      const overflow = trackWidth - containerWidth;
-      setEndX(overflow > 0 ? -overflow : 0);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [mobile]);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
+  const { scrollXProgress } = useScroll({
+    container: trackRef,
   });
-
-  // On phones touch scrolling fires uneven, coalesced scroll events, so raw
-  // progress produces visible steps. A spring resamples it every frame on the
-  // animation loop, turning those steps into one continuous glide. Desktop
-  // already gets smooth deltas from Lenis, so it stays raw (1:1 with wheel).
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.4,
-    restDelta: 0.0005,
-  });
-  const progress = mobile ? smoothProgress : scrollYProgress;
-
-  const stepped = useTransform(progress, (v) => steppedProgress(v, CARD_COUNT, 0.62));
-  const x = useTransform(progress, (v) => v * endX);
 
   return (
-    <section
-      id="advantages"
-      ref={sectionRef}
-      className="relative bg-ink-deep"
-      style={{ height: `${CARD_COUNT * 40}vh` }}
-    >
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
-          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-          <h2
-            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-          >
-            Почему выбирают
-            <span className="text-bone-mute"> Malaysary Invest.</span>
-          </h2>
-        </div>
+    <section id="advantages" className="relative bg-ink-deep py-24 sm:py-32">
+      <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
+        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+        <h2
+          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+        >
+          Почему выбирают
+          <span className="text-bone-mute"> Malaysary Invest.</span>
+        </h2>
+      </div>
 
-        <div className="mx-auto w-full max-w-7xl overflow-hidden">
-          <motion.div
-            ref={trackRef}
-            style={{ x }}
-            className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
-          >
+      <div className="mx-auto w-full max-w-7xl overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex gap-5 overflow-x-auto px-6 pb-12 pt-4 snap-x snap-mandatory hide-scrollbar sm:gap-6 sm:px-10 lg:px-16"
+        >
           {ADVANTAGES.map((a, i) =>
             mobile ? (
-              // Static cards on mobile: per-card scroll-linked transforms
-              // (7 motion values x 9 cards) are what caused the jank.
               <StaticCard key={a.index} a={a} />
             ) : (
-              <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
+              <Card key={a.index} a={a} cardIndex={i} scrollProgress={scrollXProgress} />
             ),
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -187,16 +143,16 @@ export default function HorizontalAdvantages() {
 function Card({
   a,
   cardIndex,
-  scrollYProgress,
+  scrollProgress,
 }: {
   a: Advantage;
   cardIndex: number;
-  scrollYProgress: MotionValue<number>;
+  scrollProgress: MotionValue<number>;
 }) {
-  const spread = 0.11;
+  const spread = 0.15;
   const peak = cardIndex / Math.max(1, CARD_COUNT - 1);
 
-  const active = useTransform(scrollYProgress, (v) => {
+  const active = useTransform(scrollProgress, (v) => {
     const t = 1 - Math.min(1, Math.abs(v - peak) / spread);
     return t;
   });
@@ -213,7 +169,7 @@ function Card({
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
@@ -256,7 +212,7 @@ function StaticCard({ a }: { a: Advantage }) {
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 snap-center flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
         {a.index}
       </div>
