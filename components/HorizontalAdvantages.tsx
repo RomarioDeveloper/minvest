@@ -67,6 +67,7 @@ const ADVANTAGES: Advantage[] = [
     title: "Системы Face ID",
     body: "Системы Face ID в премиальных проектах.",
     icon: IconFaceId,
+    video: "/face-id.mp4",
   },
   {
     index: "08",
