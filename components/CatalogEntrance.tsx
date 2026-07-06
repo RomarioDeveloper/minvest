@@ -1,14 +1,19 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 
 export default function CatalogEntrance() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const [isLight, setIsLight] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    offset: ["start 65%", "end 35%"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setIsLight(latest > 0.05 && latest < 0.95);
   });
 
   // Parallax effects inside the image
@@ -16,22 +21,13 @@ export default function CatalogEntrance() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    <section ref={containerRef} data-scroll-snap className="relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28 bg-ink">
-      {/* 
-        The split background.
-        We animate the beige background dropping down from the top on scroll.
-      */}
-      <div className="absolute inset-0 z-0 flex flex-col pointer-events-none">
-        <motion.div 
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-          viewport={{ once: true, margin: "-10%" }}
-          className="h-[55%] w-full bg-[#e3dfd7] origin-top" 
-        />
-        {/* Bottom dark section remains inherited from bg-ink */}
-      </div>
-
+    <section 
+      ref={containerRef} 
+      data-scroll-snap 
+      className={`relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28 transition-colors duration-1000 ${
+        isLight ? "bg-[#efeae3]" : "bg-ink"
+      }`}
+    >
       <div className="relative z-10 mx-auto w-full px-4 sm:px-6 lg:px-12">
         <div className="flex w-full items-center justify-center">
           
@@ -47,7 +43,11 @@ export default function CatalogEntrance() {
             >
               <a 
                 href="#objects" 
-                className="whitespace-nowrap border border-bone/30 px-8 py-4 text-[11px] font-semibold uppercase tracking-widest text-bone transition hover:border-bone hover:bg-bone hover:text-ink backdrop-blur-sm"
+                className={`whitespace-nowrap border px-8 py-4 text-[11px] font-semibold uppercase tracking-widest transition duration-700 backdrop-blur-sm ${
+                  isLight 
+                    ? "border-ink/30 text-ink hover:bg-ink hover:text-bone" 
+                    : "border-bone/30 text-bone hover:bg-bone hover:text-ink"
+                }`}
                 style={{ marginTop: '20%' }}
               >
                 Подбор по параметрам
@@ -68,7 +68,7 @@ export default function CatalogEntrance() {
                 className="absolute inset-0 h-full w-full object-cover"
                 style={{ scale: imageScale, y: imageY }}
               />
-              <div className="absolute inset-0 bg-black/25 transition-opacity hover:bg-black/10" /> 
+              <div className={`absolute inset-0 transition-colors duration-1000 ${isLight ? "bg-white/30" : "bg-black/25 hover:bg-black/10"}`} /> 
               
               {/* Overlay Text */}
               <motion.div 
@@ -79,7 +79,9 @@ export default function CatalogEntrance() {
                 className="pointer-events-none absolute inset-0 flex items-center justify-center text-center"
               >
                 <h2 
-                  className="font-display font-semibold uppercase tracking-tight text-bone drop-shadow-lg"
+                  className={`font-display font-semibold uppercase tracking-tight transition-colors duration-1000 ${
+                    isLight ? "text-ink drop-shadow-md" : "text-bone drop-shadow-lg"
+                  }`}
                   style={{ fontSize: "clamp(30px, 5vw, 84px)", lineHeight: 0.95 }}
                 >
                   Выберите свою
@@ -99,7 +101,11 @@ export default function CatalogEntrance() {
             >
               <a 
                 href="#objects" 
-                className="whitespace-nowrap border border-bone/30 px-8 py-4 text-[11px] font-semibold uppercase tracking-widest text-bone transition hover:border-bone hover:bg-bone hover:text-ink backdrop-blur-sm"
+                className={`whitespace-nowrap border px-8 py-4 text-[11px] font-semibold uppercase tracking-widest transition duration-700 backdrop-blur-sm ${
+                  isLight 
+                    ? "border-ink/30 text-ink hover:bg-ink hover:text-bone" 
+                    : "border-bone/30 text-bone hover:bg-bone hover:text-ink"
+                }`}
                 style={{ marginTop: '20%' }}
               >
                 Выбор на генплане
@@ -119,13 +125,21 @@ export default function CatalogEntrance() {
         >
           <a 
             href="#objects" 
-            className="flex w-full sm:w-auto items-center justify-center border border-bone/20 bg-ink px-8 py-4 text-[11px] font-semibold uppercase tracking-widest text-bone transition hover:bg-bone hover:text-ink"
+            className={`flex w-full sm:w-auto items-center justify-center border px-8 py-4 text-[11px] font-semibold uppercase tracking-widest transition duration-700 ${
+              isLight
+                ? "border-ink/20 bg-[#efeae3] text-ink hover:bg-ink hover:text-bone"
+                : "border-bone/20 bg-ink text-bone hover:bg-bone hover:text-ink"
+            }`}
           >
             Подбор по параметрам
           </a>
           <a 
             href="#objects" 
-            className="flex w-full sm:w-auto items-center justify-center border border-bone/20 bg-ink px-8 py-4 text-[11px] font-semibold uppercase tracking-widest text-bone transition hover:bg-bone hover:text-ink"
+            className={`flex w-full sm:w-auto items-center justify-center border px-8 py-4 text-[11px] font-semibold uppercase tracking-widest transition duration-700 ${
+              isLight
+                ? "border-ink/20 bg-[#efeae3] text-ink hover:bg-ink hover:text-bone"
+                : "border-bone/20 bg-ink text-bone hover:bg-bone hover:text-ink"
+            }`}
           >
             Выбор на генплане
           </a>
