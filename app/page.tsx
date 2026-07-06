@@ -16,6 +16,7 @@ import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import TwoUpVideo from "@/components/TwoUpVideo";
+import Header from "@/components/Header";
 
 export default function HomePage() {
   return (
@@ -23,27 +24,7 @@ export default function HomePage() {
       <ScrollProgressBar />
 
       {/* ---------- NAV ---------- */}
-      <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 backdrop-blur-[2px] sm:px-10">
-        <a href="#top" className="flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
-          <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
-          <span className="hidden sm:inline">MALAYSARY INVEST</span>
-          <span className="sm:hidden">MALAYSARY</span>
-        </a>
-        <nav className="hidden gap-7 text-eyebrow uppercase text-bone-soft lg:flex">
-          <a className="transition hover:text-bone" href="#objects">Объекты</a>
-          <a className="transition hover:text-bone" href="#advantages">Преимущества</a>
-          <a className="transition hover:text-bone" href="#construction">Конструктив</a>
-          <a className="transition hover:text-bone" href="#terms">Условия</a>
-          <a className="transition hover:text-bone" href="#company">О компании</a>
-          <a className="transition hover:text-bone" href="#contact">Контакты</a>
-        </nav>
-        <a
-          href="#contact"
-          className="border border-bone/20 px-4 py-2 text-eyebrow uppercase text-bone transition hover:border-bone hover:bg-bone hover:text-ink"
-        >
-          Бронь
-        </a>
-      </header>
+      <Header />
 
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
       <div id="top">
