@@ -86,11 +86,17 @@ export default function Preloader() {
       return;
     }
     type LenisLike = { stop: () => void; start: () => void };
-    const w = window as unknown as { __lenis?: LenisLike };
+    type SnapLike = { stop: () => void; start: () => void };
+    const w = window as unknown as { __lenis?: LenisLike; __lenisSnap?: SnapLike };
     const lenis = w.__lenis;
+    const snap = w.__lenisSnap;
     if (lenis) {
       lenis.stop();
-      return () => lenis.start();
+      snap?.stop();
+      return () => {
+        lenis.start();
+        snap?.start();
+      };
     }
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";

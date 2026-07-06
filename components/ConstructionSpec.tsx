@@ -50,6 +50,7 @@ export default function ConstructionSpec() {
   return (
     <section
       id="construction"
+      data-scroll-snap
       className="relative bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">

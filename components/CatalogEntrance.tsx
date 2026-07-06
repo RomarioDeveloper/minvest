@@ -16,7 +16,7 @@ export default function CatalogEntrance() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    <section ref={containerRef} className="relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28 bg-ink">
+    <section ref={containerRef} data-scroll-snap className="relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28 bg-ink">
       {/* 
         The split background.
         We animate the beige background dropping down from the top on scroll.

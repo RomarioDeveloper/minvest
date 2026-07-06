@@ -13,6 +13,7 @@ export default function TradeIn() {
   return (
     <section
       id="tradein"
+      data-scroll-snap
       className="relative overflow-hidden bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-2 lg:items-center">

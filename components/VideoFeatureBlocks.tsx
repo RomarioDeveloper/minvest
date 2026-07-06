@@ -52,6 +52,7 @@ function FeatureBlock({ title, video }: BlockProps) {
   return (
     <section
       ref={sectionRef}
+      data-scroll-snap
       className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink"
     >
       <motion.div

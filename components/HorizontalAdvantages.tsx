@@ -7,6 +7,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { steppedProgress } from "@/lib/scrollStep";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -134,12 +135,14 @@ export default function HorizontalAdvantages() {
   });
   const progress = mobile ? smoothProgress : scrollYProgress;
 
-  const x = useTransform(progress, [0, 1], [0, endX]);
+  const stepped = useTransform(progress, (v) => steppedProgress(v, CARD_COUNT, 0.62));
+  const x = useTransform(stepped, (v) => v * endX);
 
   return (
     <section
       id="advantages"
       ref={sectionRef}
+      data-scroll-snap-steps={CARD_COUNT}
       className="relative bg-ink-deep"
       style={{ height: `${CARD_COUNT * 55}vh` }}
     >

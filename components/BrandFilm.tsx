@@ -249,6 +249,7 @@ export default function BrandFilm({
   return (
     <section
       ref={sectionRef}
+      data-scroll-snap-step-vh={mobile ? 85 : 90}
       className="relative w-full bg-ink"
       style={{ height: `${sectionVh}dvh` }}
       aria-label="Видео о доме, управляемое скроллом"

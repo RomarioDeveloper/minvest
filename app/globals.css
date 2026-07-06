@@ -12,6 +12,23 @@
     overflow-anchor: none;
   }
 
+  html.scroll-snap-magnet {
+    scroll-behavior: auto;
+  }
+
+  @supports (scroll-snap-type: y proximity) {
+    @media (max-width: 767px), (pointer: coarse) {
+      html.scroll-snap-magnet {
+        scroll-snap-type: y proximity;
+      }
+
+      html.scroll-snap-magnet [data-scroll-snap] {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+      }
+    }
+  }
+
   html,
   body {
     background: #08080a;

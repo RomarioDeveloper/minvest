@@ -54,6 +54,7 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   return (
     <section
       ref={sectionRef}
+      data-scroll-snap
       className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-ink-deep"
     >
       <motion.div

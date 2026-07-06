@@ -103,6 +103,7 @@ export default function EditorialSpread({
   return (
     <section
       ref={sectionRef}
+      data-scroll-snap
       className={`relative w-full overflow-hidden bg-ink ${heightClasses[height]}`}
     >
       <div 

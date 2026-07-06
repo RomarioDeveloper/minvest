@@ -18,7 +18,7 @@ type Item = {
  */
 export default function TwoUpVideo({ left, right }: { left: Item; right: Item }) {
   return (
-    <section className="relative bg-ink">
+    <section className="relative bg-ink" data-scroll-snap>
       <div className="grid grid-cols-1 md:grid-cols-2">
         <Panel item={left} />
         <Panel item={right} />

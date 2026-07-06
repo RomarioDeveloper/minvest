@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Preloader from "@/components/Preloader";
 import ScrollRestoration from "@/components/ScrollRestoration";
+import ScrollSnapMagnet from "@/components/ScrollSnapMagnet";
 import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ScrollRestoration />
         <SmoothScroller />
+        <ScrollSnapMagnet />
         <Preloader />
         {children}
       </body>
