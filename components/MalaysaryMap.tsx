@@ -43,15 +43,15 @@ export default function MalaysaryMap() {
         }
       ).addTo(map);
 
-      const markerHeight = 24;
+      const markerHeight = 14;
       const markerWidth = Math.round(markerHeight * (187 / 120));
 
       const markerIcon = L.divIcon({
-        className: "",
-        html: `<img src="/logo-mark.webp" alt="" width="${markerWidth}" height="${markerHeight}" draggable="false" style="display:block;filter:drop-shadow(0 1px 4px rgba(0,0,0,.45));" />`,
+        className: "malaysary-map-pin",
+        html: `<img src="/logo-mark.webp" alt="" draggable="false" style="display:block;width:${markerWidth}px;height:${markerHeight}px;max-width:${markerWidth}px;max-height:${markerHeight}px;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));" />`,
         iconSize: [markerWidth, markerHeight],
         iconAnchor: [markerWidth / 2, markerHeight / 2],
-        popupAnchor: [0, -Math.round(markerHeight / 2) - 4],
+        popupAnchor: [0, -Math.round(markerHeight / 2) - 2],
       });
 
       const bounds = L.latLngBounds([]);
@@ -111,6 +111,13 @@ export default function MalaysaryMap() {
         }
         .leaflet-attribution-flag {
           display: none !important;
+        }
+        .malaysary-map-pin {
+          background: transparent !important;
+          border: none !important;
+        }
+        .malaysary-map-pin img {
+          pointer-events: none;
         }
       `}</style>
       <div
