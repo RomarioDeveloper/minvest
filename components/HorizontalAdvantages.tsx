@@ -61,6 +61,7 @@ const ADVANTAGES: Advantage[] = [
     title: "Закрытая территория",
     body: "Закрытые территории с контролем доступа.",
     icon: IconFence,
+    video: "/cctv.mp4",
   },
   {
     index: "07",
