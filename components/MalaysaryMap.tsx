@@ -43,7 +43,7 @@ export default function MalaysaryMap() {
         }
       ).addTo(map);
 
-      const markerHeight = 14;
+      const markerHeight = 20;
       const markerWidth = Math.round(markerHeight * (187 / 120));
 
       const markerIcon = L.divIcon({
