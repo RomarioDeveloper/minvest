@@ -7,6 +7,11 @@
     color-scheme: dark;
   }
 
+  html {
+    /* Не даём браузеру «привязывать» scroll при подгрузке медиа после reload. */
+    overflow-anchor: none;
+  }
+
   html,
   body {
     background: #08080a;

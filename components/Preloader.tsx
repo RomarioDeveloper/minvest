@@ -1,5 +1,6 @@
 "use client";
 
+import { scrollToTop } from "@/lib/scrollRestoration";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -78,8 +79,10 @@ export default function Preloader() {
   // overflow on <html> desynced touch scrolling and froze pinned sections.
   useEffect(() => {
     if (done) {
+      scrollToTop();
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      requestAnimationFrame(scrollToTop);
       return;
     }
     type LenisLike = { stop: () => void; start: () => void };

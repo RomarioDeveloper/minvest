@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Preloader from "@/components/Preloader";
+import ScrollRestoration from "@/components/ScrollRestoration";
 import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
 
@@ -33,11 +34,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ломает пиннед-секции и скролл-анимации при перезагрузке. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `history.scrollRestoration="manual";window.scrollTo(0,0);window.addEventListener("pageshow",function(e){if(e.persisted)window.scrollTo(0,0)});`,
+            __html: `(function(){function s(){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}if("scrollRestoration"in history)history.scrollRestoration="manual";s();window.addEventListener("pageshow",s);window.addEventListener("load",s,{once:true})})();`,
           }}
         />
       </head>
       <body>
+        <ScrollRestoration />
         <SmoothScroller />
         <Preloader />
         {children}

@@ -5,6 +5,7 @@ import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
+import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
 import LayoutScrollBlock from "@/components/LayoutScrollBlock";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
@@ -24,7 +25,7 @@ export default function HomePage() {
       {/* ---------- NAV ---------- */}
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 backdrop-blur-[2px] sm:px-10">
         <a href="#top" className="flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone">
-          <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
+          <img src="/logo-mark.png" alt="" aria-hidden className="h-8 w-auto" />
           <span className="hidden sm:inline">MALAYSARY INVEST</span>
           <span className="sm:hidden">MALAYSARY</span>
         </a>
@@ -127,6 +128,9 @@ export default function HomePage() {
 
       {/* ---------- ADVANTAGES (horizontal scroll) ---------- */}
       <HorizontalAdvantages />
+
+      {/* ---------- WIDE VIDEO BLOCKS ---------- */}
+      <VideoFeatureBlocks />
 
       {/* ---------- CATALOG ENTRANCE CTA ---------- */}
       <CatalogEntrance />

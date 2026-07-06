@@ -1,6 +1,5 @@
 "use client";
 
-import AdvantageWideBlock from "@/components/AdvantageWideBlock";
 import {
   motion,
   useScroll,
@@ -17,8 +16,6 @@ type Advantage = {
   icon: (props: { className?: string }) => ReactNode;
   video?: string;
   videoPosition?: string;
-  /** Full-width video block instead of a horizontal-scroll card. */
-  wide?: boolean;
 };
 
 const ADVANTAGES: Advantage[] = [
@@ -28,7 +25,6 @@ const ADVANTAGES: Advantage[] = [
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
     video: "/16744999619190.mp4",
-    wide: true,
   },
   {
     index: "02",
@@ -43,7 +39,6 @@ const ADVANTAGES: Advantage[] = [
     body: "Удобные и функциональные планировки квартир.",
     icon: IconLayout,
     video: "/16745042872950.mp4",
-    wide: true,
   },
   {
     index: "04",
@@ -52,7 +47,6 @@ const ADVANTAGES: Advantage[] = [
     icon: IconGarage,
     video: "/16745051196022.mp4",
     videoPosition: "center top",
-    wide: true,
   },
   {
     index: "05",
@@ -60,45 +54,34 @@ const ADVANTAGES: Advantage[] = [
     body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
     icon: IconStore,
     video: "/16745019476598.mp4",
-    wide: true,
   },
   {
     index: "06",
-    title: "Закрытые детские площадки",
-    body: "Закрытые детские площадки — ваши дети будут в безопасности.",
-    icon: IconPlayground,
-    video: "/playground-aerial.mp4",
-    wide: true,
-  },
-  {
-    index: "07",
     title: "Закрытая территория",
     body: "Закрытые территории с контролем доступа.",
     icon: IconFence,
   },
   {
-    index: "08",
+    index: "07",
     title: "Системы Face ID",
     body: "Системы Face ID в премиальных проектах.",
     icon: IconFaceId,
   },
   {
-    index: "09",
+    index: "08",
     title: "Умные замки",
     body: "Умные замки в квартирах.",
     icon: IconSmartLock,
   },
   {
-    index: "10",
+    index: "09",
     title: "Приватность и безопасность",
     body: "Продуманная система приватности и безопасности для жителей.",
     icon: IconShield,
   },
 ];
 
-const WIDE_ADVANTAGES = ADVANTAGES.filter((a) => a.wide && a.video);
-const CAROUSEL_ADVANTAGES = ADVANTAGES.filter((a) => !a.wide);
-const CARD_COUNT = CAROUSEL_ADVANTAGES.length;
+const CARD_COUNT = ADVANTAGES.length;
 
 function useMobileViewport() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -119,7 +102,7 @@ export default function HorizontalAdvantages() {
   // Until the viewport is known (SSR / first paint) render the lighter mobile variant.
   const mobile = isMobile !== false;
 
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [endX, setEndX] = useState(0);
 
@@ -135,7 +118,7 @@ export default function HorizontalAdvantages() {
   }, [mobile]);
 
   const { scrollYProgress } = useScroll({
-    target: carouselRef,
+    target: sectionRef,
     offset: ["start start", "end end"],
   });
 
@@ -154,44 +137,39 @@ export default function HorizontalAdvantages() {
   const x = useTransform(progress, [0, 1], [0, endX]);
 
   return (
-    <section id="advantages" className="relative bg-ink-deep">
-      <div className="px-6 pt-24 pb-10 sm:px-10 sm:pt-28 lg:px-16">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
-
-      {WIDE_ADVANTAGES.map((a) => (
-        <AdvantageWideBlock
-          key={a.index}
-          title={a.title}
-          body={a.body}
-          video={a.video!}
-          videoPosition={a.videoPosition}
-        />
-      ))}
-
-      <div ref={carouselRef} className="relative" style={{ height: `${CARD_COUNT * 55}vh` }}>
-        <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-          <motion.div
-            ref={trackRef}
-            style={{ x }}
-            className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
+    <section
+      id="advantages"
+      ref={sectionRef}
+      className="relative bg-ink-deep"
+      style={{ height: `${CARD_COUNT * 55}vh` }}
+    >
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+        <div className="px-6 pb-8 sm:px-10 lg:px-16">
+          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          <h2
+            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
           >
-            {CAROUSEL_ADVANTAGES.map((a, i) =>
-              mobile ? (
-                <StaticCard key={a.index} a={a} />
-              ) : (
-                <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
-              ),
-            )}
-          </motion.div>
+            Почему выбирают
+            <span className="text-bone-mute"> Malaysary Invest.</span>
+          </h2>
         </div>
+
+        <motion.div
+          ref={trackRef}
+          style={{ x }}
+          className="flex gap-5 px-6 will-change-transform sm:gap-6 sm:px-10 lg:px-16"
+        >
+          {ADVANTAGES.map((a, i) =>
+            mobile ? (
+              // Static cards on mobile: per-card scroll-linked transforms
+              // (7 motion values x 9 cards) are what caused the jank.
+              <StaticCard key={a.index} a={a} />
+            ) : (
+              <Card key={a.index} a={a} cardIndex={i} scrollYProgress={scrollYProgress} />
+            ),
+          )}
+        </motion.div>
       </div>
     </section>
   );
@@ -333,16 +311,6 @@ function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objec
 }
 
 /* ── Inline SVG icons ── */
-
-function IconPlayground({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-      <path d="M6 20v-8M18 20v-8M12 20V8" strokeLinecap="round" />
-      <path d="M4 20h16M8 8l4-4 4 4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="14" r="1.5" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
 
 function IconFence({ className }: { className?: string }) {
   return (
