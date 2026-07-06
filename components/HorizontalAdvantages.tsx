@@ -74,6 +74,7 @@ const ADVANTAGES: Advantage[] = [
     title: "Умные замки",
     body: "Умные замки в квартирах.",
     icon: IconSmartLock,
+    video: "/smart-locks.mp4",
   },
   {
     index: "09",
