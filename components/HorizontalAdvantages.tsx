@@ -3,6 +3,7 @@
 import {
   motion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
@@ -109,9 +110,20 @@ export default function HorizontalAdvantages() {
         setScrollRange(trackRef.current.scrollWidth - window.innerWidth);
       }
     };
+    
     measure();
+    
+    // Create an observer to measure when fonts/images load and change the width
+    const observer = new ResizeObserver(measure);
+    if (trackRef.current) {
+      observer.observe(trackRef.current);
+    }
+    
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -119,7 +131,14 @@ export default function HorizontalAdvantages() {
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    mass: 0.4,
+    restDelta: 0.0005,
+  });
+
+  const x = useTransform(smoothProgress, [0, 1], [0, -scrollRange]);
 
   return (
     <section
@@ -143,10 +162,10 @@ export default function HorizontalAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="flex gap-5 px-[6vw] sm:gap-6 sm:px-[calc(50vw-260px)] will-change-transform"
+          className="flex w-max gap-5 px-[6vw] sm:gap-6 sm:px-[calc(50vw-260px)] will-change-transform"
         >
           {ADVANTAGES.map((a, i) => (
-            <Card key={a.index} a={a} cardIndex={i} scrollProgress={scrollYProgress} />
+            <Card key={a.index} a={a} cardIndex={i} scrollProgress={smoothProgress} />
           ))}
         </motion.div>
       </div>
