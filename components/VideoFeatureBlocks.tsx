@@ -17,7 +17,7 @@ export default function VideoFeatureBlocks() {
       />
       <FeatureBlock
         title="Закрытые детские площадки — ваши дети будут в безопасности"
-        video="/16745042872950.mp4"
+        video="/entrance-gate.mp4"
       />
       <FeatureBlock
         title="Тишина и уют"
@@ -29,7 +29,7 @@ export default function VideoFeatureBlocks() {
       />
       <FeatureBlock
         title="Объекты которые находятся на этапе ввода в эксплуатацию"
-        video="/entrance-gate.mp4"
+        video="/16745042872950.mp4"
       />
     </div>
   );
