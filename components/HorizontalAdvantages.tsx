@@ -69,6 +69,11 @@ const ADVANTAGES: Advantage[] = [
   },
 ];
 
+/** Single source of truth for the preloader to warm these videos up front. */
+export const ADVANTAGE_VIDEO_SRCS: string[] = ADVANTAGES.map((a) => a.video).filter(
+  (src): src is string => Boolean(src),
+);
+
 export default function HorizontalAdvantages() {
   const scrollerRef = useRef<HTMLDivElement>(null);
 

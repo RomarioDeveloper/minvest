@@ -1,6 +1,8 @@
 "use client";
 
+import { ADVANTAGE_VIDEO_SRCS } from "@/components/HorizontalAdvantages";
 import { scrollToTop } from "@/lib/scrollRestoration";
+import { warmAdvantageVideos } from "@/lib/videoWarmup";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -22,12 +24,21 @@ export default function Preloader() {
     let timer: number;
     let isWindowLoaded = document.readyState === "complete";
     let isBrandfilmReady = false;
+    let areVideosReady = false;
     let finished = false;
+
+    let brandfilmProgress = 0;
+    let videoProgress = 0;
+    const applyProgress = () => {
+      // Blend the hero frame progress with the advantage-video warm-up so the
+      // bar reflects everything the curtain is actually waiting on.
+      setProgress(Math.min(1, brandfilmProgress * 0.5 + videoProgress * 0.5));
+    };
 
     const checkDone = () => {
       if (finished) return;
-      // Ждём и загрузку страницы, и скачивание видео в Blob
-      if (isWindowLoaded && isBrandfilmReady) {
+      // Ждём загрузку страницы, кадры героя и первый кадр всех видео преимуществ
+      if (isWindowLoaded && isBrandfilmReady && areVideosReady) {
         finished = true;
         const left = Math.max(0, MIN_SHOW_MS - (performance.now() - started));
         timer = window.setTimeout(() => setDone(true), left);
@@ -47,9 +58,21 @@ export default function Preloader() {
     const onBrandfilmProgress = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (typeof detail === "number") {
-        setProgress(detail);
+        brandfilmProgress = detail;
+        applyProgress();
       }
     };
+
+    // Прогреваем все видео преимуществ пока висит занавес, чтобы они не
+    // «появлялись» на глазах при прокрутке. Ждём только первый кадр каждого —
+    // это быстро (moov в начале файла), а докачка идёт в фоне.
+    warmAdvantageVideos(ADVANTAGE_VIDEO_SRCS, (fraction) => {
+      videoProgress = fraction;
+      applyProgress();
+    }).then(() => {
+      areVideosReady = true;
+      checkDone();
+    });
 
     // Если видео очень тяжелое или интернет медленный — пускаем пользователя через 8 секунд в любом случае
     const cap = window.setTimeout(() => {
