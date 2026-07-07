@@ -68,7 +68,13 @@ export default function BrandFilm({
   const [titleVisible, setTitleVisible] = useState(false);
 
   useEffect(() => {
-    const show = () => setTitleVisible(true);
+    let timer = 0;
+    // Событие приходит в момент, когда занавес прелоадера только начинает
+    // подниматься (сам подъём ~0.9s). Ждём, пока экран полностью откроется,
+    // и только потом стартуем — иначе половина анимации играет за занавесом.
+    const show = () => {
+      timer = window.setTimeout(() => setTitleVisible(true), 1000);
+    };
     window.addEventListener("preloader:done", show, { once: true });
     // Страховка: если событие не пришло (например, компонент перемонтировался
     // уже после прелоадера) — всё равно показываем заголовок.
@@ -76,6 +82,7 @@ export default function BrandFilm({
     return () => {
       window.removeEventListener("preloader:done", show);
       window.clearTimeout(fallback);
+      window.clearTimeout(timer);
     };
   }, []);
 
