@@ -1,6 +1,13 @@
 "use client";
 
-import { createSlidingFrameLoader, pinProgress, snapFrameIndex } from "@/lib/scrollCanvas";
+import {
+  createSlidingFrameLoader,
+  frameHeight,
+  frameWidth,
+  pinProgress,
+  snapFrameIndex,
+  type Frame,
+} from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -125,10 +132,12 @@ export default function BrandFilm({
       lastExact = -1;
     };
 
-    const drawFrame = (img: HTMLImageElement, alpha: number) => {
-      const scale = Math.max(canvasW / img.naturalWidth, canvasH / img.naturalHeight);
-      const dw = img.naturalWidth * scale;
-      const dh = img.naturalHeight * scale;
+    const drawFrame = (img: Frame, alpha: number) => {
+      const iw = frameWidth(img);
+      const ih = frameHeight(img);
+      const scale = Math.max(canvasW / iw, canvasH / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
       ctx.globalAlpha = alpha;
       ctx.drawImage(img, (canvasW - dw) / 2, (canvasH - dh) / 2, dw, dh);
       ctx.globalAlpha = 1;

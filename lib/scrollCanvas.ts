@@ -1,5 +1,22 @@
 export const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
+/** A decoded frame ready to draw without a main-thread decode. */
+export type Frame = ImageBitmap | HTMLImageElement;
+
+export function frameWidth(frame: Frame): number {
+  return frame instanceof HTMLImageElement ? frame.naturalWidth : frame.width;
+}
+
+export function frameHeight(frame: Frame): number {
+  return frame instanceof HTMLImageElement ? frame.naturalHeight : frame.height;
+}
+
+export function frameDrawable(frame: Frame | null | undefined): frame is Frame {
+  if (!frame) return false;
+  if (frame instanceof HTMLImageElement) return frame.complete && frame.naturalWidth > 0;
+  return frame.width > 0;
+}
+
 export function pinProgress(section: HTMLElement): number {
   const viewport = window.visualViewport?.height ?? window.innerHeight;
   const scrollable = section.offsetHeight - viewport;
@@ -65,7 +82,7 @@ export function createSlidingFrameLoader({
   batchSize = 3,
   onFirstFrame,
 }: SlidingFrameLoaderOptions) {
-  const frames: (HTMLImageElement | null)[] = Array.from({ length: count }, () => null);
+  const frames: (Frame | null)[] = Array.from({ length: count }, () => null);
   const loading = new Set<number>();
   let center = 0;
   let active = false;
@@ -75,34 +92,84 @@ export function createSlidingFrameLoader({
 
   const shouldLoad = (index: number) => index % step === 0;
 
+  // Frames further than this from the current center are released to keep
+  // memory bounded — a 1920×1080 frame costs ~8 MB decoded, so holding all
+  // of them would blow past a gigabyte on a long sequence.
+  const evictRadius = Math.max(windowRadius * 2, windowRadius + 8);
+
+  const canBitmap = typeof createImageBitmap === "function";
+  const isBitmap = (f: unknown): f is ImageBitmap =>
+    typeof ImageBitmap !== "undefined" && f instanceof ImageBitmap;
+
+  const freeFrame = (i: number) => {
+    const frame = frames[i];
+    if (isBitmap(frame)) frame.close();
+    frames[i] = null;
+  };
+
+  const store = (i: number, frame: Frame) => {
+    if (cancelled) {
+      if (isBitmap(frame)) frame.close();
+      return;
+    }
+    frames[i] = frame;
+    if (!firstFired) {
+      firstFired = true;
+      onFirstFrame?.();
+    }
+  };
+
   const loadFrame = (index: number) => {
     const i = snapFrameIndex(index, count, step);
     if (frames[i] || loading.has(i) || cancelled || !shouldLoad(i)) return;
 
     loading.add(i);
-    const img = new Image();
-    img.decoding = "async";
-
+    const src = frameFileSrc(base, i, extension);
     const finish = () => loading.delete(i);
 
+    if (canBitmap) {
+      // Decode entirely off the main thread: fetch the encoded bytes and let
+      // createImageBitmap decode on a worker. Drawing the resulting bitmap is
+      // a cheap GPU upload with no synchronous decode during scroll.
+      fetch(src)
+        .then((r) => r.blob())
+        .then((blob) => createImageBitmap(blob))
+        .then((bmp) => store(i, bmp))
+        .catch(() => {})
+        .finally(finish);
+      return;
+    }
+
+    const img = new Image();
+    img.decoding = "async";
     img.onload = () => {
-      if (!cancelled) {
-        frames[i] = img;
-        if (!firstFired) {
-          firstFired = true;
-          onFirstFrame?.();
-        }
+      const done = () => {
+        store(i, img);
+        finish();
+      };
+      // decode() forces the decode ahead of the first draw so drawImage never
+      // blocks the scroll thread.
+      if (typeof img.decode === "function") {
+        img.decode().then(done).catch(done);
+      } else {
+        done();
       }
-      finish();
     };
     img.onerror = finish;
-    img.src = frameFileSrc(base, i, extension);
+    img.src = src;
+  };
+
+  const evict = (c: number) => {
+    for (let i = 0; i < count; i++) {
+      if (frames[i] && Math.abs(i - c) > evictRadius) freeFrame(i);
+    }
   };
 
   const pump = () => {
     if (cancelled || !active) return;
 
     const c = snapFrameIndex(center, count, step);
+    evict(c);
     const order = priorityFrameOrder(c, count).filter(
       (i) => shouldLoad(i) && Math.abs(i - c) <= windowRadius,
     );
@@ -161,6 +228,10 @@ export function createSlidingFrameLoader({
     destroy() {
       cancelled = true;
       stopPump();
+      for (let i = 0; i < count; i++) {
+        if (isBitmap(frames[i])) (frames[i] as ImageBitmap).close();
+        frames[i] = null;
+      }
     },
   };
 }

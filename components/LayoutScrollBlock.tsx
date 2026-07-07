@@ -1,6 +1,13 @@
 "use client";
 
-import { createSlidingFrameLoader, snapFrameIndex } from "@/lib/scrollCanvas";
+import {
+  createSlidingFrameLoader,
+  frameDrawable,
+  frameHeight,
+  frameWidth,
+  snapFrameIndex,
+  type Frame,
+} from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -25,15 +32,17 @@ function pinProgress(section: HTMLElement): number {
 
 function drawContain(
   ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
+  img: Frame,
   w: number,
   h: number,
   zoom = 1,
 ): boolean {
-  if (!img.complete || img.naturalWidth === 0) return false;
-  const scale = Math.min(w / img.naturalWidth, h / img.naturalHeight) * zoom;
-  const dw = img.naturalWidth * scale;
-  const dh = img.naturalHeight * scale;
+  if (!frameDrawable(img)) return false;
+  const iw = frameWidth(img);
+  const ih = frameHeight(img);
+  const scale = Math.min(w / iw, h / ih) * zoom;
+  const dw = iw * scale;
+  const dh = ih * scale;
   ctx.fillStyle = "#050506";
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);

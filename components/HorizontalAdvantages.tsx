@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
 import { registerLazyVideo } from "@/lib/lazyVideo";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 type Advantage = {
   title: string;
@@ -76,195 +69,100 @@ const ADVANTAGES: Advantage[] = [
   },
 ];
 
-const CARD_COUNT = ADVANTAGES.length;
-
-function useMobileViewport() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  return isMobile;
-}
-
 export default function HorizontalAdvantages() {
-  const isMobile = useMobileViewport();
-  const [mounted, setMounted] = useState(false);
+  const scrollerRef = useRef<HTMLDivElement>(null);
 
+  // Pointer-drag scrolling for mouse users. Native touch/trackpad scrolling
+  // already works; this only adds click-and-drag on desktop. It touches the
+  // DOM only while the pointer is down, so it never runs during page scroll.
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const el = scrollerRef.current;
+    if (!el) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
-  if (!mounted) {
-    return (
-      <>
-        <div className="hidden md:block">
-          <ScrollAdvantages mobile={false} />
-        </div>
-        <div className="block md:hidden">
-          <ScrollAdvantages mobile />
-        </div>
-      </>
-    );
-  }
+    let down = false;
+    let startX = 0;
+    let startLeft = 0;
+    let moved = false;
 
-  return <ScrollAdvantages mobile={isMobile === true} />;
-}
+    const onDown = (e: PointerEvent) => {
+      down = true;
+      moved = false;
+      startX = e.clientX;
+      startLeft = el.scrollLeft;
+      el.classList.add("cursor-grabbing");
+    };
 
-function ScrollAdvantages({ mobile }: { mobile: boolean }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [scrollRange, setScrollRange] = useState(0);
+    const onMove = (e: PointerEvent) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      // Disable snap while dragging so the strip follows the pointer smoothly.
+      el.style.scrollSnapType = "none";
+      el.scrollLeft = startLeft - dx;
+    };
 
-  useEffect(() => {
-    const measure = () => {
-      if (trackRef.current) {
-        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
+    const onUp = () => {
+      if (!down) return;
+      down = false;
+      el.classList.remove("cursor-grabbing");
+      el.style.scrollSnapType = "";
+    };
+
+    // Prevent accidental link/text selection after a drag.
+    const onClick = (e: MouseEvent) => {
+      if (moved) {
+        e.preventDefault();
+        e.stopPropagation();
       }
     };
 
-    measure();
+    el.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    el.addEventListener("click", onClick, true);
 
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) {
-      observer.observe(trackRef.current);
-    }
-
-    window.addEventListener("resize", measure);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
+      el.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      el.removeEventListener("click", onClick, true);
     };
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: mobile ? 180 : 120,
-    damping: mobile ? 32 : 26,
-    mass: mobile ? 0.25 : 0.4,
-    restDelta: 0.0005,
-  });
-
-  const x = useTransform(smoothProgress, [0, 1], [0, -scrollRange]);
-  const sectionVh = mobile ? 26 : 40;
-
   return (
-    <section
-      id="advantages"
-      ref={sectionRef}
-      className="relative bg-ink-deep"
-      style={{ height: `${CARD_COUNT * sectionVh}vh` }}
-    >
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
-          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-          <h2
-            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-          >
-            Почему выбирают
-            <span className="text-bone-mute"> Malaysary Invest.</span>
-          </h2>
-        </div>
-
-        <motion.div
-          ref={trackRef}
-          style={{ x }}
-          className={`flex w-max gap-5 sm:gap-6 ${
-            mobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)] will-change-transform"
-          }`}
+    <section id="advantages" className="relative bg-ink-deep py-20 sm:py-28">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16">
+        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+        <h2
+          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
         >
-          {ADVANTAGES.map((a, i) =>
-            mobile ? (
-              <StaticCard key={a.title} a={a} />
-            ) : (
-              <Card key={a.title} a={a} cardIndex={i} scrollProgress={smoothProgress} />
-            ),
-          )}
-        </motion.div>
+          Почему выбирают
+          <span className="text-bone-mute"> Malaysary Invest.</span>
+        </h2>
+      </div>
+
+      <div
+        ref={scrollerRef}
+        className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain px-6 pb-4 sm:mt-12 sm:gap-6 sm:px-10 lg:px-16 md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {ADVANTAGES.map((a) => (
+          <Card key={a.title} a={a} />
+        ))}
+        {/* Trailing spacer so the last card can scroll fully into view. */}
+        <div aria-hidden className="w-px shrink-0" />
       </div>
     </section>
   );
 }
 
-function Card({
-  a,
-  cardIndex,
-  scrollProgress,
-}: {
-  a: Advantage;
-  cardIndex: number;
-  scrollProgress: MotionValue<number>;
-}) {
-  const spread = 0.15;
-  const peak = cardIndex / Math.max(1, CARD_COUNT - 1);
-
-  const active = useTransform(scrollProgress, (v) => {
-    const t = 1 - Math.min(1, Math.abs(v - peak) / spread);
-    return t;
-  });
-
-  const iconScale = useTransform(active, [0, 1], [0.5, 1.12]);
-  const iconOpacity = useTransform(active, [0, 1], [0.12, 1]);
-  const iconY = useTransform(active, [0, 1], [18, 0]);
-  const ringScale = useTransform(active, [0, 1], [0.6, 1.35]);
-  const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
-  const videoScale = useTransform(active, [0, 1], [1.08, 1]);
-  const videoOpacity = useTransform(active, [0, 1], [0.35, 1]);
-
+function Card({ a }: { a: Advantage }) {
   const Icon = a.icon;
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
-      {hasVideo ? (
-        <motion.div
-          style={{ scale: videoScale, opacity: videoOpacity }}
-          className="pointer-events-none absolute inset-0 overflow-hidden"
-        >
-          <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
-          <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
-        </motion.div>
-      ) : (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <motion.div
-            style={{ scale: ringScale, opacity: ringOpacity }}
-            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]"
-          />
-          <motion.div
-            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
-            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
-          >
-            <Icon className="h-11 w-11 text-bone/80" />
-          </motion.div>
-        </div>
-      )}
-
-      <div className={`relative z-10 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
-        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
-          {a.title}
-        </h3>
-        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">{a.body}</p>
-      </div>
-    </article>
-  );
-}
-
-function StaticCard({ a }: { a: Advantage }) {
-  const Icon = a.icon;
-  const hasVideo = !!a.video;
-
-  return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 snap-start flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[480px] sm:p-10">
       {hasVideo ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
