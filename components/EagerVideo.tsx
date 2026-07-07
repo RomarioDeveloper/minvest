@@ -1,7 +1,7 @@
 "use client";
 
-import { getVideoSrc, isVideoReady } from "@/lib/videoWarmup";
-import { useEffect, useRef, useState } from "react";
+import { getVideoSrc } from "@/lib/videoWarmup";
+import { useEffect, useRef } from "react";
 
 type Props = {
   src: string;
@@ -10,70 +10,39 @@ type Props = {
   objectPosition?: string;
 };
 
-/**
- * Background loop video.
- * - Source is attached only when the section is near the viewport (saves CPU).
- * - Data is already in cache from the preloader, so it appears instantly.
- * - Pauses while scrolling to keep scroll smooth on fullscreen sections.
- */
+/** Background loop video — src is always set (preloaded in cache), play only in view. */
 export default function EagerVideo({ src, className = "", style, objectPosition }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [activeSrc, setActiveSrc] = useState<string | null>(() =>
-    isVideoReady(src) ? getVideoSrc(src) : null,
-  );
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
 
-    let scrollTimer: number | undefined;
-    let visible = false;
-
-    const playIfVisible = () => {
-      if (visible) video.play().catch(() => {});
-    };
-
-    const pauseForScroll = () => {
-      video.pause();
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(playIfVisible, 120);
-    };
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting;
-
-        if (entry.isIntersecting) {
-          if (!activeSrc) setActiveSrc(getVideoSrc(src));
-          playIfVisible();
-        } else {
-          video.pause();
-        }
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
       },
-      { rootMargin: "80% 0px", threshold: 0.05 },
+      { threshold: 0.15 },
     );
     observer.observe(video);
 
-    window.addEventListener("scroll", pauseForScroll, { passive: true });
-
     return () => {
       observer.disconnect();
-      window.removeEventListener("scroll", pauseForScroll);
-      window.clearTimeout(scrollTimer);
       video.pause();
     };
-  }, [activeSrc, src]);
+  }, []);
 
   return (
     <video
       ref={ref}
-      src={activeSrc ?? undefined}
+      src={getVideoSrc(src)}
       className={className}
-      style={{ objectPosition, contain: "strict", ...style }}
+      style={{ objectPosition, ...style }}
       muted
       loop
       playsInline
-      preload={activeSrc ? "auto" : "none"}
+      preload="auto"
       disablePictureInPicture
     />
   );
