@@ -98,16 +98,10 @@ export default function LayoutScrollBlock({
       step: frameStep,
       windowRadius: mobile ? 20 : 32,
       batchSize: mobile ? 4 : 6,
-      preloadAll: mobile, // На мобилках (3МБ) грузим и держим все кадры в памяти
       onFirstFrame: () => setFrameReady(true),
     });
 
     loader.setCenter(startCenter);
-    // На мобилках сразу запускаем фоновую загрузку всех кадров (активируем лоадер),
-    // чтобы не ждать пока секция появится в IntersectionObserver
-    if (mobile) {
-      loader.setActive(true);
-    }
     loaderRef.current = loader;
 
     return () => {
@@ -170,11 +164,7 @@ export default function LayoutScrollBlock({
     const observer = new IntersectionObserver(
       ([entry]) => {
         isIntersecting = entry.isIntersecting;
-        // На десктопе загружаем кадры только когда блок близко к видимости.
-        // На мобилках мы хотим, чтобы фоновая загрузка всех кадров не прерывалась.
-        if (!mobile) {
-          loaderRef.current?.setActive(entry.isIntersecting);
-        }
+        loaderRef.current?.setActive(entry.isIntersecting);
       },
       { rootMargin: "100% 0px" },
     );

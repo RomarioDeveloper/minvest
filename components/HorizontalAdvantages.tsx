@@ -1,9 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
-import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
-import { useEffect, useState, type ReactNode } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
   title: string;
@@ -72,35 +70,6 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 export default function HorizontalAdvantages() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true });
-  const [isMobile, setIsMobile] = useState(false);
-  const emblaProgress = useMotionValue(0);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const onScroll = () => {
-      const progress = Math.max(0, Math.min(1, emblaApi.scrollProgress()));
-      emblaProgress.set(progress);
-    };
-
-    emblaApi.on("scroll", onScroll);
-    emblaApi.on("reInit", onScroll);
-    onScroll();
-
-    return () => {
-      emblaApi.off("scroll", onScroll);
-      emblaApi.off("reInit", onScroll);
-    };
-  }, [emblaApi, emblaProgress]);
-
   return (
     <section id="advantages" className="relative bg-ink-deep py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto w-full max-w-7xl px-6 pb-12 sm:px-10 lg:px-16">
@@ -114,75 +83,77 @@ export default function HorizontalAdvantages() {
         </h2>
       </div>
 
-      <div className="embla overflow-hidden" ref={emblaRef}>
-        <div
-          className={`embla__container flex touch-pan-y gap-5 sm:gap-6 ${
-            isMobile ? "pl-6 pr-6" : "pl-[6vw] pr-[6vw] sm:pl-[calc(50vw-260px)] sm:pr-[calc(50vw-260px)]"
-          }`}
-        >
-          {ADVANTAGES.map((a, i) => (
-            <Card key={a.title} a={a} cardIndex={i} scrollProgress={emblaProgress} />
-          ))}
-        </div>
+      <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-5 sm:gap-6 px-6 sm:px-[10vw] pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Spacer for mobile to center the first card */}
+        <div className="w-[1vw] shrink-0 sm:w-[calc(50vw-280px)]" aria-hidden />
+        {ADVANTAGES.map((a, i) => (
+          <Card key={a.title} a={a} />
+        ))}
+        {/* Spacer for mobile to center the last card */}
+        <div className="w-[1vw] shrink-0 sm:w-[calc(50vw-280px)]" aria-hidden />
       </div>
     </section>
   );
 }
 
-function Card({
-  a,
-  cardIndex,
-  scrollProgress,
-}: {
-  a: Advantage;
-  cardIndex: number;
-  scrollProgress: MotionValue<number>;
-}) {
-  const spread = 0.15;
-  const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
+function Card({ a }: { a: Advantage }) {
+  const ref = useRef<HTMLElement>(null);
+  const [isActive, setIsActive] = useState(false);
 
-  const active = useTransform(scrollProgress, (v) => {
-    return 1 - Math.min(1, Math.abs(v - peak) / spread);
-  });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
 
-  const iconScale = useTransform(active, [0, 1], [0.8, 1.12]);
-  const iconOpacity = useTransform(active, [0, 1], [0.4, 1]);
-  const iconY = useTransform(active, [0, 1], [10, 0]);
-  const ringScale = useTransform(active, [0, 1], [0.8, 1.35]);
-  const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
+    // Включаем активное состояние (анимации внутри карточки),
+    // когда карточка на 60% видна на экране
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+      },
+      { root: null, threshold: 0.6 }
+    );
+    
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
-  const videoScale = useTransform(active, [0, 1], [1.05, 1]);
-  const videoOpacity = useTransform(active, [0, 1], [0.4, 1]);
-
-  const Icon = a.icon;
   const hasVideo = !!a.video;
+  const Icon = a.icon;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 transform-gpu">
+    <article
+      ref={ref}
+      className="snap-center relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 transform-gpu rounded-3xl transition-transform duration-700"
+    >
       {hasVideo ? (
-        <motion.div
-          style={{ scale: videoScale, opacity: videoOpacity }}
-          className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
-        >
-          <EagerVideo
-            src={a.video!}
-            objectPosition={a.videoPosition}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className={`absolute inset-0 h-full w-full transition-transform duration-1000 ${
+              isActive ? "scale-100 opacity-100" : "scale-[1.05] opacity-40"
+            }`}
+          >
+            <EagerVideo
+              src={a.video!}
+              objectPosition={a.videoPosition}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
-        </motion.div>
+        </div>
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <motion.div
-            style={{ scale: ringScale, opacity: ringOpacity }}
-            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
+          <div
+            className={`absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] transition-all duration-700 ${
+              isActive ? "scale-125 opacity-30" : "scale-75 opacity-0"
+            }`}
           />
-          <motion.div
-            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
-            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
+          <div
+            className={`relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm transition-all duration-700 ${
+              isActive ? "scale-110 opacity-100 translate-y-0" : "scale-90 opacity-50 translate-y-4"
+            }`}
           >
             <Icon className="h-11 w-11 text-bone/80" />
-          </motion.div>
+          </div>
         </div>
       )}
 
