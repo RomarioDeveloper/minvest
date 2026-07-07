@@ -10,7 +10,8 @@
     "optimize:render": "tsx scripts/optimize-render.ts",
     "optimize:entrance": "tsx scripts/optimize-entrance.ts",
     "optimize:hero-scrub": "tsx scripts/optimize-hero-scrub.ts",
-    "extract:layout-frames": "tsx scripts/extract-layout-frames.ts"
+    "extract:layout-frames": "tsx scripts/extract-layout-frames.ts",
+    "generate:layouts": "node scripts/generate-layouts.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

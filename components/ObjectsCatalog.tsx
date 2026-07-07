@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
-import { OBJECTS, STATUS_LABEL, type ObjectStatus, type RealtyObject } from "@/lib/objects";
+import { OBJECTS, STATUS_LABEL, type ObjectLayout, type ObjectStatus, type RealtyObject } from "@/lib/objects";
 
 type Filter = "all" | ObjectStatus;
 
@@ -118,36 +118,54 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
 /* ─── Modal ─── */
 function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void }) {
   const [mediaTab, setMediaTab] = useState<"photo" | "video" | "layouts">("photo");
-  const [slide, setSlide] = useState(0);
+  const [photoSlide, setPhotoSlide] = useState(0);
+  const [layoutSlide, setLayoutSlide] = useState(0);
   const [dir, setDir] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [fsVideo, setFsVideo] = useState<string | null>(null);
+  const layouts = obj.layouts ?? [];
   const hasVideos = !!obj.videos?.length;
-  const hasLayouts = !!obj.layouts?.length;
+  const hasLayouts = layouts.length > 0;
+  const currentLayout = layouts[layoutSlide];
 
-  const go = useCallback((next: number) => {
-    setDir(next > slide ? 1 : -1);
-    setSlide(next);
-  }, [slide]);
+  const goPhoto = useCallback((next: number) => {
+    setDir(next > photoSlide ? 1 : -1);
+    setPhotoSlide(next);
+  }, [photoSlide]);
 
-  const prev = () => go((slide - 1 + obj.gallery.length) % obj.gallery.length);
-  const next = () => go((slide + 1) % obj.gallery.length);
+  const goLayout = useCallback((next: number) => {
+    setDir(next > layoutSlide ? 1 : -1);
+    setLayoutSlide(next);
+  }, [layoutSlide]);
 
-  useEffect(() => { setSlide(0); setMediaTab("photo"); }, [obj.slug]);
+  const prevPhoto = () => goPhoto((photoSlide - 1 + obj.gallery.length) % obj.gallery.length);
+  const nextPhoto = () => goPhoto((photoSlide + 1) % obj.gallery.length);
+  const prevLayout = () => goLayout((layoutSlide - 1 + layouts.length) % layouts.length);
+  const nextLayout = () => goLayout((layoutSlide + 1) % layouts.length);
+
+  useEffect(() => {
+    setPhotoSlide(0);
+    setLayoutSlide(0);
+    setMediaTab("photo");
+  }, [obj.slug]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (lightbox !== null || fsVideo) return;
       if (e.key === "Escape") onClose();
       if (mediaTab === "photo") {
-        if (e.key === "ArrowRight") next();
-        if (e.key === "ArrowLeft") prev();
+        if (e.key === "ArrowRight") nextPhoto();
+        if (e.key === "ArrowLeft") prevPhoto();
+      }
+      if (mediaTab === "layouts" && layouts.length > 1) {
+        if (e.key === "ArrowRight") nextLayout();
+        if (e.key === "ArrowLeft") prevLayout();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide, mediaTab, lightbox, fsVideo]);
+  }, [photoSlide, layoutSlide, mediaTab, lightbox, fsVideo, layouts.length]);
 
   return (
     <>
@@ -162,12 +180,12 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── Media area ── */}
-        <div className="relative h-[220px] w-full shrink-0 overflow-hidden bg-ink sm:h-[260px] md:h-[300px]">
+        <div className={`relative w-full shrink-0 overflow-hidden bg-ink ${mediaTab === "layouts" ? "h-[260px] sm:h-[300px] md:h-[360px]" : "h-[220px] sm:h-[260px] md:h-[300px]"}`}>
 
           {mediaTab === "photo" && (
             <>
               <AnimatePresence initial={false} custom={dir}>
-                <motion.img key={slide} src={obj.gallery[slide]} alt={`${obj.name} — фото ${slide + 1}`}
+                <motion.img key={photoSlide} src={obj.gallery[photoSlide]} alt={`${obj.name} — фото ${photoSlide + 1}`}
                   className="absolute inset-0 h-full w-full cursor-zoom-in object-cover"
                   custom={dir}
                   variants={{
@@ -177,13 +195,13 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
                   }}
                   initial="enter" animate="center" exit="exit"
                   transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
-                  onClick={() => setLightbox(slide)}
+                  onClick={() => setLightbox(photoSlide)}
                 />
               </AnimatePresence>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
               {/* Expand button */}
-              <button onClick={() => setLightbox(slide)}
+              <button onClick={() => setLightbox(photoSlide)}
                 className="absolute bottom-10 right-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 text-[10px] uppercase tracking-widest text-bone/70 backdrop-blur-sm transition hover:text-bone">
                 <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                   <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -193,24 +211,24 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
 
               {obj.gallery.length > 1 && (
                 <>
-                  <button onClick={prev} aria-label="Назад"
+                  <button onClick={prevPhoto} aria-label="Назад"
                     className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
-                  <button onClick={next} aria-label="Вперёд"
+                  <button onClick={nextPhoto} aria-label="Вперёд"
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
                   <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
                     {obj.gallery.map((_, i) => (
-                      <button key={i} onClick={() => go(i)}
-                        className={`h-1 rounded-full transition-all duration-300 ${i === slide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`} />
+                      <button key={i} onClick={() => goPhoto(i)}
+                        className={`h-1 rounded-full transition-all duration-300 ${i === photoSlide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`} />
                     ))}
                   </div>
                 </>
               )}
               <div className="absolute bottom-3 right-4 text-[11px] font-semibold uppercase tracking-widest text-bone/50">
-                {slide + 1} / {obj.gallery.length}
+                {photoSlide + 1} / {obj.gallery.length}
               </div>
             </>
           )}
@@ -223,19 +241,74 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             </div>
           )}
 
-          {mediaTab === "layouts" && obj.layouts && (
-            <div className="absolute inset-0 bg-[#08080a] p-5 overflow-x-auto whitespace-nowrap flex items-center gap-5 scroll-smooth custom-scrollbar">
-              {obj.layouts.map((src, i) => (
-                <div key={i} className="relative h-full w-auto shrink-0 bg-white/5 rounded-xl border border-bone/10 transition hover:border-bone/30 cursor-zoom-in group" onClick={() => setLightbox(i)}>
-                  <img src={src} alt={`Планировка ${i + 1}`} className="h-full w-auto object-contain p-2 mix-blend-screen" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-bone">
-                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+          {mediaTab === "layouts" && currentLayout && (
+            <>
+              <AnimatePresence initial={false} custom={dir}>
+                <motion.img
+                  key={layoutSlide}
+                  src={currentLayout.src}
+                  alt={currentLayout.label}
+                  className="absolute inset-0 h-full w-full cursor-zoom-in object-contain p-3 sm:p-4"
+                  custom={dir}
+                  variants={{
+                    enter: (d: number) => ({ x: d * 60, opacity: 0, scale: 0.98 }),
+                    center: { x: 0, opacity: 1, scale: 1 },
+                    exit: (d: number) => ({ x: d * -60, opacity: 0, scale: 0.98 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
+                  onClick={() => setLightbox(layoutSlide)}
+                />
+              </AnimatePresence>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+              <div className="absolute left-3 bottom-10 flex max-w-[calc(100%-7rem)] flex-col gap-1.5">
+                <span className="inline-flex w-fit items-center gap-2 bg-black/70 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-bone backdrop-blur-sm">
+                  {currentLayout.label}
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/45">
+                  {currentLayout.kind === "commercial" ? "Коммерческое помещение" : "Жилая планировка"}
+                </span>
+              </div>
+
+              <button
+                onClick={() => setLightbox(layoutSlide)}
+                className="absolute bottom-10 right-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 text-[10px] uppercase tracking-widest text-bone/70 backdrop-blur-sm transition hover:text-bone"
+              >
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                  <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                На весь экран
+              </button>
+
+              {layouts.length > 1 && (
+                <>
+                  <button onClick={prevLayout} aria-label="Предыдущая планировка"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <button onClick={nextLayout} aria-label="Следующая планировка"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <div className="absolute bottom-3 left-1/2 flex max-w-[70%] -translate-x-1/2 gap-1.5 overflow-x-auto hide-scrollbar">
+                    {layouts.map((layout, i) => (
+                      <button
+                        key={layout.src}
+                        onClick={() => goLayout(i)}
+                        title={layout.label}
+                        className={`h-1 shrink-0 rounded-full transition-all duration-300 ${i === layoutSlide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`}
+                      />
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
+                </>
+              )}
+              <div className="absolute bottom-3 right-4 text-[11px] font-semibold uppercase tracking-widest text-bone/50">
+                {layoutSlide + 1} / {layouts.length}
+              </div>
+            </>
           )}
 
           <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm z-10">
@@ -269,7 +342,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             {hasLayouts && (
               <button onClick={() => setMediaTab("layouts")}
                 className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "layouts" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
-                Планировки ({obj.layouts!.length})
+                Планировки ({layouts.length})
                 {mediaTab === "layouts" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
               </button>
             )}
@@ -307,6 +380,24 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
                 ))}
               </div>
             )}
+
+            {mediaTab === "layouts" && layouts.length > 0 && (
+              <div className="mt-5">
+                <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/35">
+                  Все планировки
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {layouts.map((layout, i) => (
+                    <LayoutChip
+                      key={layout.src}
+                      layout={layout}
+                      active={i === layoutSlide}
+                      onClick={() => goLayout(i)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="h-4" />
           </div>
         </div>
@@ -329,8 +420,13 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         {lightbox !== null && mediaTab === "photo" && (
           <PhotoLightbox images={obj.gallery} startIndex={lightbox} onClose={() => setLightbox(null)} />
         )}
-        {lightbox !== null && mediaTab === "layouts" && obj.layouts && (
-          <PhotoLightbox images={obj.layouts} startIndex={lightbox} onClose={() => setLightbox(null)} />
+        {lightbox !== null && mediaTab === "layouts" && layouts.length > 0 && (
+          <PhotoLightbox
+            images={layouts.map((layout) => layout.src)}
+            labels={layouts.map((layout) => layout.label)}
+            startIndex={lightbox}
+            onClose={() => setLightbox(null)}
+          />
         )}
       </AnimatePresence>
 
@@ -405,7 +501,17 @@ function VideoPlayer({ src, index, onFullscreen }: { src: string; index: number;
 }
 
 /* ─── Photo Lightbox ─── */
-function PhotoLightbox({ images, startIndex, onClose }: { images: string[]; startIndex: number; onClose: () => void }) {
+function PhotoLightbox({
+  images,
+  labels,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  labels?: string[];
+  startIndex: number;
+  onClose: () => void;
+}) {
   const [idx, setIdx] = useState(startIndex);
   const [dir, setDir] = useState(0);
 
@@ -434,8 +540,13 @@ function PhotoLightbox({ images, startIndex, onClose }: { images: string[]; star
       <div className="fixed inset-0 z-[81] flex flex-col items-center justify-center" onClick={onClose}>
         {/* Top bar */}
         <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-4">
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">
-            {idx + 1} / {images.length}
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">
+              {idx + 1} / {images.length}
+            </div>
+            {labels?.[idx] && (
+              <div className="mt-1 text-sm font-semibold text-bone/80">{labels[idx]}</div>
+            )}
           </div>
           <button className="flex h-10 w-10 items-center justify-center text-bone/50 transition hover:text-bone" onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -452,7 +563,7 @@ function PhotoLightbox({ images, startIndex, onClose }: { images: string[]; star
 
         {/* Main image */}
         <AnimatePresence mode="wait" custom={dir}>
-          <motion.img key={idx} src={images[idx]} alt=""
+          <motion.img key={idx} src={images[idx]} alt={labels?.[idx] ?? ""}
             custom={dir}
             variants={{
               enter: (d: number) => ({ x: d * 100, opacity: 0, scale: 0.97 }),
@@ -520,6 +631,33 @@ function FullscreenVideo({ src, onClose }: { src: string; onClose: () => void })
         />
       </div>
     </>
+  );
+}
+
+function LayoutChip({
+  layout,
+  active,
+  onClick,
+}: {
+  layout: ObjectLayout;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={layout.label}
+      className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
+        active
+          ? "border-bone bg-bone text-ink"
+          : layout.kind === "commercial"
+            ? "border-amber-400/30 text-amber-100/80 hover:border-amber-400/60"
+            : "border-bone/20 text-bone-soft hover:border-bone/45 hover:text-bone"
+      }`}
+    >
+      {layout.area} м²
+      {layout.kind === "commercial" ? " · ком." : ""}
+    </button>
   );
 }
 
