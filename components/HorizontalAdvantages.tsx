@@ -1,6 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -70,108 +71,127 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 export default function HorizontalAdvantages() {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Pointer-drag scrolling for mouse users. Native touch/trackpad scrolling
-  // already works; this only adds click-and-drag on desktop. It touches the
-  // DOM only while the pointer is down, so it never runs during page scroll.
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-    let down = false;
-    let startX = 0;
-    let startLeft = 0;
-    let moved = false;
-
-    const onDown = (e: PointerEvent) => {
-      down = true;
-      moved = false;
-      startX = e.clientX;
-      startLeft = el.scrollLeft;
-      el.classList.add("cursor-grabbing");
-    };
-
-    const onMove = (e: PointerEvent) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 4) moved = true;
-      // Disable snap while dragging so the strip follows the pointer smoothly.
-      el.style.scrollSnapType = "none";
-      el.scrollLeft = startLeft - dx;
-    };
-
-    const onUp = () => {
-      if (!down) return;
-      down = false;
-      el.classList.remove("cursor-grabbing");
-      el.style.scrollSnapType = "";
-    };
-
-    // Prevent accidental link/text selection after a drag.
-    const onClick = (e: MouseEvent) => {
-      if (moved) {
-        e.preventDefault();
-        e.stopPropagation();
+  useEffect(() => {
+    const measure = () => {
+      if (trackRef.current) {
+        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
       }
     };
-
-    el.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    el.addEventListener("click", onClick, true);
-
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (trackRef.current) observer.observe(trackRef.current);
+    window.addEventListener("resize", measure);
     return () => {
-      el.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-      el.removeEventListener("click", onClick, true);
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
     };
   }, []);
 
-  return (
-    <section id="advantages" className="relative overflow-x-clip bg-ink-deep py-20 sm:py-28">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
 
-      <div
-        ref={scrollerRef}
-        className="scroll-strip-x mt-10 flex snap-x snap-mandatory gap-5 pb-4 pl-[8vw] pr-[8vw] max-sm:[scroll-padding-inline:8vw] sm:mt-12 sm:gap-6 sm:px-[max(2.5rem,calc(50vw-240px))] md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {ADVANTAGES.map((a) => (
-          <Card key={a.title} a={a} />
-        ))}
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  const sectionVh = isMobile ? 35 : 45;
+
+  return (
+    <section
+      id="advantages"
+      ref={sectionRef}
+      className="relative bg-ink-deep"
+      style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
+    >
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
+          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          <h2
+            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+          >
+            Почему выбирают
+            <span className="text-bone-mute"> Malaysary Invest.</span>
+          </h2>
+        </div>
+
+        <motion.div
+          ref={trackRef}
+          style={{ x }}
+          className={`flex w-max gap-5 sm:gap-6 will-change-transform ${
+            isMobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)]"
+          }`}
+        >
+          {ADVANTAGES.map((a, i) => (
+            <Card key={a.title} a={a} cardIndex={i} scrollProgress={scrollYProgress} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
 }
 
-function Card({ a }: { a: Advantage }) {
+function Card({
+  a,
+  cardIndex,
+  scrollProgress,
+}: {
+  a: Advantage;
+  cardIndex: number;
+  scrollProgress: MotionValue<number>;
+}) {
+  const spread = 0.15;
+  const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
+
+  const active = useTransform(scrollProgress, (v) => {
+    return 1 - Math.min(1, Math.abs(v - peak) / spread);
+  });
+
+  const iconScale = useTransform(active, [0, 1], [0.8, 1.12]);
+  const iconOpacity = useTransform(active, [0, 1], [0.4, 1]);
+  const iconY = useTransform(active, [0, 1], [10, 0]);
+  const ringScale = useTransform(active, [0, 1], [0.8, 1.35]);
+  const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
+
+  const videoScale = useTransform(active, [0, 1], [1.05, 1]);
+  const videoOpacity = useTransform(active, [0, 1], [0.4, 1]);
+
   const Icon = a.icon;
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 snap-center flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[480px] sm:snap-start sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       {hasVideo ? (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
+        <motion.div
+          style={{ scale: videoScale, opacity: videoOpacity }}
+          className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
+        >
+          <EagerVideo src={a.video!} objectPosition={a.videoPosition} className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
-        </div>
+        </motion.div>
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="absolute h-44 w-44 scale-[1.35] rounded-full border border-bone/20 bg-bone/[0.03] opacity-35" />
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04]">
+          <motion.div
+            style={{ scale: ringScale, opacity: ringOpacity }}
+            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
+          />
+          <motion.div
+            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
+            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
+          >
             <Icon className="h-11 w-11 text-bone/80" />
-          </div>
+          </motion.div>
         </div>
       )}
 
@@ -182,16 +202,6 @@ function Card({ a }: { a: Advantage }) {
         <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">{a.body}</p>
       </div>
     </article>
-  );
-}
-
-function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
-  return (
-    <EagerVideo
-      src={src}
-      objectPosition={objectPosition}
-      className="absolute inset-0 h-full w-full object-cover"
-    />
   );
 }
 
