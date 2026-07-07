@@ -7,6 +7,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { registerLazyVideo } from "@/lib/lazyVideo";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -294,17 +295,7 @@ function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objec
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { rootMargin: "120px" },
-    );
-
-    observer.observe(video);
-    return () => observer.disconnect();
+    return registerLazyVideo(video);
   }, []);
 
   return (
@@ -316,7 +307,7 @@ function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objec
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       disablePictureInPicture
     />
   );

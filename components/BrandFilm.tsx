@@ -1,6 +1,6 @@
 "use client";
 
-import { pinProgress, priorityFrameOrder } from "@/lib/scrollCanvas";
+import { createSlidingFrameLoader, pinProgress, snapFrameIndex } from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -14,10 +14,6 @@ type Props = {
 
 const SECTION_VH_MOBILE = 300;
 const SECTION_VH_DESKTOP = 520;
-
-function frameSrc(base: string, index: number) {
-  return `${base}/${String(index + 1).padStart(4, "0")}.webp`;
-}
 
 function useMobileViewport() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -55,7 +51,7 @@ export default function BrandFilm({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
 
-  const framesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const loaderRef = useRef<ReturnType<typeof createSlidingFrameLoader> | null>(null);
   const [frameReady, setFrameReady] = useState(false);
 
   const ready = isMobile !== null;
@@ -64,70 +60,38 @@ export default function BrandFilm({
   const count = mobile ? (frameCountMobile ?? frameCount) : frameCount;
   const videoPoster = mobile ? (posterMobile ?? poster) : poster;
   const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
+  const frameStep = mobile ? 2 : 1;
 
-  // Preload frames prioritised around the current scroll position.
   useEffect(() => {
     if (!ready || !base) return;
-
-    let cancelled = false;
-    const frames: (HTMLImageElement | null)[] = Array.from({ length: count }, () => null);
-    framesRef.current = frames;
-    let done = 0;
-    let readyFired = false;
 
     setFrameReady(false);
     window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
 
     const section = sectionRef.current;
-    const center = section ? Math.round(pinProgress(section) * (count - 1)) : 0;
-    const order = priorityFrameOrder(center, count);
-    let queueIndex = 0;
+    const startCenter = section ? Math.round(pinProgress(section) * (count - 1)) : 0;
 
-    const checkReady = () => {
-      if (readyFired) return;
-      if (frames[order[0]]) {
-        readyFired = true;
+    const loader = createSlidingFrameLoader({
+      base,
+      count,
+      extension: "webp",
+      step: frameStep,
+      windowRadius: mobile ? 14 : 22,
+      batchSize: mobile ? 2 : 4,
+      onFirstFrame: () => {
         setFrameReady(true);
         window.dispatchEvent(new CustomEvent("brandfilm:ready"));
-      }
-    };
+      },
+    });
 
-    const loadFrame = (i: number) => {
-      const img = new Image();
-      img.decoding = "async";
-      img.onload = () => {
-        if (cancelled) return;
-        frames[i] = img;
-        done++;
-        if (done % 8 === 0 || done === count) {
-          window.dispatchEvent(
-            new CustomEvent("brandfilm:progress", { detail: done / count }),
-          );
-        }
-        checkReady();
-      };
-      img.onerror = () => {
-        if (cancelled) return;
-        done++;
-        checkReady();
-      };
-      img.src = frameSrc(base, i);
-    };
-
-    const loadBatch = () => {
-      if (cancelled) return;
-      const batchSize = mobile ? 8 : 12;
-      const end = Math.min(queueIndex + batchSize, order.length);
-      for (; queueIndex < end; queueIndex++) loadFrame(order[queueIndex]);
-      if (queueIndex < order.length) requestAnimationFrame(loadBatch);
-    };
-
-    loadBatch();
+    loader.setCenter(startCenter);
+    loaderRef.current = loader;
 
     return () => {
-      cancelled = true;
+      loader.destroy();
+      loaderRef.current = null;
     };
-  }, [ready, base, count, mobile]);
+  }, [ready, base, count, frameStep, mobile]);
 
   // Render loop: eased progress → blended frames on canvas.
   useEffect(() => {
@@ -170,17 +134,6 @@ export default function BrandFilm({
       ctx.globalAlpha = 1;
     };
 
-    /** Nearest loaded frame at or before/after `i` — sequence may still be loading. */
-    const nearestLoaded = (i: number): number => {
-      const frames = framesRef.current;
-      if (frames[i]) return i;
-      for (let d = 1; d < frames.length; d++) {
-        if (i - d >= 0 && frames[i - d]) return i - d;
-        if (i + d < frames.length && frames[i + d]) return i + d;
-      }
-      return -1;
-    };
-
     // Blending two offset frames reads as motion blur when the camera moves
     // fast — so cross-blend only below this speed (frames per RAF tick).
     // Above it a single crisp frame looks sharper and the eye can't tell.
@@ -190,19 +143,25 @@ export default function BrandFilm({
       const exact = smooth * (count - 1);
       if (Math.abs(exact - lastExact) < 0.004) return;
 
-      const frames = framesRef.current;
+      const loader = loaderRef.current;
+      if (!loader) return;
+
+      const frames = loader.frames;
       const blend = velocity < BLEND_MAX_VELOCITY;
-      const iRaw = Math.min(count - 1, blend ? Math.floor(exact) : Math.round(exact));
-      const i = nearestLoaded(iRaw);
+      const iRaw = snapFrameIndex(
+        Math.min(count - 1, blend ? Math.floor(exact) : Math.round(exact)),
+        count,
+        frameStep,
+      );
+      const i = loader.nearestLoaded(iRaw);
       if (i === -1) return;
 
       drawFrame(frames[i]!, 1);
 
       if (blend && i === iRaw) {
-        // Sub-frame cross-blend — only while settling, where it adds
-        // smoothness without ghosting.
-        const next = i + 1 < count ? frames[i + 1] : null;
-        const frac = exact - iRaw;
+        const nextIndex = i + frameStep < count ? i + frameStep : -1;
+        const next = nextIndex >= 0 ? frames[nextIndex] : null;
+        const frac = (exact - iRaw) / frameStep;
         if (next && frac > 0.01) drawFrame(next, frac);
       }
 
@@ -223,6 +182,7 @@ export default function BrandFilm({
         lastScrollY = window.scrollY;
         target = pinProgress(section);
         lastTarget = target;
+        loaderRef.current?.setCenter(Math.round(target * (count - 1)));
       }
 
       // Framerate-independent ease toward the scroll position — turns
@@ -239,6 +199,7 @@ export default function BrandFilm({
     const observer = new IntersectionObserver(
       ([entry]) => {
         active = entry.isIntersecting;
+        loaderRef.current?.setActive(entry.isIntersecting);
       },
       { rootMargin: "100px 0px" },
     );
@@ -253,7 +214,7 @@ export default function BrandFilm({
       observer.disconnect();
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [ready, count, mobile]);
+  }, [ready, count, frameStep, mobile]);
 
   return (
     <section

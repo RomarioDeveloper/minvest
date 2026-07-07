@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { registerLazyVideo } from "@/lib/lazyVideo";
 import { useEffect, useRef } from "react";
 
 type BlockProps = {
@@ -38,15 +38,12 @@ export default function VideoFeatureBlocks() {
 function SplitFeatureBlock({ title, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
   return (
     <section className="relative flex h-[100svh] w-full flex-col md:flex-row overflow-hidden bg-ink">
-      {/* Mobile background video */}
-      <div className="absolute inset-0 md:hidden">
+      <div className="absolute inset-0 md:left-1/2 md:w-1/2">
         <BackgroundVideo src={video} objectPosition={objectPosition} />
       </div>
 
-      {/* Mobile gradient wash */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent md:hidden" />
 
-      {/* Text Container */}
       <div className="relative z-10 flex h-full w-full items-end p-6 pb-20 sm:p-10 md:w-1/2 md:items-center md:p-16 lg:p-24">
         <div className="max-w-4xl">
           <h2
@@ -55,13 +52,6 @@ function SplitFeatureBlock({ title, video, objectPosition = "center" }: BlockPro
           >
             {title}
           </h2>
-        </div>
-      </div>
-
-      {/* Desktop Video Container */}
-      <div className="relative hidden h-full w-1/2 overflow-hidden md:block">
-        <div className="absolute inset-0">
-          <BackgroundVideo src={video} objectPosition={objectPosition} />
         </div>
       </div>
     </section>
@@ -102,17 +92,7 @@ function BackgroundVideo({ src, objectPosition = "center" }: { src: string; obje
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { rootMargin: "120px" },
-    );
-
-    observer.observe(video);
-    return () => observer.disconnect();
+    return registerLazyVideo(video);
   }, []);
 
   return (
@@ -124,7 +104,7 @@ function BackgroundVideo({ src, objectPosition = "center" }: { src: string; obje
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       disablePictureInPicture
     />
   );

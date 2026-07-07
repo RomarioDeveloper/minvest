@@ -1,33 +1,23 @@
 "use client";
 
+import { registerLazyVideo } from "@/lib/lazyVideo";
 import { useEffect, useRef } from "react";
 
 type Props = {
   /** Base path without extension, e.g. "/video/brand". Looks up .webm/.mp4/.jpg. */
   src: string;
   className?: string;
+  priority?: boolean;
 };
 
-/**
- * Looping background video that only plays while on screen — keeps scroll
- * smooth and saves battery: offscreen videos are paused, not decoded.
- */
-export default function LoopVideo({ src, className = "" }: Props) {
+export default function LoopVideo({ src, className = "", priority = false }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) v.play().catch(() => {});
-        else v.pause();
-      },
-      { rootMargin: "120px" },
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
+    const video = ref.current;
+    if (!video) return;
+    return registerLazyVideo(video, { priority });
+  }, [priority]);
 
   return (
     <video
@@ -36,7 +26,7 @@ export default function LoopVideo({ src, className = "" }: Props) {
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       poster={`${src}.jpg`}
       disablePictureInPicture
     >

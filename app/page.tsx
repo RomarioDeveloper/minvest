@@ -11,8 +11,8 @@ import RevealOnView from "@/components/RevealOnView";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
+import TradeInDriveIn from "@/components/TradeInDriveIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
-import TwoUpVideo from "@/components/TwoUpVideo";
 import Header from "@/components/Header";
 
 export default function HomePage() {
@@ -216,34 +216,9 @@ export default function HomePage() {
         </RevealOnView>
       </div>
 
-      {/* ---------- LIVING YARD (looped videos) ---------- */}
-      <div className="relative">
-        <RevealOnView variant="zoom" offset={0} as="div">
-          <TwoUpVideo
-            left={{
-              src: "/video/yard-day",
-              eyebrow: "Двор днём",
-              title: <>Вода, игры и солнце.</>,
-              body: (
-                <>
-                  Сухой фонтан, игровые формы и навесы от солнца. Двор, в котором
-                  дети проводят весь день — на виду у родителей.
-                </>
-              ),
-            }}
-            right={{
-              src: "/video/yard-evening",
-              eyebrow: "Двор вечером",
-              title: <>Тёплый свет после заката.</>,
-              body: (
-                <>
-                  Вечером двор подсвечивается мягким светом: дорожки, зелень и
-                  площадка видны с каждого балкона.
-                </>
-              ),
-            }}
-          />
-        </RevealOnView>
+      {/* ---------- TRADE-IN CAR SCENE (replaces heavy yard videos) ---------- */}
+      <div className="relative border-t border-bone/10 bg-ink-deep">
+        <TradeInDriveIn />
       </div>
 
       {/* ---------- TRADE-IN ---------- */}

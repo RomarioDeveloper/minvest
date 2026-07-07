@@ -1,5 +1,6 @@
 "use client";
 
+import { createSlidingFrameLoader, snapFrameIndex } from "@/lib/scrollCanvas";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -63,8 +64,7 @@ export default function LayoutScrollBlock({
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useMobileViewport();
-  const framesRef = useRef<(HTMLImageElement | null)[]>([]);
-  const [loadedCount, setLoadedCount] = useState(0);
+  const loaderRef = useRef<ReturnType<typeof createSlidingFrameLoader> | null>(null);
   const [frameReady, setFrameReady] = useState(false);
 
   const ready = isMobile !== null;
@@ -72,58 +72,37 @@ export default function LayoutScrollBlock({
   const base = mobile ? (frameBaseMobile ?? frameBase) : frameBase;
   const framePoster = mobile ? (posterMobile ?? poster) : poster;
   const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
+  const frameStep = mobile ? 2 : 1;
 
   useEffect(() => {
     if (!ready || !base) return;
 
-    let cancelled = false;
-    const frames: (HTMLImageElement | null)[] = Array.from({ length: frameCount }, () => null);
-    framesRef.current = frames;
-    let done = 0;
-    let currentIndex = 0;
-
-    setLoadedCount(0);
     setFrameReady(false);
 
-    const loadBatch = () => {
-      if (cancelled) return;
-      const end = Math.min(currentIndex + 12, frameCount);
+    const section = sectionRef.current;
+    const startCenter = section ? Math.round(pinProgress(section) * (frameCount - 1)) : 0;
 
-      for (; currentIndex < end; currentIndex++) {
-        const i = currentIndex;
-        const img = new Image();
-        img.decoding = "async";
+    const loader = createSlidingFrameLoader({
+      base,
+      count: frameCount,
+      extension: "jpg",
+      step: frameStep,
+      windowRadius: mobile ? 12 : 18,
+      batchSize: mobile ? 2 : 3,
+      onFirstFrame: () => setFrameReady(true),
+    });
 
-        const finish = () => {
-          if (cancelled) return;
-          done++;
-          setLoadedCount(done);
-        };
-
-        img.onload = () => {
-          frames[i] = img;
-          finish();
-        };
-        img.onerror = () => {
-          frames[i] = null;
-          finish();
-        };
-
-        img.src = `${base}/${String(i + 1).padStart(4, "0")}.jpg`;
-      }
-
-      if (currentIndex < frameCount) requestAnimationFrame(loadBatch);
-    };
-
-    loadBatch();
+    loader.setCenter(startCenter);
+    loaderRef.current = loader;
 
     return () => {
-      cancelled = true;
+      loader.destroy();
+      loaderRef.current = null;
     };
-  }, [ready, base, frameCount]);
+  }, [ready, base, frameCount, frameStep, mobile]);
 
   useEffect(() => {
-    if (!ready || loadedCount < 1) return;
+    if (!ready) return;
 
     const section = sectionRef.current;
     const canvas = canvasRef.current;
@@ -136,9 +115,6 @@ export default function LayoutScrollBlock({
     let canvasH = 0;
     let rafId = 0;
     let lastExact = -1;
-    // The frames are 16:9 with wide black margins around the house, so on a
-    // narrow phone plain "contain" renders it tiny. Zooming crops only the
-    // empty margins while keeping the house and dimension labels in frame.
     const zoom = mobile ? 1.25 : 1;
 
     const resizeCanvas = () => {
@@ -150,10 +126,20 @@ export default function LayoutScrollBlock({
     };
 
     const draw = (progress: number) => {
-      const exact = Math.min(frameCount - 1, Math.max(0, Math.round(progress * (frameCount - 1))));
+      const loader = loaderRef.current;
+      if (!loader) return;
+
+      const exact = snapFrameIndex(
+        Math.min(frameCount - 1, Math.max(0, Math.round(progress * (frameCount - 1)))),
+        frameCount,
+        frameStep,
+      );
       if (exact === lastExact) return;
 
-      const frame = framesRef.current[exact];
+      const frameIndex = loader.nearestLoaded(exact);
+      if (frameIndex === -1) return;
+
+      const frame = loader.frames[frameIndex];
       if (frame && drawContain(ctx, frame, canvasW, canvasH, zoom)) {
         lastExact = exact;
         if (!frameReady) setFrameReady(true);
@@ -169,15 +155,18 @@ export default function LayoutScrollBlock({
     const observer = new IntersectionObserver(
       ([entry]) => {
         isIntersecting = entry.isIntersecting;
+        loaderRef.current?.setActive(entry.isIntersecting);
       },
-      { rootMargin: "100% 0px" } // Start tracking slightly before it enters
+      { rootMargin: "100% 0px" },
     );
     observer.observe(section);
 
     const tick = () => {
       if (isIntersecting && window.scrollY !== lastScrollY) {
         lastScrollY = window.scrollY;
-        draw(pinProgress(section));
+        const progress = pinProgress(section);
+        loaderRef.current?.setCenter(Math.round(progress * (frameCount - 1)));
+        draw(progress);
       }
       rafId = requestAnimationFrame(tick);
     };
@@ -192,7 +181,7 @@ export default function LayoutScrollBlock({
       window.removeEventListener("resize", resizeCanvas);
       window.visualViewport?.removeEventListener("resize", resizeCanvas);
     };
-  }, [ready, loadedCount, frameCount, frameReady, mobile]);
+  }, [ready, frameCount, frameReady, frameStep, mobile]);
 
   return (
     <section

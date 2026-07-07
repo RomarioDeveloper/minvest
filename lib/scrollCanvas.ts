@@ -36,6 +36,135 @@ export function priorityFrameOrder(center: number, total: number): number[] {
   return order;
 }
 
+export function snapFrameIndex(index: number, count: number, step = 1): number {
+  const snapped = Math.round(index / step) * step;
+  return Math.min(count - 1, Math.max(0, snapped));
+}
+
+export function frameFileSrc(base: string, index: number, extension: "webp" | "jpg") {
+  return `${base}/${String(index + 1).padStart(4, "0")}.${extension}`;
+}
+
+type SlidingFrameLoaderOptions = {
+  base: string;
+  count: number;
+  extension: "webp" | "jpg";
+  step?: number;
+  windowRadius?: number;
+  batchSize?: number;
+  onFirstFrame?: () => void;
+};
+
+/** Loads only frames near the current scroll position instead of the whole sequence. */
+export function createSlidingFrameLoader({
+  base,
+  count,
+  extension,
+  step = 1,
+  windowRadius = 20,
+  batchSize = 3,
+  onFirstFrame,
+}: SlidingFrameLoaderOptions) {
+  const frames: (HTMLImageElement | null)[] = Array.from({ length: count }, () => null);
+  const loading = new Set<number>();
+  let center = 0;
+  let active = false;
+  let cancelled = false;
+  let firstFired = false;
+  let pumpTimer: number | undefined;
+
+  const shouldLoad = (index: number) => index % step === 0;
+
+  const loadFrame = (index: number) => {
+    const i = snapFrameIndex(index, count, step);
+    if (frames[i] || loading.has(i) || cancelled || !shouldLoad(i)) return;
+
+    loading.add(i);
+    const img = new Image();
+    img.decoding = "async";
+
+    const finish = () => loading.delete(i);
+
+    img.onload = () => {
+      if (!cancelled) {
+        frames[i] = img;
+        if (!firstFired) {
+          firstFired = true;
+          onFirstFrame?.();
+        }
+      }
+      finish();
+    };
+    img.onerror = finish;
+    img.src = frameFileSrc(base, i, extension);
+  };
+
+  const pump = () => {
+    if (cancelled || !active) return;
+
+    const c = snapFrameIndex(center, count, step);
+    const order = priorityFrameOrder(c, count).filter(
+      (i) => shouldLoad(i) && Math.abs(i - c) <= windowRadius,
+    );
+
+    let queued = 0;
+    for (const i of order) {
+      if (!frames[i] && !loading.has(i)) {
+        loadFrame(i);
+        if (++queued >= batchSize) break;
+      }
+    }
+  };
+
+  const startPump = () => {
+    if (pumpTimer !== undefined) return;
+    const run = () => {
+      pump();
+      if (!cancelled) pumpTimer = window.setTimeout(run, 100);
+    };
+    run();
+  };
+
+  const stopPump = () => {
+    if (pumpTimer !== undefined) {
+      window.clearTimeout(pumpTimer);
+      pumpTimer = undefined;
+    }
+  };
+
+  const nearestLoaded = (target: number): number => {
+    const snapped = snapFrameIndex(target, count, step);
+    if (frames[snapped]) return snapped;
+    for (let d = step; d < count; d += step) {
+      if (snapped - d >= 0 && frames[snapped - d]) return snapped - d;
+      if (snapped + d < count && frames[snapped + d]) return snapped + d;
+    }
+    return -1;
+  };
+
+  return {
+    frames,
+    setCenter(index: number) {
+      center = index;
+      if (active) pump();
+    },
+    setActive(next: boolean) {
+      active = next;
+      if (next) {
+        pump();
+        startPump();
+      } else {
+        stopPump();
+      }
+    },
+    nearestLoaded,
+    destroy() {
+      cancelled = true;
+      stopPump();
+    },
+  };
+}
+
 export function drawCover(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
+import { registerLazyVideo } from "@/lib/lazyVideo";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -41,10 +42,15 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+
     const onCanPlay = () => setLoaded(true);
     v.addEventListener("canplay", onCanPlay);
     v.addEventListener("loadeddata", onCanPlay);
+
+    const unregister = registerLazyVideo(v, { priority: true });
+
     return () => {
+      unregister();
       v.removeEventListener("canplay", onCanPlay);
       v.removeEventListener("loadeddata", onCanPlay);
     };
@@ -71,11 +77,10 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
-          autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
           poster={`${src}.jpg`}
         >
           <source src={`${src}.webm`} type="video/webm" />

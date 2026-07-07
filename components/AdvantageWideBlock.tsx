@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { registerLazyVideo } from "@/lib/lazyVideo";
 import { useEffect, useRef } from "react";
 
 type Props = {
@@ -55,17 +55,7 @@ function WideBlockVideo({ src, objectPosition }: { src: string; objectPosition: 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { rootMargin: "120px" },
-    );
-
-    observer.observe(video);
-    return () => observer.disconnect();
+    return registerLazyVideo(video);
   }, []);
 
   return (
@@ -77,7 +67,7 @@ function WideBlockVideo({ src, objectPosition }: { src: string; objectPosition: 
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       disablePictureInPicture
     />
   );
