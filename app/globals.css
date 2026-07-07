@@ -364,3 +364,21 @@
     touch-action: pan-x pan-y;
   }
 }
+
+/* Вращение светящейся рамки BlobCard (см. components/ui/glow-effect.tsx).
+   Translate входит в keyframes, потому что элемент отцентрован транформом. */
+.glow-rotator {
+  animation-name: glow-rotate;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+@keyframes glow-rotate {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

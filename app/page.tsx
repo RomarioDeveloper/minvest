@@ -8,6 +8,7 @@ import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
 import RevealOnView from "@/components/RevealOnView";
+import { BlobCard } from "@/components/ui/blob-card";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
@@ -316,36 +317,35 @@ export default function HomePage() {
                 ),
               },
             ].map((c, i) => (
-              <RevealOnView
-                key={c.label}
-                variant="block"
-                delay={160 + i * 100}
-                className="group relative overflow-hidden rounded-2xl border border-bone/10 bg-ink-panel transition-colors duration-500 hover:border-bone/25"
-              >
+              <RevealOnView key={c.label} variant="block" delay={160 + i * 100}>
                 <a
                   href={c.href}
                   {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="block p-6 sm:p-7"
+                  className="group block"
                 >
-                  {/* Свечение сверху при наведении */}
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(ellipse_50%_100%_at_50%_0%,rgba(244,244,245,0.07),rgba(244,244,245,0)_100%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                  <div className="flex items-start justify-between">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-bone/15 text-bone-soft transition-colors duration-500 group-hover:border-bone/40 group-hover:text-bone">
-                      {c.icon}
-                    </span>
-                    <span className="text-bone-dim transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-bone">
-                      ↗
-                    </span>
-                  </div>
-
-                  <div className="mt-8 font-display text-xl font-semibold tracking-tightest text-bone sm:text-2xl">
-                    {c.value}
-                  </div>
-                  <div className="mt-2 border-t border-bone/10 pt-3">
-                    <span className="text-[13px] font-semibold text-bone-soft">{c.label}</span>
-                    <span className="ml-2 text-[12px] text-bone-dim">{c.note}</span>
-                  </div>
+                  <BlobCard
+                    headerHeight={104}
+                    header={
+                      <div className="flex items-start justify-between">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-bone/20 bg-ink/40 text-bone-soft backdrop-blur-sm transition-colors duration-500 group-hover:border-bone/50 group-hover:text-bone">
+                          {c.icon}
+                        </span>
+                        <span className="text-bone-dim transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-bone">
+                          ↗
+                        </span>
+                      </div>
+                    }
+                  >
+                    <div className="px-6 pb-6 sm:px-7 sm:pb-7">
+                      <div className="font-display text-xl font-semibold tracking-tightest text-bone sm:text-2xl">
+                        {c.value}
+                      </div>
+                      <div className="mt-2 border-t border-bone/10 pt-3">
+                        <span className="text-[13px] font-semibold text-bone-soft">{c.label}</span>
+                        <span className="ml-2 text-[12px] text-bone-dim">{c.note}</span>
+                      </div>
+                    </div>
+                  </BlobCard>
                 </a>
               </RevealOnView>
             ))}
