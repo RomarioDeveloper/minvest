@@ -46,8 +46,6 @@ export default function Header() {
       <nav className="relative hidden gap-7 text-eyebrow uppercase text-bone-soft lg:flex">
         <a className="transition hover:text-bone" href="#objects">Объекты</a>
         <a className="transition hover:text-bone" href="#advantages">Преимущества</a>
-        <a className="transition hover:text-bone" href="#construction">Конструктив</a>
-        <a className="transition hover:text-bone" href="#terms">Условия</a>
         <a className="transition hover:text-bone" href="#company">О компании</a>
         <a className="transition hover:text-bone" href="#contact">Контакты</a>
       </nav>

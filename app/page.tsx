@@ -1,17 +1,12 @@
 import BrandFilm from "@/components/BrandFilm";
-import CatalogEntrance from "@/components/CatalogEntrance";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
-import ConstructionSpec from "@/components/ConstructionSpec";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
-import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
-import PurchaseTerms from "@/components/PurchaseTerms";
 import RevealOnView from "@/components/RevealOnView";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
-import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import TwoUpVideo from "@/components/TwoUpVideo";
@@ -53,67 +48,8 @@ export default function HomePage() {
         />
       </div>
 
-      {/* ---------- INTRO STATS ---------- */}
-      <section className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
-        <div className="mx-auto max-w-7xl">
-          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-            Знакомство
-          </RevealOnView>
-          <RevealOnView
-            as="div"
-            variant="blur"
-            delay={120}
-            className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
-          >
-            <h2 style={{ fontSize: "clamp(34px, 5.4vw, 72px)", lineHeight: 0.98 }}>
-              Архитектура без лишнего.
-              <br />
-              Двор без посторонних.
-              <br />
-              <span className="text-bone-mute">Жильё без компромиссов.</span>
-            </h2>
-          </RevealOnView>
-
-          <div className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
-            <RevealOnView variant="block" delay={150} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <StatsCountUp
-                to={6}
-                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
-              />
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">этажей</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={300} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <span className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
-                ≈ <StatsCountUp to={40} />
-              </span>
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">квартир</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={450} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <StatsCountUp
-                to={100}
-                suffix="%"
-                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
-              />
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">закрытая территория</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={600} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <div className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
-                24 / 7
-              </div>
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">видеонаблюдение</div>
-            </RevealOnView>
-          </div>
-        </div>
-      </section>
-
       {/* ---------- ADVANTAGES (horizontal scroll) ---------- */}
       <HorizontalAdvantages />
-
-      {/* ---------- WIDE VIDEO BLOCKS ---------- */}
-      <VideoFeatureBlocks />
-
-      {/* ---------- CATALOG ENTRANCE CTA ---------- */}
-      <CatalogEntrance />
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
@@ -261,41 +197,11 @@ export default function HomePage() {
         </RevealOnView>
       </div>
 
-      {/* ---------- CONSTRUCTION SPEC ---------- */}
-      <ConstructionSpec />
-
-      {/* ---------- PURCHASE TERMS ---------- */}
-      <PurchaseTerms />
-
       {/* ---------- TRADE-IN ---------- */}
       <TradeIn />
 
       {/* ---------- COMPANY ADVANTAGES + INFOGRAPHICS ---------- */}
       <CompanyAdvantages />
-
-      {/* ---------- CLOSING SPREAD ---------- */}
-      <RevealOnView variant="shutter-right" offset={0} as="div" className="relative">
-        <EditorialSpread
-          imageSrc="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp"
-          imageAlt="Жилой дом и территория на закате"
-          eyebrow="Дом — это решение надолго"
-          title={
-            <>
-              Приезжайте посмотреть
-              <br />
-              <span className="text-bone-mute">в любой день недели.</span>
-            </>
-          }
-          body={
-            <>
-              Менеджер встретит на территории, проведёт по этажам, покажет планировки и
-              свободные квартиры. Без скриптов и без давления.
-            </>
-          }
-          placement="bottom-left"
-          height="tall"
-        />
-      </RevealOnView>
 
       {/* ---------- CONTACT ---------- */}
       <section
