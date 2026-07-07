@@ -196,7 +196,7 @@ export default function LayoutScrollBlock({
     <section
       ref={sectionRef}
       id="layouts"
-      className="relative w-full bg-transparent"
+      className="relative w-full overflow-x-clip bg-transparent"
       style={{ height: `${sectionVh}dvh` }}
       aria-label="Планировки квартир, управляемые скроллом"
     >

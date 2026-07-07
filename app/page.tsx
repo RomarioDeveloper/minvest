@@ -16,14 +16,14 @@ import Header from "@/components/Header";
 
 export default function HomePage() {
   return (
-    <main className="relative bg-ink text-bone">
+    <main className="relative w-full max-w-full overflow-x-clip bg-ink text-bone">
       <ScrollProgressBar />
 
       {/* ---------- NAV ---------- */}
       <Header />
 
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
-      <div id="top">
+      <div id="top" className="overflow-x-clip">
         <BrandFilm
           frameBase="/hero-desktop-frames"
           frameBaseMobile="/hero-mobile-frames"
@@ -51,7 +51,7 @@ export default function HomePage() {
       </div>
 
       {/* ---------- INTRO STATS ---------- */}
-      <section className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
+      <section className="relative overflow-x-clip border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
             <RevealOnView variant="block" delay={150} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">

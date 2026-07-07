@@ -228,7 +228,7 @@ export default function BrandFilm({
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-ink"
+      className="relative w-full overflow-x-clip bg-ink"
       style={{ height: `${sectionVh}dvh` }}
       aria-label="Видео о доме, управляемое скроллом"
     >

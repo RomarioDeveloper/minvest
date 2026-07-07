@@ -131,7 +131,7 @@ export default function HorizontalAdvantages() {
   }, []);
 
   return (
-    <section id="advantages" className="relative bg-ink-deep py-20 sm:py-28">
+    <section id="advantages" className="relative overflow-x-clip bg-ink-deep py-20 sm:py-28">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16">
         <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
         <h2
@@ -145,7 +145,7 @@ export default function HorizontalAdvantages() {
 
       <div
         ref={scrollerRef}
-        className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain px-6 pb-4 sm:mt-12 sm:gap-6 sm:px-10 lg:px-16 md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="scroll-strip-x mt-10 flex snap-x snap-mandatory gap-5 px-6 pb-4 sm:mt-12 sm:gap-6 sm:px-10 lg:px-16 md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {ADVANTAGES.map((a) => (
           <Card key={a.title} a={a} />

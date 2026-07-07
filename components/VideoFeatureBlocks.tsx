@@ -9,7 +9,7 @@ type BlockProps = {
 
 export default function VideoFeatureBlocks() {
   return (
-    <div className="flex flex-col [content-visibility:auto]">
+    <div className="flex flex-col overflow-x-clip [content-visibility:auto]">
       <FeatureBlock
         title="Закрытые детские площадки — ваши дети будут в безопасности"
         video="/entrance-gate.mp4"

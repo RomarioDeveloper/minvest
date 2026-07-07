@@ -10,6 +10,9 @@
   html {
     /* Не даём браузеру «привязывать» scroll при подгрузке медиа после reload. */
     overflow-anchor: none;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
   }
 
   html.scroll-snap-magnet {
@@ -28,8 +31,12 @@
   body {
     font-family: "Manrope", system-ui, sans-serif;
     font-weight: 500;
-    /* clip keeps horizontal overflow hidden without breaking position:sticky on iOS */
-    overflow-x: clip;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    overscroll-behavior-x: none;
+    /* Вертикальный скролл страницы; горизонтальный — только внутри каруселей */
+    touch-action: pan-y pinch-zoom;
   }
 
   ::selection {
@@ -266,5 +273,13 @@
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Horizontal carousels: scroll inside the strip, never move the whole page */
+  .scroll-strip-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
   }
 }
