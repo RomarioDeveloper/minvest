@@ -162,10 +162,12 @@ function Card({
   a,
   cardIndex,
   scrollProgress,
+  isMobile,
 }: {
   a: Advantage;
   cardIndex: number;
   scrollProgress: MotionValue<number>;
+  isMobile: boolean;
 }) {
   const spread = 0.15;
   const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
