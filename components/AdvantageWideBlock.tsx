@@ -1,7 +1,6 @@
 "use client";
 
-import { registerLazyVideo } from "@/lib/lazyVideo";
-import { useEffect, useRef } from "react";
+import EagerVideo from "@/components/EagerVideo";
 
 type Props = {
   title: string;
@@ -19,7 +18,11 @@ export default function AdvantageWideBlock({
   return (
     <section className="relative h-[100svh] w-full overflow-hidden bg-ink">
       <div className="absolute inset-0">
-        <WideBlockVideo src={video} objectPosition={videoPosition} />
+        <EagerVideo
+          src={video}
+          objectPosition={videoPosition}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       </div>
 
       <div
@@ -46,29 +49,5 @@ export default function AdvantageWideBlock({
         </div>
       </div>
     </section>
-  );
-}
-
-function WideBlockVideo({ src, objectPosition }: { src: string; objectPosition: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-    return registerLazyVideo(video);
-  }, []);
-
-  return (
-    <video
-      ref={ref}
-      src={src}
-      className="absolute inset-0 h-full w-full object-cover"
-      style={{ objectPosition }}
-      muted
-      loop
-      playsInline
-      preload="none"
-      disablePictureInPicture
-    />
   );
 }

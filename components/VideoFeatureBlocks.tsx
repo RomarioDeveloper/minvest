@@ -1,7 +1,6 @@
 "use client";
 
-import { registerLazyVideo } from "@/lib/lazyVideo";
-import { useEffect, useRef } from "react";
+import EagerVideo from "@/components/EagerVideo";
 
 type BlockProps = {
   title: string;
@@ -39,7 +38,11 @@ function SplitFeatureBlock({ title, video, objectPosition = "center" }: BlockPro
   return (
     <section className="relative flex h-[100svh] w-full flex-col md:flex-row overflow-hidden bg-ink">
       <div className="absolute inset-0 md:left-1/2 md:w-1/2">
-        <BackgroundVideo src={video} objectPosition={objectPosition} />
+        <EagerVideo
+          src={video}
+          objectPosition={objectPosition}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       </div>
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent md:hidden" />
@@ -62,7 +65,11 @@ function FeatureBlock({ title, video, objectPosition = "center" }: BlockProps & 
   return (
     <section className="relative h-[100svh] w-full overflow-hidden bg-ink">
       <div className="absolute inset-0">
-        <BackgroundVideo src={video} objectPosition={objectPosition} />
+        <EagerVideo
+          src={video}
+          objectPosition={objectPosition}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       </div>
 
       <div
@@ -83,29 +90,5 @@ function FeatureBlock({ title, video, objectPosition = "center" }: BlockProps & 
         </div>
       </div>
     </section>
-  );
-}
-
-function BackgroundVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-    return registerLazyVideo(video);
-  }, []);
-
-  return (
-    <video
-      ref={ref}
-      src={src}
-      className="absolute inset-0 h-full w-full object-cover"
-      style={{ objectPosition }}
-      muted
-      loop
-      playsInline
-      preload="none"
-      disablePictureInPicture
-    />
   );
 }

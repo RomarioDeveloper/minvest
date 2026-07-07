@@ -1,8 +1,8 @@
 "use client";
 
+import EagerLoopVideo from "@/components/EagerLoopVideo";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { registerLazyVideo } from "@/lib/lazyVideo";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 type Props = {
   /** Base path without extension, e.g. "/video/1". Looks up .mp4/.webm/.jpg. */
@@ -23,8 +23,6 @@ type Props = {
  */
 export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [loaded, setLoaded] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -38,23 +36,6 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   const subtitleY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
   const subtitleOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 1]);
   const vignetteOpacity = useTransform(scrollYProgress, [0, 1], [0.55, 1]);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-
-    const onCanPlay = () => setLoaded(true);
-    v.addEventListener("canplay", onCanPlay);
-    v.addEventListener("loadeddata", onCanPlay);
-
-    const unregister = registerLazyVideo(v, { priority: true });
-
-    return () => {
-      unregister();
-      v.removeEventListener("canplay", onCanPlay);
-      v.removeEventListener("loadeddata", onCanPlay);
-    };
-  }, []);
 
   return (
     <section
@@ -72,20 +53,7 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
           className="absolute inset-0 h-full w-full object-cover"
         />
 
-        <video
-          ref={videoRef}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
-            loaded ? "opacity-100" : "opacity-0"
-          }`}
-          muted
-          loop
-          playsInline
-          preload="none"
-          poster={`${src}.jpg`}
-        >
-          <source src={`${src}.webm`} type="video/webm" />
-          <source src={`${src}.mp4`} type="video/mp4" />
-        </video>
+        <EagerLoopVideo base={src} className="absolute inset-0 h-full w-full object-cover" />
       </div>
 
       {/* Vignette that deepens on scroll */}

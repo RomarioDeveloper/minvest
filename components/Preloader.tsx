@@ -1,8 +1,8 @@
 "use client";
 
-import { ADVANTAGE_VIDEO_SRCS } from "@/components/HorizontalAdvantages";
 import { scrollToTop } from "@/lib/scrollRestoration";
-import { warmAdvantageVideos } from "@/lib/videoWarmup";
+import { SITE_VIDEO_SRCS } from "@/lib/siteVideos";
+import { warmSiteVideos } from "@/lib/videoWarmup";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -30,14 +30,12 @@ export default function Preloader() {
     let brandfilmProgress = 0;
     let videoProgress = 0;
     const applyProgress = () => {
-      // Blend the hero frame progress with the advantage-video warm-up so the
-      // bar reflects everything the curtain is actually waiting on.
       setProgress(Math.min(1, brandfilmProgress * 0.5 + videoProgress * 0.5));
     };
 
     const checkDone = () => {
       if (finished) return;
-      // Ждём загрузку страницы, кадры героя и первый кадр всех видео преимуществ
+      // Ждём страницу, кадры героя и все фоновые видео — без lazy
       if (isWindowLoaded && isBrandfilmReady && areVideosReady) {
         finished = true;
         const left = Math.max(0, MIN_SHOW_MS - (performance.now() - started));
@@ -63,10 +61,8 @@ export default function Preloader() {
       }
     };
 
-    // Прогреваем все видео преимуществ пока висит занавес, чтобы они не
-    // «появлялись» на глазах при прокрутке. Ждём только первый кадр каждого —
-    // это быстро (moov в начале файла), а докачка идёт в фоне.
-    warmAdvantageVideos(ADVANTAGE_VIDEO_SRCS, (fraction) => {
+    // Все видео сайта — грузим сразу, пока висит занавес.
+    warmSiteVideos(SITE_VIDEO_SRCS, (fraction) => {
       videoProgress = fraction;
       applyProgress();
     }).then(() => {
@@ -74,13 +70,13 @@ export default function Preloader() {
       checkDone();
     });
 
-    // Если видео очень тяжелое или интернет медленный — пускаем пользователя через 8 секунд в любом случае
+    // Много тяжёлых роликов — даём больше времени, но не блокируем навсегда.
     const cap = window.setTimeout(() => {
       if (!finished) {
         finished = true;
         setDone(true);
       }
-    }, 8000);
+    }, 20000);
 
     if (isWindowLoaded) onLoad();
     else window.addEventListener("load", onLoad, { once: true });

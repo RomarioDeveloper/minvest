@@ -1,69 +1,95 @@
-let warmed = false;
+const ready = new Set<string>();
+const warming = new Map<string, Promise<void>>();
+
+let container: HTMLDivElement | null = null;
+
+function getContainer() {
+  if (typeof document === "undefined") return null;
+  if (!container) {
+    container = document.createElement("div");
+    container.setAttribute("aria-hidden", "true");
+    container.style.cssText =
+      "position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;";
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
+export function isVideoReady(src: string) {
+  return ready.has(src);
+}
+
+function warmOne(src: string): Promise<void> {
+  const existing = warming.get(src);
+  if (existing) return existing;
+  if (ready.has(src)) return Promise.resolve();
+
+  const promise = new Promise<void>((resolve) => {
+    const host = getContainer();
+    if (!host) {
+      resolve();
+      return;
+    }
+
+    const video = document.createElement("video");
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.src = src;
+
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      ready.add(src);
+      video.removeEventListener("canplay", done);
+      video.removeEventListener("loadeddata", done);
+      video.removeEventListener("error", done);
+      resolve();
+    };
+
+    video.addEventListener("canplay", done);
+    video.addEventListener("loadeddata", done);
+    video.addEventListener("error", done);
+
+    host.appendChild(video);
+    video.load();
+
+    if (video.readyState >= 2) done();
+  }).finally(() => {
+    warming.delete(src);
+  });
+
+  warming.set(src, promise);
+  return promise;
+}
 
 /**
- * Warms a set of videos up front (during the preloader) so they don't visibly
- * pop in while the visitor scrolls. The returned promise resolves once every
- * video has its first frame (or metadata) ready — which is cheap because the
- * files are faststart (moov at the front). Full buffering keeps going in the
- * background afterwards via hidden elements kept alive for the session.
+ * Preloads videos during the preloader so fullscreen blocks don't visibly
+ * buffer while the visitor scrolls. Hidden elements stay in the DOM so the
+ * browser keeps the data in cache for the visible <video> tags on the page.
  */
-export function warmAdvantageVideos(
+export function warmSiteVideos(
   srcs: readonly string[],
   onProgress?: (readyFraction: number) => void,
 ): Promise<void> {
-  if (warmed || typeof document === "undefined") return Promise.resolve();
-  warmed = true;
+  if (typeof document === "undefined" || srcs.length === 0) {
+    return Promise.resolve();
+  }
 
-  if (srcs.length === 0) return Promise.resolve();
+  const unique = [...new Set(srcs)];
+  let loaded = unique.filter((src) => ready.has(src)).length;
+  onProgress?.(loaded / unique.length);
 
-  const mobile = window.matchMedia("(max-width: 767px)").matches;
+  const jobs = unique
+    .filter((src) => !ready.has(src))
+    .map((src) =>
+      warmOne(src).then(() => {
+        loaded += 1;
+        onProgress?.(loaded / unique.length);
+      }),
+    );
 
-  const container = document.createElement("div");
-  container.setAttribute("aria-hidden", "true");
-  container.style.cssText =
-    "position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;";
-  document.body.appendChild(container);
-
-  const total = srcs.length;
-  let ready = 0;
-
-  return new Promise((resolve) => {
-    let settled = 0;
-
-    const settleOne = () => {
-      ready += 1;
-      onProgress?.(ready / total);
-      settled += 1;
-      if (settled >= total) resolve();
-    };
-
-    srcs.forEach((src) => {
-      const video = document.createElement("video");
-      video.muted = true;
-      video.defaultMuted = true;
-      video.playsInline = true;
-      // Phones shouldn't eagerly pull ~200 MB of full videos; metadata is
-      // enough to have the first frame decode instantly on scroll. Desktop can
-      // afford to buffer the whole clip.
-      video.preload = mobile ? "metadata" : "auto";
-      video.src = src;
-
-      let handled = false;
-      const done = () => {
-        if (handled) return;
-        handled = true;
-        video.removeEventListener("loadeddata", done);
-        video.removeEventListener("loadedmetadata", done);
-        video.removeEventListener("error", done);
-        settleOne();
-      };
-
-      video.addEventListener("loadeddata", done);
-      video.addEventListener("loadedmetadata", done);
-      video.addEventListener("error", done);
-
-      container.appendChild(video);
-      video.load();
-    });
-  });
+  return Promise.all(jobs).then(() => undefined);
 }

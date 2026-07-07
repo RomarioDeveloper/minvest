@@ -1,6 +1,6 @@
 "use client";
 
-import { registerLazyVideo } from "@/lib/lazyVideo";
+import EagerVideo from "@/components/EagerVideo";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -68,11 +68,6 @@ const ADVANTAGES: Advantage[] = [
     video: "/security-guard.mp4",
   },
 ];
-
-/** Single source of truth for the preloader to warm these videos up front. */
-export const ADVANTAGE_VIDEO_SRCS: string[] = ADVANTAGES.map((a) => a.video).filter(
-  (src): src is string => Boolean(src),
-);
 
 export default function HorizontalAdvantages() {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -193,38 +188,11 @@ function Card({ a }: { a: Advantage }) {
 }
 
 function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-
-    // Fade the video in only once its first frame is actually decodable, so it
-    // eases in instead of snapping from an empty panel to a moving picture.
-    const reveal = () => setReady(true);
-    video.addEventListener("loadeddata", reveal);
-    video.addEventListener("playing", reveal);
-
-    const stop = registerLazyVideo(video);
-    return () => {
-      video.removeEventListener("loadeddata", reveal);
-      video.removeEventListener("playing", reveal);
-      stop();
-    };
-  }, []);
-
   return (
-    <video
-      ref={ref}
+    <EagerVideo
       src={src}
-      className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out motion-reduce:transition-none"
-      style={{ objectPosition, opacity: ready ? 1 : 0 }}
-      muted
-      loop
-      playsInline
-      preload="none"
-      disablePictureInPicture
+      objectPosition={objectPosition}
+      className="absolute inset-0 h-full w-full object-cover"
     />
   );
 }
