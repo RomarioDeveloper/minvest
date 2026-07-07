@@ -226,8 +226,7 @@ export default function HorizontalAdvantages() {
         
         {/* Заголовок теперь часть липкого вьюпорта, а не скроллится */}
         <div className="absolute top-0 left-0 w-full z-20 pointer-events-none bg-gradient-to-b from-ink-deep via-ink-deep/90 to-transparent pb-10">
-          {/* На мобильных (sm) делаем отступ сверху, как у всего сайта */}
-          <div className="mx-auto w-full max-w-7xl px-6 pt-24 sm:pt-16 sm:px-10 lg:px-16 lg:pt-24">
+          <div className="mx-auto w-full max-w-7xl px-6 pt-24 sm:px-10 lg:px-16 lg:pt-24">
             <div className="text-[11px] sm:text-eyebrow uppercase text-bone-mute tracking-wider font-semibold">Преимущества</div>
             <h2
               className="mt-2 sm:mt-4 max-w-3xl font-display font-semibold tracking-tight text-balance text-bone drop-shadow-md"
@@ -241,7 +240,7 @@ export default function HorizontalAdvantages() {
         </div>
 
         {/* Track with cards */}
-        <div className="flex h-full w-full items-center pt-24 sm:pt-0">
+        <div className="flex h-full w-full items-end pb-8 sm:items-center sm:pb-0 pt-[24vh] sm:pt-0">
           {/* Сдвигаем трек на мобилке, чтобы первая карточка была в центре, а не сбоку */}
           <div ref={trackRef} className="flex w-max items-center px-[10vw] sm:px-[15vw]" style={{ gap: isMobile ? "1rem" : "2rem" }}>
             {ADVANTAGES.map((a, i) => {
@@ -251,8 +250,8 @@ export default function HorizontalAdvantages() {
               return (
                 <article
                   key={a.title}
-                  // Уменьшили высоту карточки для мобильных устройств, чтобы она гарантированно помещалась под заголовком
-                  className="hbs-item relative flex h-[52vh] max-h-[600px] min-h-[380px] w-[82vw] sm:w-[480px] lg:w-[540px] shrink-0 flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-6 sm:p-10 transform-gpu"
+                  // Фиксируем высоту для мобильных, чтобы карточки не пытались растянуться до центра экрана
+                  className="hbs-item relative flex h-[55vh] max-h-[500px] min-h-[380px] w-[82vw] sm:h-[58vh] sm:max-h-[600px] sm:w-[480px] lg:w-[540px] shrink-0 flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-6 pb-8 sm:p-10 transform-gpu"
                 >
                   <div className="hbs-bg absolute inset-0 w-full h-full transform-gpu overflow-hidden bg-ink-panel">
                     {hasVideo ? (
@@ -262,9 +261,8 @@ export default function HorizontalAdvantages() {
                           objectPosition={a.videoPosition}
                           className="absolute inset-0 h-full w-full object-cover"
                         />
-                        <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/40 to-transparent" />
-                        {/* Увеличили нижний градиент, чтобы текст читался лучше */}
-                        <div className="absolute inset-x-0 bottom-0 h-[80%] bg-gradient-to-t from-ink-panel via-ink-panel/70 to-transparent" />
+                        <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/40 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-panel via-ink-panel/70 to-transparent" />
                       </>
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -276,14 +274,14 @@ export default function HorizontalAdvantages() {
                     )}
                   </div>
 
-                  <div className="hbs-content relative z-10 pointer-events-none mb-2">
-                    <div className="mb-3 sm:mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md shadow-lg">
+                  <div className="hbs-content relative z-10 pointer-events-none">
+                    <div className="mb-2 sm:mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md shadow-lg">
                       {String(i + 1).padStart(2, "0")} / {String(ADVANTAGES.length).padStart(2, "0")}
                     </div>
                     <h3 className="font-display text-[1.4rem] font-semibold leading-tight tracking-tight text-bone sm:text-4xl drop-shadow-lg">
                       {a.title}
                     </h3>
-                    <p className="mt-2 text-pretty text-[14px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
+                    <p className="mt-1.5 text-pretty text-[14px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
                       {a.body}
                     </p>
                   </div>
