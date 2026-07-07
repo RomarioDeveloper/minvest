@@ -12,11 +12,6 @@ export default function VideoFeatureBlocks() {
   return (
     <div className="flex flex-col">
       <FeatureBlock
-        title="Самые удобные квадратуры и гибкие планировки"
-        video="/16745051196022.mp4"
-        objectPosition="center"
-      />
-      <FeatureBlock
         title="Закрытые детские площадки — ваши дети будут в безопасности"
         video="/entrance-gate.mp4"
         objectPosition="center top"

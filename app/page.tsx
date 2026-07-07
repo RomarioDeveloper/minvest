@@ -1,12 +1,15 @@
 import BrandFilm from "@/components/BrandFilm";
+import LayoutScrollBlock from "@/components/LayoutScrollBlock";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
+import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
 import RevealOnView from "@/components/RevealOnView";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import TwoUpVideo from "@/components/TwoUpVideo";
@@ -48,8 +51,54 @@ export default function HomePage() {
         />
       </div>
 
+      {/* ---------- INTRO STATS ---------- */}
+      <section className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+            <RevealOnView variant="block" delay={150} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
+              <StatsCountUp
+                to={6}
+                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
+              />
+              <div className="mt-2 text-eyebrow uppercase text-bone-dim">этажей</div>
+            </RevealOnView>
+            <RevealOnView variant="block" delay={300} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
+              <span className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
+                ≈ <StatsCountUp to={40} />
+              </span>
+              <div className="mt-2 text-eyebrow uppercase text-bone-dim">квартир</div>
+            </RevealOnView>
+            <RevealOnView variant="block" delay={450} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
+              <StatsCountUp
+                to={100}
+                suffix="%"
+                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
+              />
+              <div className="mt-2 text-eyebrow uppercase text-bone-dim">закрытая территория</div>
+            </RevealOnView>
+            <RevealOnView variant="block" delay={600} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
+              <div className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
+                24 / 7
+              </div>
+              <div className="mt-2 text-eyebrow uppercase text-bone-dim">видеонаблюдение</div>
+            </RevealOnView>
+          </div>
+        </div>
+      </section>
+
       {/* ---------- ADVANTAGES (horizontal scroll) ---------- */}
       <HorizontalAdvantages />
+
+      {/* ---------- WIDE VIDEO BLOCKS ---------- */}
+      <VideoFeatureBlocks />
+
+      {/* ---------- LAYOUTS SCROLL ---------- */}
+      <LayoutScrollBlock
+        frameBase="/layout-frames"
+        frameBaseMobile="/layout-frames-mobile"
+        frameCount={300}
+        poster="/layout-scroll-poster.jpg"
+      />
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
