@@ -83,8 +83,10 @@ export default function BrandFilm({
       count,
       extension: "webp",
       step: frameStep,
-      windowRadius: mobile ? 14 : 22,
-      batchSize: mobile ? 2 : 4,
+      // Увеличиваем радиус предзагрузки, чтобы кадры успевали скачаться при быстром скролле
+      windowRadius: mobile ? 24 : 40,
+      // Увеличиваем размер пачки для более агрессивной загрузки
+      batchSize: mobile ? 4 : 8,
       onFirstFrame: () => {
         setFrameReady(true);
         window.dispatchEvent(new CustomEvent("brandfilm:ready"));

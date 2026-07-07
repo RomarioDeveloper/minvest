@@ -95,7 +95,7 @@ export function createSlidingFrameLoader({
   // Frames further than this from the current center are released to keep
   // memory bounded — a 1920×1080 frame costs ~8 MB decoded, so holding all
   // of them would blow past a gigabyte on a long sequence.
-  const evictRadius = Math.max(windowRadius * 2, windowRadius + 8);
+  const evictRadius = Math.max(windowRadius * 3, windowRadius + 12);
 
   const canBitmap = typeof createImageBitmap === "function";
   const isBitmap = (f: unknown): f is ImageBitmap =>
@@ -170,6 +170,8 @@ export function createSlidingFrameLoader({
 
     const c = snapFrameIndex(center, count, step);
     evict(c);
+    
+    // Грузим кадры в обе стороны от центра
     const order = priorityFrameOrder(c, count).filter(
       (i) => shouldLoad(i) && Math.abs(i - c) <= windowRadius,
     );
@@ -187,7 +189,8 @@ export function createSlidingFrameLoader({
     if (pumpTimer !== undefined) return;
     const run = () => {
       pump();
-      if (!cancelled) pumpTimer = window.setTimeout(run, 100);
+      // Ускоряем цикл проверки (было 100ms -> стало 30ms)
+      if (!cancelled) pumpTimer = window.setTimeout(run, 30);
     };
     run();
   };

@@ -96,8 +96,8 @@ export default function LayoutScrollBlock({
       count: frameCount,
       extension: "jpg",
       step: frameStep,
-      windowRadius: mobile ? 12 : 18,
-      batchSize: mobile ? 2 : 3,
+      windowRadius: mobile ? 20 : 32,
+      batchSize: mobile ? 4 : 6,
       onFirstFrame: () => setFrameReady(true),
     });
 
