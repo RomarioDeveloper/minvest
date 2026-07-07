@@ -163,8 +163,22 @@ export default function LayoutScrollBlock({
     resizeCanvas();
     draw(pinProgress(section));
 
+    let lastScrollY = -1;
+    let isIntersecting = false;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting;
+      },
+      { rootMargin: "100% 0px" } // Start tracking slightly before it enters
+    );
+    observer.observe(section);
+
     const tick = () => {
-      draw(pinProgress(section));
+      if (isIntersecting && window.scrollY !== lastScrollY) {
+        lastScrollY = window.scrollY;
+        draw(pinProgress(section));
+      }
       rafId = requestAnimationFrame(tick);
     };
 
@@ -173,6 +187,7 @@ export default function LayoutScrollBlock({
     window.visualViewport?.addEventListener("resize", resizeCanvas);
 
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resizeCanvas);
       window.visualViewport?.removeEventListener("resize", resizeCanvas);

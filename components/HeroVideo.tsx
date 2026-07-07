@@ -31,7 +31,6 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   });
 
   // Layered transforms for the parallax feel
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
   const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
@@ -59,7 +58,7 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
     >
       <motion.div
         className="absolute inset-0 will-change-transform"
-        style={{ scale: videoScale, y: videoY }}
+        style={{ scale: 1.05, y: videoY }}
       >
         {/* Poster as base layer — instantly visible, then crossfaded under the video */}
         <img

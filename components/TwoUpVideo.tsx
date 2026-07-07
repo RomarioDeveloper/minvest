@@ -35,7 +35,6 @@ function Panel({ item }: { item: Item }) {
   });
 
   const videoY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.14, 1.02, 1.14]);
   const copyY = useTransform(scrollYProgress, [0, 0.3, 1], [60, 0, -40]);
   const copyOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.85, 1], [0, 1, 1, 0]);
 
@@ -43,7 +42,7 @@ function Panel({ item }: { item: Item }) {
     <div ref={ref} className="relative h-[100svh] min-h-[640px] overflow-hidden">
       <motion.div
         className="absolute inset-0 will-change-transform"
-        style={{ y: videoY, scale: videoScale }}
+        style={{ y: videoY, scale: 1.05 }}
       >
         <LoopVideo src={item.src} className="absolute inset-0 h-full w-full object-cover" />
       </motion.div>

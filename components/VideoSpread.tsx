@@ -26,7 +26,6 @@ export default function VideoSpread({ src, eyebrow, title, body }: Props) {
   });
 
   const videoY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.14, 1.02, 1.14]);
   const washOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 0.75, 0.75, 0.5]);
   const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["36px", "0px", "-16px", "-48px"]);
   const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
@@ -38,7 +37,7 @@ export default function VideoSpread({ src, eyebrow, title, body }: Props) {
     >
       <motion.div
         className="absolute inset-0 will-change-transform"
-        style={{ y: videoY, scale: videoScale }}
+        style={{ y: videoY, scale: 1.05 }}
       >
         <LoopVideo src={src} className="absolute inset-0 h-full w-full object-cover" />
       </motion.div>

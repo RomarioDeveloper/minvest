@@ -102,6 +102,55 @@ function useMobileViewport() {
 }
 
 export default function HorizontalAdvantages() {
+  const isMobile = useMobileViewport();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <>
+        <div className="hidden md:block">
+          <DesktopAdvantages />
+        </div>
+        <div className="block md:hidden">
+          <MobileAdvantages />
+        </div>
+      </>
+    );
+  }
+
+  return isMobile ? <MobileAdvantages /> : <DesktopAdvantages />;
+}
+
+function MobileAdvantages() {
+  return (
+    <section id="advantages" className="relative bg-ink-deep py-20">
+      <div className="mx-auto w-full max-w-7xl px-6 pb-8">
+        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+        <h2
+          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+        >
+          Почему выбирают
+          <span className="text-bone-mute"> Malaysary Invest.</span>
+        </h2>
+      </div>
+
+      <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-10 hide-scrollbar">
+        {ADVANTAGES.map((a) => (
+          <div key={a.index} className="snap-center shrink-0">
+            <StaticCard a={a} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DesktopAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [scrollRange, setScrollRange] = useState(0);
@@ -115,7 +164,6 @@ export default function HorizontalAdvantages() {
     
     measure();
     
-    // Create an observer to measure when fonts/images load and change the width
     const observer = new ResizeObserver(measure);
     if (trackRef.current) {
       observer.observe(trackRef.current);

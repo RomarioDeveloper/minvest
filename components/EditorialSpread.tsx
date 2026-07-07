@@ -79,7 +79,6 @@ export default function EditorialSpread({
 
   // Image: depth illusion
   const imgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
-  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.18, 1.06, 1.18]);
 
   // Wash deepens around the middle, fades at edges
   const washOpacity = useTransform(
@@ -119,7 +118,7 @@ export default function EditorialSpread({
         src={imageSrc}
         alt={imageAlt}
         className="absolute inset-0 h-full w-full object-cover will-change-transform"
-        style={{ y: imgY, scale: imgScale }}
+        style={{ y: imgY, scale: 1.05 }}
         loading="lazy"
       />
 

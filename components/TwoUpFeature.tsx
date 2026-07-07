@@ -35,7 +35,6 @@ function Panel({ item }: { item: Item }) {
   });
 
   const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.18, 1.04, 1.18]);
   const copyY = useTransform(scrollYProgress, [0, 0.3, 1], [60, 0, -40]);
   const copyOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.85, 1], [0, 1, 1, 0]);
 
@@ -45,7 +44,7 @@ function Panel({ item }: { item: Item }) {
         src={item.imageSrc}
         alt={item.imageAlt}
         className="absolute inset-0 h-full w-full object-cover will-change-transform"
-        style={{ y: imgY, scale: imgScale }}
+        style={{ y: imgY, scale: 1.05 }}
         loading="lazy"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-ink-deep via-ink-deep/40 to-transparent" />

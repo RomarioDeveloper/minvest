@@ -44,7 +44,6 @@ function SplitFeatureBlock({ title, video }: BlockProps) {
   });
 
   const videoY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.12]);
   const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["40px", "0px", "-20px", "-60px"]);
   const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
 
@@ -57,7 +56,7 @@ function SplitFeatureBlock({ title, video }: BlockProps) {
       {/* Mobile background video */}
       <motion.div
         className="absolute inset-0 will-change-transform md:hidden"
-        style={{ y: videoY, scale: videoScale }}
+        style={{ y: videoY, scale: 1.05 }}
       >
         <BackgroundVideo src={video} />
       </motion.div>
@@ -84,7 +83,7 @@ function SplitFeatureBlock({ title, video }: BlockProps) {
       <div className="relative hidden h-full w-1/2 overflow-hidden md:block">
         <motion.div
           className="absolute inset-0 will-change-transform"
-          style={{ y: videoY, scale: videoScale }}
+          style={{ y: videoY, scale: 1.05 }}
         >
           <BackgroundVideo src={video} />
         </motion.div>
@@ -102,7 +101,6 @@ function FeatureBlock({ title, video }: BlockProps) {
   });
 
   const videoY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.12]);
   const washOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 0.85, 0.85, 0.5]);
   const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["40px", "0px", "-20px", "-60px"]);
   const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
@@ -115,7 +113,7 @@ function FeatureBlock({ title, video }: BlockProps) {
     >
       <motion.div
         className="absolute inset-0 will-change-transform"
-        style={{ y: videoY, scale: videoScale }}
+        style={{ y: videoY, scale: 1.05 }}
       >
         <BackgroundVideo src={video} />
       </motion.div>
