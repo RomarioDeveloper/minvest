@@ -44,6 +44,7 @@ const ADVANTAGES: Advantage[] = [
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
     video: "/01.mp4",
+    videoPosition: "80% center", // Сдвигает само видео левее, чтобы правая часть с лифтом попала в кадр
   },
   {
     title: "Трёхкамерные окна",
@@ -222,11 +223,11 @@ export default function HorizontalAdvantages() {
       className="relative w-full bg-ink-deep"
       style={{ height: `${scrollLength}vh` }}
     >
-      <div ref={viewportRef} className="sticky top-0 flex h-[100svh] w-full flex-col justify-center overflow-hidden">
+      <div ref={viewportRef} className="sticky top-0 flex h-[100svh] w-full flex-col overflow-hidden">
         
-        {/* Заголовок теперь часть липкого вьюпорта, а не скроллится */}
-        <div className="absolute top-0 left-0 w-full z-20 pointer-events-none bg-gradient-to-b from-ink-deep via-ink-deep/90 to-transparent pb-10">
-          <div className="mx-auto w-full max-w-7xl px-6 pt-24 sm:px-10 lg:px-16 lg:pt-24">
+        {/* Заголовок */}
+        <div className="w-full z-20 pointer-events-none shrink-0 pt-24 sm:pt-28 pb-4 sm:pb-6">
+          <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16">
             <div className="text-[11px] sm:text-eyebrow uppercase text-bone-mute tracking-wider font-semibold">Преимущества</div>
             <h2
               className="mt-2 sm:mt-4 max-w-3xl font-display font-semibold tracking-tight text-balance text-bone drop-shadow-md"
@@ -240,7 +241,7 @@ export default function HorizontalAdvantages() {
         </div>
 
         {/* Track with cards */}
-        <div className="flex h-full w-full items-end pb-8 sm:items-center sm:pb-0 pt-[24vh] sm:pt-0">
+        <div className="flex flex-1 w-full items-end pb-8 sm:items-center sm:pb-12">
           {/* Сдвигаем трек на мобилке, чтобы первая карточка была в центре, а не сбоку */}
           <div ref={trackRef} className="flex w-max items-center px-[10vw] sm:px-[15vw]" style={{ gap: isMobile ? "1rem" : "2rem" }}>
             {ADVANTAGES.map((a, i) => {
@@ -275,9 +276,6 @@ export default function HorizontalAdvantages() {
                   </div>
 
                   <div className="hbs-content relative z-10 pointer-events-none">
-                    <div className="mb-2 sm:mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md shadow-lg">
-                      {String(i + 1).padStart(2, "0")} / {String(ADVANTAGES.length).padStart(2, "0")}
-                    </div>
                     <h3 className="font-display text-[1.4rem] font-semibold leading-tight tracking-tight text-bone sm:text-4xl drop-shadow-lg">
                       {a.title}
                     </h3>
