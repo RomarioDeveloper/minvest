@@ -1,39 +1,30 @@
 const ready = new Set<string>();
+const blobUrls = new Map<string, string>();
 const warming = new Map<string, Promise<void>>();
 
-let container: HTMLDivElement | null = null;
-
-function getContainer() {
-  if (typeof document === "undefined") return null;
-  if (!container) {
-    container = document.createElement("div");
-    container.setAttribute("aria-hidden", "true");
-    container.style.cssText =
-      "position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;";
-    document.body.appendChild(container);
-  }
-  return container;
-}
+/** Videos above this size are warmed via a temp element + HTTP cache, not a blob. */
+const BLOB_MAX_BYTES = 25 * 1024 * 1024;
+const WARM_CONCURRENCY = 3;
 
 export function isVideoReady(src: string) {
   return ready.has(src);
 }
 
-function warmOne(src: string): Promise<void> {
-  const existing = warming.get(src);
-  if (existing) return existing;
-  if (ready.has(src)) return Promise.resolve();
+export function getVideoSrc(src: string) {
+  return blobUrls.get(src) ?? src;
+}
 
-  const promise = new Promise<void>((resolve) => {
-    const host = getContainer();
-    if (!host) {
-      resolve();
-      return;
-    }
+async function warmWithFetch(src: string) {
+  const resp = await fetch(src);
+  if (!resp.ok) throw new Error(`fetch failed: ${src}`);
+  const blob = await resp.blob();
+  blobUrls.set(src, URL.createObjectURL(blob));
+}
 
+async function warmWithElement(src: string) {
+  await new Promise<void>((resolve) => {
     const video = document.createElement("video");
     video.muted = true;
-    video.defaultMuted = true;
     video.playsInline = true;
     video.preload = "auto";
     video.src = src;
@@ -42,33 +33,69 @@ function warmOne(src: string): Promise<void> {
     const done = () => {
       if (settled) return;
       settled = true;
-      ready.add(src);
       video.removeEventListener("canplay", done);
       video.removeEventListener("loadeddata", done);
       video.removeEventListener("error", done);
+      video.src = "";
+      video.load();
       resolve();
     };
 
     video.addEventListener("canplay", done);
     video.addEventListener("loadeddata", done);
     video.addEventListener("error", done);
-
-    host.appendChild(video);
     video.load();
-
     if (video.readyState >= 2) done();
-  }).finally(() => {
-    warming.delete(src);
   });
+}
 
-  warming.set(src, promise);
-  return promise;
+async function warmOne(src: string) {
+  if (ready.has(src)) return;
+
+  try {
+    const head = await fetch(src, { method: "HEAD" });
+    const size = Number(head.headers.get("content-length") ?? 0);
+    if (size > 0 && size <= BLOB_MAX_BYTES) {
+      await warmWithFetch(src);
+    } else {
+      await warmWithElement(src);
+    }
+  } catch {
+    try {
+      await warmWithElement(src);
+    } catch {
+      /* still mark ready so the preloader doesn't hang forever */
+    }
+  }
+
+  ready.add(src);
+}
+
+async function runPool(srcs: string[], onProgress?: (fraction: number) => void) {
+  const queue = srcs.filter((s) => !ready.has(s));
+  const total = srcs.length;
+  let done = srcs.filter((s) => ready.has(s)).length;
+  onProgress?.(done / total);
+
+  let index = 0;
+  async function worker() {
+    while (index < queue.length) {
+      const src = queue[index++];
+      await warmOne(src);
+      done += 1;
+      onProgress?.(done / total);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(WARM_CONCURRENCY, queue.length || 1) }, () =>
+    worker(),
+  );
+  await Promise.all(workers);
 }
 
 /**
- * Preloads videos during the preloader so fullscreen blocks don't visibly
- * buffer while the visitor scrolls. Hidden elements stay in the DOM so the
- * browser keeps the data in cache for the visible <video> tags on the page.
+ * Preloads videos during the preloader into memory / HTTP cache.
+ * Does NOT keep hidden <video> elements alive — that was causing scroll jank.
  */
 export function warmSiteVideos(
   srcs: readonly string[],
@@ -77,19 +104,9 @@ export function warmSiteVideos(
   if (typeof document === "undefined" || srcs.length === 0) {
     return Promise.resolve();
   }
+  return runPool([...new Set(srcs)], onProgress);
+}
 
-  const unique = [...new Set(srcs)];
-  let loaded = unique.filter((src) => ready.has(src)).length;
-  onProgress?.(loaded / unique.length);
-
-  const jobs = unique
-    .filter((src) => !ready.has(src))
-    .map((src) =>
-      warmOne(src).then(() => {
-        loaded += 1;
-        onProgress?.(loaded / unique.length);
-      }),
-    );
-
-  return Promise.all(jobs).then(() => undefined);
+export function warmSiteVideosBackground(srcs: readonly string[]) {
+  void runPool([...new Set(srcs)]);
 }

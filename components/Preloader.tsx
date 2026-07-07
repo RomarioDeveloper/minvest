@@ -1,8 +1,8 @@
 "use client";
 
 import { scrollToTop } from "@/lib/scrollRestoration";
-import { SITE_VIDEO_SRCS } from "@/lib/siteVideos";
-import { warmSiteVideos } from "@/lib/videoWarmup";
+import { FEATURE_VIDEO_SRCS, SITE_VIDEO_SRCS } from "@/lib/siteVideos";
+import { warmSiteVideos, warmSiteVideosBackground } from "@/lib/videoWarmup";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -61,13 +61,14 @@ export default function Preloader() {
       }
     };
 
-    // Все видео сайта — грузим сразу, пока висит занавес.
-    warmSiteVideos(SITE_VIDEO_SRCS, (fraction) => {
+    // Fullscreen-блоки — ждём в прелоадере. Остальные — в фоне, без лагов скролла.
+    warmSiteVideos(FEATURE_VIDEO_SRCS, (fraction) => {
       videoProgress = fraction;
       applyProgress();
     }).then(() => {
       areVideosReady = true;
       checkDone();
+      warmSiteVideosBackground(SITE_VIDEO_SRCS.filter((s) => !new Set<string>(FEATURE_VIDEO_SRCS).has(s)));
     });
 
     // Много тяжёлых роликов — даём больше времени, но не блокируем навсегда.

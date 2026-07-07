@@ -1,36 +1,61 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { getVideoSrc, isVideoReady } from "@/lib/videoWarmup";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  /** Base path without extension, e.g. "/video/1". */
   base: string;
   className?: string;
   poster?: string;
 };
 
-/** Hero / multi-format loop video — preloaded up front, plays only while in view. */
 export default function EagerLoopVideo({ base, className = "", poster }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const mp4 = `${base}.mp4`;
+  const webm = `${base}.webm`;
+  const ready = isVideoReady(mp4) || isVideoReady(webm);
+  const [active, setActive] = useState(ready);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
 
+    let scrollTimer: number | undefined;
+    let visible = false;
+
+    const playIfVisible = () => {
+      if (visible) video.play().catch(() => {});
+    };
+
+    const pauseForScroll = () => {
+      video.pause();
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(playIfVisible, 120);
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
+        visible = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          if (!active) setActive(true);
+          playIfVisible();
+        } else {
+          video.pause();
+        }
       },
-      { threshold: 0.15 },
+      { rootMargin: "40% 0px", threshold: 0.05 },
     );
     observer.observe(video);
 
+    window.addEventListener("scroll", pauseForScroll, { passive: true });
+
     return () => {
       observer.disconnect();
+      window.removeEventListener("scroll", pauseForScroll);
+      window.clearTimeout(scrollTimer);
       video.pause();
     };
-  }, []);
+  }, [active]);
 
   return (
     <video
@@ -39,12 +64,16 @@ export default function EagerLoopVideo({ base, className = "", poster }: Props) 
       muted
       loop
       playsInline
-      preload="auto"
+      preload={active ? "auto" : "none"}
       poster={poster ?? `${base}.jpg`}
       disablePictureInPicture
     >
-      <source src={`${base}.webm`} type="video/webm" />
-      <source src={`${base}.mp4`} type="video/mp4" />
+      {active && (
+        <>
+          <source src={getVideoSrc(webm)} type="video/webm" />
+          <source src={getVideoSrc(mp4)} type="video/mp4" />
+        </>
+      )}
     </video>
   );
 }
