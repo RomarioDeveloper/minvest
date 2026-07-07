@@ -8,6 +8,8 @@ import {
   snapFrameIndex,
   type Frame,
 } from "@/lib/scrollCanvas";
+import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -56,10 +58,26 @@ export default function BrandFilm({
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileViewport();
 
   const loaderRef = useRef<ReturnType<typeof createSlidingFrameLoader> | null>(null);
   const [frameReady, setFrameReady] = useState(false);
+  // Заголовок бренда запускаем только после подъёма прелоадера,
+  // иначе анимация отыграет за занавесом и никто её не увидит.
+  const [titleVisible, setTitleVisible] = useState(false);
+
+  useEffect(() => {
+    const show = () => setTitleVisible(true);
+    window.addEventListener("preloader:done", show, { once: true });
+    // Страховка: если событие не пришло (например, компонент перемонтировался
+    // уже после прелоадера) — всё равно показываем заголовок.
+    const fallback = window.setTimeout(show, 6000);
+    return () => {
+      window.removeEventListener("preloader:done", show);
+      window.clearTimeout(fallback);
+    };
+  }, []);
 
   const ready = isMobile !== null;
   const mobile = isMobile === true;
@@ -204,6 +222,15 @@ export default function BrandFilm({
       if (Math.abs(target - smooth) < 0.0004) smooth = target;
       velocity = Math.abs(smooth - prev) * (count - 1);
 
+      // Брендовый заголовок растворяется на первых ~10% скролла,
+      // чтобы не мешать смотреть сам фильм.
+      const overlay = overlayRef.current;
+      if (overlay) {
+        const fade = Math.min(1, Math.max(0, 1 - smooth / 0.1));
+        overlay.style.opacity = fade.toFixed(3);
+        overlay.style.visibility = fade <= 0.001 ? "hidden" : "visible";
+      }
+
       draw();
     };
 
@@ -252,6 +279,49 @@ export default function BrandFilm({
           aria-hidden
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
+
+        {/* Брендовый заголовок — только на ПК, поверх облаков */}
+        {!isMobile && titleVisible && (
+          <div
+            ref={overlayRef}
+            className="pointer-events-none absolute inset-0 z-[3] hidden md:flex flex-col items-center justify-center"
+          >
+            {/* Лёгкая подложка, чтобы текст читался на светлых облаках */}
+            <div className="absolute inset-x-0 top-1/2 h-[46vh] -translate-y-1/2 bg-[radial-gradient(ellipse_60%_100%_at_center,rgba(5,5,6,0.42),transparent_70%)]" />
+
+            <motion.div
+              className="relative flex items-center gap-4 text-eyebrow uppercase text-bone/85"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="h-[1px] w-10 bg-gradient-to-r from-transparent to-bone/60" />
+              Застройщик комфортной среды
+              <span className="h-[1px] w-10 bg-gradient-to-l from-transparent to-bone/60" />
+            </motion.div>
+
+            <motion.h1
+              className="relative mt-5 font-display font-bold tracking-tightest text-center"
+              style={{
+                fontSize: "clamp(56px, 7.4vw, 138px)",
+                lineHeight: 0.95,
+                textShadow: "0 2px 60px rgba(5,5,6,0.35)",
+              }}
+              initial={{ opacity: 0, y: 26, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <DiaTextReveal
+                text="MALAYSARY INVEST"
+                textColor="#f4f4f5"
+                colors={["#f7dfae", "#f3b268", "#e8875f", "#fbeedb", "#f7dfae"]}
+                duration={2}
+                delay={0.5}
+                startOnView={false}
+              />
+            </motion.h1>
+          </div>
+        )}
       </div>
     </section>
   );

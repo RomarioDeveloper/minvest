@@ -108,6 +108,8 @@ export default function Preloader() {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       requestAnimationFrame(scrollToTop);
+      // Сообщаем секциям, что занавес поднимается — можно запускать intro-анимации.
+      window.dispatchEvent(new CustomEvent("preloader:done"));
       return;
     }
     type LenisLike = { stop: () => void; start: () => void };
