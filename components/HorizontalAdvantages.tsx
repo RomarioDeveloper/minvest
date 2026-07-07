@@ -115,7 +115,8 @@ export default function HorizontalAdvantages() {
       style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-8 pt-24 sm:pt-0 sm:px-10 lg:px-16">
+        {/* Уменьшены отступы на мобильных, чтобы заголовок не выталкивал карточки за пределы экрана */}
+        <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-12 sm:pb-8 sm:pt-0 sm:px-10 lg:px-16">
           <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
           <h2
             className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
@@ -139,7 +140,6 @@ export default function HorizontalAdvantages() {
               a={a}
               cardIndex={i}
               scrollProgress={scrollYProgress}
-              isMobile={isMobile}
             />
           ))}
         </motion.div>
@@ -152,12 +152,10 @@ function Card({
   a,
   cardIndex,
   scrollProgress,
-  isMobile,
 }: {
   a: Advantage;
   cardIndex: number;
   scrollProgress: MotionValue<number>;
-  isMobile: boolean;
 }) {
   const spread = 0.15;
   const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
@@ -179,54 +177,33 @@ function Card({
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 rounded-2xl transform-gpu">
+    <article className="relative flex h-[52svh] max-h-[560px] min-h-[340px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-6 sm:h-[58vh] sm:min-h-[420px] sm:w-[520px] sm:p-10 rounded-2xl transform-gpu">
       {hasVideo ? (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          {isMobile ? (
-            <div className="absolute inset-0 h-full w-full">
-              <EagerVideo
-                src={a.video!}
-                objectPosition={a.videoPosition}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-          ) : (
-            <motion.div
-              style={{ scale: videoScale, opacity: videoOpacity }}
-              className="absolute inset-0 h-full w-full will-change-transform"
-            >
-              <EagerVideo
-                src={a.video!}
-                objectPosition={a.videoPosition}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </motion.div>
-          )}
+        <motion.div
+          style={{ scale: videoScale, opacity: videoOpacity }}
+          className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
+        >
+          <EagerVideo
+            src={a.video!}
+            objectPosition={a.videoPosition}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
-        </div>
+          {/* Добавлен градиент снизу, чтобы текст читался на белом фоне видео */}
+          <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-ink-panel/90 via-ink-panel/30 to-transparent" />
+        </motion.div>
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          {isMobile ? (
-            <>
-              <div className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]" />
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04]">
-                <Icon className="h-11 w-11 text-bone/80" />
-              </div>
-            </>
-          ) : (
-            <>
-              <motion.div
-                style={{ scale: ringScale, opacity: ringOpacity }}
-                className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
-              />
-              <motion.div
-                style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
-                className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
-              >
-                <Icon className="h-11 w-11 text-bone/80" />
-              </motion.div>
-            </>
-          )}
+          <motion.div
+            style={{ scale: ringScale, opacity: ringOpacity }}
+            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
+          />
+          <motion.div
+            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
+            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
+          >
+            <Icon className="h-11 w-11 text-bone/80" />
+          </motion.div>
         </div>
       )}
 
@@ -235,10 +212,10 @@ function Card({
           hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"
         }`}
       >
-        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
+        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl drop-shadow-md">
           {a.title}
         </h3>
-        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">
+        <p className="mt-3 text-pretty text-[15px] leading-relaxed text-bone-soft sm:mt-4 sm:text-[17px] drop-shadow-md">
           {a.body}
         </p>
       </div>
