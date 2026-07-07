@@ -4,6 +4,10 @@ import ScrollRestoration from "@/components/ScrollRestoration";
 import ScrollSnapMagnet from "@/components/ScrollSnapMagnet";
 import SmoothScroller from "@/components/SmoothScroller";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Malaysary Invest — застройщик",
@@ -19,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={cn("font-sans", geist.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

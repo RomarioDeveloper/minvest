@@ -1,16 +1,42 @@
 "use client";
 
-import EagerVideo from "@/components/EagerVideo";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import gsap from "gsap";
+import { cn } from "@/lib/utils";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import EagerVideo from "@/components/EagerVideo";
 
-type Advantage = {
+gsap.registerPlugin(ScrollTrigger);
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function computeFocusIntensity(
+  progress: number,
+  index: number,
+  total: number,
+  influence = 0.2
+) {
+  if (total <= 1) return 0;
+  const safeInfluence = clamp(influence, 0.04, 1);
+  const center = index / (total - 1);
+  return clamp(Math.abs(progress - center) / safeInfluence, 0, 1);
+}
+
+function applyScrollSensitivity(progress: number, sensitivity: number) {
+  const safeSensitivity = clamp(sensitivity, 0.25, 1.6);
+  const exponent = 1 / safeSensitivity;
+  return Math.pow(clamp(progress, 0, 1), exponent);
+}
+
+export interface Advantage {
   title: string;
   body: string;
   icon: (props: { className?: string }) => ReactNode;
   video?: string;
   videoPosition?: string;
-};
+}
 
 const ADVANTAGES: Advantage[] = [
   {
@@ -72,6 +98,9 @@ const ADVANTAGES: Advantage[] = [
 
 export default function HorizontalAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [maxShift, setMaxShift] = useState(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
@@ -81,117 +110,181 @@ export default function HorizontalAdvantages() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  // Track overflow width
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
+
+    const update = () => {
+      const overflow = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      setMaxShift(overflow);
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(viewport);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [isMobile]); // Re-calculate if layout breaks
+
+  // Animation constants (Unlumen cinematic values)
+  const blur = 12;
+  const dim = 25; 
+  const brightnessBoost = 40;
+  const darknessStrength = 1.4;
+  const minSaturation = 20; 
+  const saturationStrength = 1.5;
+  const focusSpread = 0.18;
+  const scaleEffect = 0.1;
+  const scrollSensitivity = 0.6;
+  const scrollLength = isMobile ? 300 : 450; // Scroll distance in vh
+
+  // Create GSAP ScrollTrigger
+  useEffect(() => {
+    const section = sectionRef.current;
+    const track = trackRef.current;
+    if (!section || !track || maxShift === 0) return;
+
+    const context = gsap.context(() => {
+      const cards = Array.from(track.querySelectorAll<HTMLElement>(".hbs-item"));
+
+      const applyState = (rawProgress: number) => {
+        const p = applyScrollSensitivity(rawProgress, scrollSensitivity);
+
+        // Move track horizontally
+        gsap.set(track, {
+          x: -maxShift * p,
+        });
+
+        // If on mobile, maybe we just want native scrolling without the crazy blur overhead?
+        // Let's keep it on mobile too but dial it down if needed. We'll leave it identical for now.
+        cards.forEach((card, index) => {
+          const intensity = computeFocusIntensity(p, index, cards.length, focusSpread);
+          const boostedIntensity = clamp(intensity * darknessStrength, 0, 1);
+          
+          const currentBlur = boostedIntensity * blur;
+          const peakBrightness = clamp(100 + brightnessBoost, 100, 220);
+          const currentBrightness = dim + (1 - boostedIntensity) * (peakBrightness - dim);
+          
+          const boostedSaturationIntensity = clamp(intensity * saturationStrength, 0, 1);
+          const currentSaturation = minSaturation + (1 - boostedSaturationIntensity) * (100 - minSaturation);
+          
+          const currentScale = 1 - boostedIntensity * scaleEffect;
+
+          // Instead of blurring the whole card (which blurs text too),
+          // we apply the cinematic effects ONLY to the background element (.hbs-bg).
+          // Text stays sharp, or fades slightly.
+          const bg = card.querySelector(".hbs-bg");
+          const content = card.querySelector(".hbs-content");
+
+          if (bg) {
+            gsap.set(bg, {
+              filter: `blur(${currentBlur}px) brightness(${currentBrightness}%) saturate(${currentSaturation}%)`,
+            });
+          }
+          
+          gsap.set(card, {
+            scale: currentScale,
+          });
+
+          if (content) {
+            gsap.set(content, {
+              opacity: 1 - boostedIntensity * 0.8, // Dim text slightly on unfocused cards
+            });
+          }
+        });
+      };
+
+      // Initial state
+      applyState(0);
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+        onUpdate: (self) => applyState(self.progress),
+      });
+    }, sectionRef);
+
+    return () => context.revert();
+  }, [maxShift, isMobile]);
 
   return (
-    <section id="advantages" className="relative bg-ink-deep overflow-hidden">
-      <div className="mx-auto w-full max-w-7xl px-6 pb-12 pt-24 sm:px-10 lg:px-16">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
+    <section
+      id="advantages"
+      ref={sectionRef}
+      className="relative w-full bg-ink-deep"
+      style={{ height: `${scrollLength}vh` }}
+    >
+      <div ref={viewportRef} className="sticky top-0 flex h-[100svh] w-full flex-col justify-center overflow-hidden">
+        
+        {/* Заголовок теперь часть липкого вьюпорта, а не скроллится */}
+        <div className="absolute top-0 left-0 w-full z-20 pointer-events-none">
+          <div className="mx-auto w-full max-w-7xl px-6 pt-16 sm:px-10 lg:px-16 lg:pt-24">
+            <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+            <h2
+              className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone drop-shadow-md"
+              style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+            >
+              Почему выбирают
+              <span className="text-bone-mute"> Malaysary Invest.</span>
+            </h2>
+          </div>
+        </div>
 
-      <div className="relative mx-auto w-full max-w-lg pb-32 px-6 sm:max-w-2xl sm:px-10" style={{ height: `${ADVANTAGES.length * 60}vh` }}>
-        {ADVANTAGES.map((a, i) => (
-          <StackedCard
-            key={a.title}
-            a={a}
-            index={i}
-            total={ADVANTAGES.length}
-            isMobile={isMobile}
-          />
-        ))}
+        {/* Track with cards */}
+        <div className="flex h-full w-full items-center pt-24 lg:pt-32">
+          <div ref={trackRef} className="flex w-max items-center px-[8vw] sm:px-[15vw]" style={{ gap: "2rem" }}>
+            {ADVANTAGES.map((a, i) => {
+              const hasVideo = !!a.video;
+              const Icon = a.icon;
+
+              return (
+                <article
+                  key={a.title}
+                  className="hbs-item relative flex h-[58vh] max-h-[600px] min-h-[420px] w-[80vw] sm:w-[480px] lg:w-[540px] shrink-0 flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-8 shadow-2xl sm:p-10 transform-gpu"
+                >
+                  <div className="hbs-bg absolute inset-0 w-full h-full transform-gpu overflow-hidden bg-ink-panel">
+                    {hasVideo ? (
+                      <>
+                        <EagerVideo
+                          src={a.video!}
+                          objectPosition={a.videoPosition}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                        <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/40 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-ink-panel/95 via-ink-panel/60 to-transparent" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="absolute h-56 w-56 rounded-full border border-bone/20 bg-bone/[0.03]" />
+                        <div className="relative flex h-28 w-28 items-center justify-center rounded-[1.5rem] border border-bone/15 bg-bone/[0.04] backdrop-blur-md">
+                          <Icon className="h-12 w-12 text-bone/80" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="hbs-content relative z-10">
+                    <div className="mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md">
+                      {String(i + 1).padStart(2, "0")} / {String(ADVANTAGES.length).padStart(2, "0")}
+                    </div>
+                    <h3 className="font-display text-[1.85rem] font-semibold leading-tight tracking-tightest text-bone sm:text-4xl drop-shadow-lg">
+                      {a.title}
+                    </h3>
+                    <p className="mt-3 text-pretty text-[16px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
+                      {a.body}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-function StackedCard({
-  a,
-  index,
-  total,
-  isMobile,
-}: {
-  a: Advantage;
-  index: number;
-  total: number;
-  isMobile: boolean;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "start start"],
-  });
-
-  // Эффект наслоения: когда карточка доезжает до верха, она прилипает 
-  // и немного уменьшается по мере того, как сверху наезжают следующие карточки
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.3]);
-
-  const hasVideo = !!a.video;
-  const Icon = a.icon;
-
-  return (
-    <motion.div
-      ref={cardRef}
-      style={{
-        scale,
-        opacity,
-        // Карточка прилипает к верху с небольшим смещением для эффекта "стопки"
-        top: `calc(15vh + ${index * 8}px)`,
-        zIndex: index,
-      }}
-      className="sticky mb-32 origin-top"
-    >
-      <article className="relative flex h-[58vh] max-h-[600px] min-h-[420px] w-full flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-8 shadow-2xl sm:p-10 transform-gpu"
-        style={{
-          boxShadow: `0 -10px 40px -10px rgba(0,0,0, ${0.4 + index * 0.05})`,
-        }}
-      >
-        {hasVideo ? (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel">
-            <EagerVideo
-              src={a.video!}
-              objectPosition={a.videoPosition}
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
-            />
-            <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/40 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink-panel/95 via-ink-panel/40 to-transparent" />
-          </div>
-        ) : (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="absolute h-56 w-56 rounded-full border border-bone/20 bg-bone/[0.03]" />
-            <div className="relative flex h-28 w-28 items-center justify-center rounded-[1.5rem] border border-bone/15 bg-bone/[0.04] backdrop-blur-md">
-              <Icon className="h-12 w-12 text-bone/80" />
-            </div>
-          </div>
-        )}
-
-        <div
-          className={`relative z-10 ${
-            hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"
-          }`}
-        >
-          <div className="mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md">
-            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-          </div>
-          <h3 className="font-display text-[1.85rem] font-semibold leading-tight tracking-tightest text-bone sm:text-4xl drop-shadow-lg">
-            {a.title}
-          </h3>
-          <p className="mt-3 max-w-md text-pretty text-[16px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
-            {a.body}
-          </p>
-        </div>
-      </article>
-    </motion.div>
   );
 }
 
