@@ -173,6 +173,9 @@ export function DiaTextReveal({
     return () => {
       stopRef.current?.();
       clearTimeout(timerRef.current);
+      // Если эффект перезапустился до конца анимации (StrictMode в dev),
+      // разрешаем сыграть заново — иначе текст навсегда остаётся прозрачным.
+      hasPlayedRef.current = false;
     };
   }, [isInView, startOnView, once, prefersReducedMotion, sweepPos]);
 

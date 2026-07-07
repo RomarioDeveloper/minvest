@@ -284,41 +284,25 @@ export default function BrandFilm({
         {!isMobile && titleVisible && (
           <div
             ref={overlayRef}
-            className="pointer-events-none absolute inset-0 z-[3] hidden md:flex flex-col items-center justify-center"
+            className="pointer-events-none absolute inset-0 z-[3] hidden md:flex items-center justify-center"
           >
-            {/* Лёгкая подложка, чтобы текст читался на светлых облаках.
-                Радиусы 50% — градиент гарантированно сходит в ноль у краёв блока,
-                иначе его границы видны как прямоугольник. */}
-            <div className="absolute inset-x-0 top-1/2 h-[52vh] -translate-y-1/2 bg-[radial-gradient(ellipse_50%_50%_at_center,rgba(5,5,6,0.38),rgba(5,5,6,0)_95%)]" />
-
-            <motion.div
-              className="relative flex items-center gap-4 text-eyebrow uppercase text-bone/85"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="h-[1px] w-10 bg-gradient-to-r from-transparent to-bone/60" />
-              Застройщик комфортной среды
-              <span className="h-[1px] w-10 bg-gradient-to-l from-transparent to-bone/60" />
-            </motion.div>
-
             <motion.h1
-              className="relative mt-5 font-display font-bold tracking-tightest text-center"
+              className="font-display font-bold tracking-tightest text-center whitespace-nowrap"
               style={{
-                fontSize: "clamp(56px, 7.4vw, 138px)",
-                lineHeight: 0.95,
-                textShadow: "0 2px 60px rgba(5,5,6,0.35)",
+                fontSize: "clamp(48px, 6.5vw, 120px)",
+                lineHeight: 1,
+                filter: "drop-shadow(0 4px 40px rgba(5,5,6,0.45))",
               }}
-              initial={{ opacity: 0, y: 26, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             >
               <DiaTextReveal
                 text="MALAYSARY INVEST"
                 textColor="#f4f4f5"
                 colors={["#f7dfae", "#f3b268", "#e8875f", "#fbeedb", "#f7dfae"]}
                 duration={2}
-                delay={0.5}
+                delay={0.4}
                 startOnView={false}
               />
             </motion.h1>
