@@ -10,7 +10,7 @@
   html {
     /* Не даём браузеру «привязывать» scroll при подгрузке медиа после reload. */
     overflow-anchor: none;
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     max-width: 100%;
   }
@@ -31,12 +31,17 @@
   body {
     font-family: "Manrope", system-ui, sans-serif;
     font-weight: 500;
-    overflow-x: hidden;
+    /* clip, не hidden — иначе ломается position:sticky у scroll-секций */
+    overflow-x: clip;
     width: 100%;
     max-width: 100%;
     overscroll-behavior-x: none;
-    /* Вертикальный скролл страницы; горизонтальный — только внутри каруселей */
-    touch-action: pan-y pinch-zoom;
+  }
+
+  @media (pointer: coarse) {
+    body {
+      touch-action: pan-y pinch-zoom;
+    }
   }
 
   ::selection {

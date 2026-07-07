@@ -16,14 +16,14 @@ import Header from "@/components/Header";
 
 export default function HomePage() {
   return (
-    <main className="relative w-full max-w-full overflow-x-clip bg-ink text-bone">
+    <main className="relative w-full max-w-full bg-ink text-bone">
       <ScrollProgressBar />
 
       {/* ---------- NAV ---------- */}
       <Header />
 
       {/* ---------- SCROLL-DRIVEN VIDEO (fullscreen, pinned) ---------- */}
-      <div id="top" className="overflow-x-clip">
+      <div id="top">
         <BrandFilm
           frameBase="/hero-desktop-frames"
           frameBaseMobile="/hero-mobile-frames"
