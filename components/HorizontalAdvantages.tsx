@@ -115,7 +115,7 @@ export default function HorizontalAdvantages() {
       style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-8 pt-24 sm:pt-0 sm:px-10 lg:px-16">
           <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
           <h2
             className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"

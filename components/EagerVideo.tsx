@@ -13,6 +13,7 @@ type Props = {
 /** Background loop video — src is always set (preloaded in cache), play only in view. */
 export default function EagerVideo({ src, className = "", style, objectPosition }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const posterSrc = src.endsWith(".mp4") ? src.replace(".mp4", ".jpg") : undefined;
 
   useEffect(() => {
     const video = ref.current;
@@ -43,6 +44,7 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
       loop
       playsInline
       preload="auto"
+      poster={posterSrc}
       disablePictureInPicture
     />
   );
