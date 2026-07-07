@@ -1,6 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -70,90 +71,162 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 export default function HorizontalAdvantages() {
-  return (
-    <section id="advantages" className="relative bg-ink-deep py-24 sm:py-32 overflow-hidden">
-      <div className="mx-auto w-full max-w-7xl px-6 pb-12 sm:px-10 lg:px-16">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
-      <div className="flex w-full overflow-x-auto snap-x snap-mandatory gap-5 sm:gap-6 px-6 sm:px-[10vw] pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {/* Spacer for mobile to center the first card */}
-        <div className="w-[1vw] shrink-0 sm:w-[calc(50vw-280px)]" aria-hidden />
-        {ADVANTAGES.map((a, i) => (
-          <Card key={a.title} a={a} />
-        ))}
-        {/* Spacer for mobile to center the last card */}
-        <div className="w-[1vw] shrink-0 sm:w-[calc(50vw-280px)]" aria-hidden />
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const measure = () => {
+      if (trackRef.current) {
+        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
+      }
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (trackRef.current) observer.observe(trackRef.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  const sectionVh = isMobile ? 35 : 45;
+
+  return (
+    <section
+      id="advantages"
+      ref={sectionRef}
+      className="relative bg-ink-deep"
+      style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
+    >
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-8 pt-24 sm:pt-0 sm:px-10 lg:px-16">
+          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          <h2
+            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+          >
+            Почему выбирают
+            <span className="text-bone-mute"> Malaysary Invest.</span>
+          </h2>
+        </div>
+
+        <motion.div
+          ref={trackRef}
+          style={{ x }}
+          className={`flex w-max gap-5 sm:gap-6 will-change-transform ${
+            isMobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)]"
+          }`}
+        >
+          {ADVANTAGES.map((a, i) => (
+            <Card
+              key={a.title}
+              a={a}
+              cardIndex={i}
+              scrollProgress={scrollYProgress}
+              isMobile={isMobile}
+            />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
 }
 
-function Card({ a }: { a: Advantage }) {
-  const ref = useRef<HTMLElement>(null);
-  const [isActive, setIsActive] = useState(false);
+function Card({
+  a,
+  cardIndex,
+  scrollProgress,
+  isMobile,
+}: {
+  a: Advantage;
+  cardIndex: number;
+  scrollProgress: MotionValue<number>;
+  isMobile: boolean;
+}) {
+  const spread = 0.15;
+  const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+  const active = useTransform(scrollProgress, (v) => {
+    return 1 - Math.min(1, Math.abs(v - peak) / spread);
+  });
 
-    // Включаем активное состояние (анимации внутри карточки),
-    // когда карточка на 60% видна на экране
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsActive(entry.isIntersecting);
-      },
-      { root: null, threshold: 0.6 }
-    );
-    
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const iconScale = useTransform(active, [0, 1], [0.8, 1.12]);
+  const iconOpacity = useTransform(active, [0, 1], [0.4, 1]);
+  const iconY = useTransform(active, [0, 1], [10, 0]);
+  const ringScale = useTransform(active, [0, 1], [0.8, 1.35]);
+  const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
 
-  const hasVideo = !!a.video;
+  const videoScale = useTransform(active, [0, 1], [1.05, 1]);
+  const videoOpacity = useTransform(active, [0, 1], [0.4, 1]);
+
   const Icon = a.icon;
+  const hasVideo = !!a.video;
 
   return (
-    <article
-      ref={ref}
-      className="snap-center relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 transform-gpu rounded-3xl transition-transform duration-700"
-    >
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 rounded-2xl transform-gpu">
       {hasVideo ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div
-            className={`absolute inset-0 h-full w-full transition-transform duration-1000 ${
-              isActive ? "scale-100 opacity-100" : "scale-[1.05] opacity-40"
-            }`}
-          >
-            <EagerVideo
-              src={a.video!}
-              objectPosition={a.videoPosition}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          </div>
+          {isMobile ? (
+            <div className="absolute inset-0 h-full w-full">
+              <EagerVideo
+                src={a.video!}
+                objectPosition={a.videoPosition}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <motion.div
+              style={{ scale: videoScale, opacity: videoOpacity }}
+              className="absolute inset-0 h-full w-full will-change-transform"
+            >
+              <EagerVideo
+                src={a.video!}
+                objectPosition={a.videoPosition}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </motion.div>
+          )}
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
         </div>
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div
-            className={`absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] transition-all duration-700 ${
-              isActive ? "scale-125 opacity-30" : "scale-75 opacity-0"
-            }`}
-          />
-          <div
-            className={`relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm transition-all duration-700 ${
-              isActive ? "scale-110 opacity-100 translate-y-0" : "scale-90 opacity-50 translate-y-4"
-            }`}
-          >
-            <Icon className="h-11 w-11 text-bone/80" />
-          </div>
+          {isMobile ? (
+            <>
+              <div className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]" />
+              <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04]">
+                <Icon className="h-11 w-11 text-bone/80" />
+              </div>
+            </>
+          ) : (
+            <>
+              <motion.div
+                style={{ scale: ringScale, opacity: ringOpacity }}
+                className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
+              />
+              <motion.div
+                style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
+                className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
+              >
+                <Icon className="h-11 w-11 text-bone/80" />
+              </motion.div>
+            </>
+          )}
         </div>
       )}
 
