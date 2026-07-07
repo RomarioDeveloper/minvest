@@ -1,8 +1,9 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
+import { useEffect, useState, type ReactNode } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 type Advantage = {
   title: string;
@@ -71,10 +72,9 @@ const ADVANTAGES: Advantage[] = [
 ];
 
 export default function HorizontalAdvantages() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [scrollRange, setScrollRange] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true });
   const [isMobile, setIsMobile] = useState(false);
+  const emblaProgress = useMotionValue(0);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
@@ -84,59 +84,46 @@ export default function HorizontalAdvantages() {
   }, []);
 
   useEffect(() => {
-    const measure = () => {
-      if (trackRef.current) {
-        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
-      }
+    if (!emblaApi) return;
+
+    const onScroll = () => {
+      const progress = Math.max(0, Math.min(1, emblaApi.scrollProgress()));
+      emblaProgress.set(progress);
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) observer.observe(trackRef.current);
-    window.addEventListener("resize", measure);
+
+    emblaApi.on("scroll", onScroll);
+    emblaApi.on("reInit", onScroll);
+    onScroll();
+
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
+      emblaApi.off("scroll", onScroll);
+      emblaApi.off("reInit", onScroll);
     };
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
-  const sectionVh = isMobile ? 35 : 45;
+  }, [emblaApi, emblaProgress]);
 
   return (
-    <section
-      id="advantages"
-      ref={sectionRef}
-      className="relative bg-ink-deep"
-      style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
-    >
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-8 pt-24 sm:pt-0 sm:px-10 lg:px-16">
-          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-          <h2
-            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-          >
-            Почему выбирают
-            <span className="text-bone-mute"> Malaysary Invest.</span>
-          </h2>
-        </div>
+    <section id="advantages" className="relative bg-ink-deep py-24 sm:py-32 overflow-hidden">
+      <div className="mx-auto w-full max-w-7xl px-6 pb-12 sm:px-10 lg:px-16">
+        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+        <h2
+          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+        >
+          Почему выбирают
+          <span className="text-bone-mute"> Malaysary Invest.</span>
+        </h2>
+      </div>
 
-        <motion.div
-          ref={trackRef}
-          style={{ x }}
-          className={`flex w-max gap-5 sm:gap-6 will-change-transform ${
-            isMobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)]"
+      <div className="embla overflow-hidden" ref={emblaRef}>
+        <div
+          className={`embla__container flex touch-pan-y gap-5 sm:gap-6 ${
+            isMobile ? "pl-6 pr-6" : "pl-[6vw] pr-[6vw] sm:pl-[calc(50vw-260px)] sm:pr-[calc(50vw-260px)]"
           }`}
         >
           {ADVANTAGES.map((a, i) => (
-            <Card key={a.title} a={a} cardIndex={i} scrollProgress={scrollYProgress} />
+            <Card key={a.title} a={a} cardIndex={i} scrollProgress={emblaProgress} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -171,13 +158,17 @@ function Card({
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10 transform-gpu">
       {hasVideo ? (
         <motion.div
           style={{ scale: videoScale, opacity: videoOpacity }}
           className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
         >
-          <EagerVideo src={a.video!} objectPosition={a.videoPosition} className="absolute inset-0 h-full w-full object-cover" />
+          <EagerVideo
+            src={a.video!}
+            objectPosition={a.videoPosition}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
         </motion.div>
       ) : (
@@ -195,11 +186,17 @@ function Card({
         </div>
       )}
 
-      <div className={`relative z-10 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
+      <div
+        className={`relative z-10 ${
+          hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"
+        }`}
+      >
         <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
-        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">{a.body}</p>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-bone-soft sm:text-[17px]">
+          {a.body}
+        </p>
       </div>
     </article>
   );
