@@ -103,44 +103,19 @@ export default function HorizontalAdvantages() {
     return (
       <>
         <div className="hidden md:block">
-          <DesktopAdvantages />
+          <ScrollAdvantages mobile={false} />
         </div>
         <div className="block md:hidden">
-          <MobileAdvantages />
+          <ScrollAdvantages mobile />
         </div>
       </>
     );
   }
 
-  return isMobile ? <MobileAdvantages /> : <DesktopAdvantages />;
+  return <ScrollAdvantages mobile={isMobile === true} />;
 }
 
-function MobileAdvantages() {
-  return (
-    <section id="advantages" className="relative bg-ink-deep py-20">
-      <div className="mx-auto w-full max-w-7xl px-6 pb-8">
-        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-        <h2
-          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-        >
-          Почему выбирают
-          <span className="text-bone-mute"> Malaysary Invest.</span>
-        </h2>
-      </div>
-
-      <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-10 hide-scrollbar">
-        {ADVANTAGES.map((a) => (
-          <div key={a.title} className="snap-center shrink-0">
-            <StaticCard a={a} />
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DesktopAdvantages() {
+function ScrollAdvantages({ mobile }: { mobile: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [scrollRange, setScrollRange] = useState(0);
@@ -148,17 +123,17 @@ function DesktopAdvantages() {
   useEffect(() => {
     const measure = () => {
       if (trackRef.current) {
-        setScrollRange(trackRef.current.scrollWidth - window.innerWidth);
+        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
       }
     };
-    
+
     measure();
-    
+
     const observer = new ResizeObserver(measure);
     if (trackRef.current) {
       observer.observe(trackRef.current);
     }
-    
+
     window.addEventListener("resize", measure);
     return () => {
       observer.disconnect();
@@ -172,20 +147,21 @@ function DesktopAdvantages() {
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.4,
+    stiffness: mobile ? 180 : 120,
+    damping: mobile ? 32 : 26,
+    mass: mobile ? 0.25 : 0.4,
     restDelta: 0.0005,
   });
 
   const x = useTransform(smoothProgress, [0, 1], [0, -scrollRange]);
+  const sectionVh = mobile ? 26 : 40;
 
   return (
     <section
       id="advantages"
       ref={sectionRef}
       className="relative bg-ink-deep"
-      style={{ height: `${CARD_COUNT * 40}vh` }}
+      style={{ height: `${CARD_COUNT * sectionVh}vh` }}
     >
       <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
         <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-10 lg:px-16">
@@ -202,11 +178,17 @@ function DesktopAdvantages() {
         <motion.div
           ref={trackRef}
           style={{ x }}
-          className="flex w-max gap-5 px-[6vw] sm:gap-6 sm:px-[calc(50vw-260px)] will-change-transform"
+          className={`flex w-max gap-5 sm:gap-6 ${
+            mobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)] will-change-transform"
+          }`}
         >
-          {ADVANTAGES.map((a, i) => (
-            <Card key={a.title} a={a} cardIndex={i} scrollProgress={smoothProgress} />
-          ))}
+          {ADVANTAGES.map((a, i) =>
+            mobile ? (
+              <StaticCard key={a.title} a={a} />
+            ) : (
+              <Card key={a.title} a={a} cardIndex={i} scrollProgress={smoothProgress} />
+            ),
+          )}
         </motion.div>
       </div>
     </section>
