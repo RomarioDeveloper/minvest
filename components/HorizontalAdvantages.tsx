@@ -10,7 +10,6 @@ import {
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
-  index: string;
   title: string;
   body: string;
   icon: (props: { className?: string }) => ReactNode;
@@ -20,28 +19,24 @@ type Advantage = {
 
 const ADVANTAGES: Advantage[] = [
   {
-    index: "01",
     title: "Бесшумные лифты",
     body: "Современные бесшумные лифты.",
     icon: IconElevator,
     video: "/01.mp4",
   },
   {
-    index: "02",
     title: "Трёхкамерные окна",
     body: "Трёхкамерные окна с высокой тепло- и шумоизоляцией.",
     icon: IconWindow,
     video: "/okna.mp4",
   },
   {
-    index: "03",
     title: "Удобные планировки",
     body: "Удобные и функциональные планировки квартир.",
     icon: IconLayout,
     video: "/sleek-modern-kitchen-interior-design-2025-12-17-13-06-28-utc.mp4",
   },
   {
-    index: "04",
     title: "Гаражи и парковки",
     body: "Собственные гаражи и парковочные решения.",
     icon: IconGarage,
@@ -49,35 +44,30 @@ const ADVANTAGES: Advantage[] = [
     videoPosition: "center top",
   },
   {
-    index: "05",
     title: "Коммерческие помещения",
     body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
     icon: IconStore,
     video: "/commercial.mp4",
   },
   {
-    index: "06",
     title: "Закрытая территория",
     body: "Закрытые территории с контролем доступа.",
     icon: IconFence,
     video: "/cctv.mp4",
   },
   {
-    index: "07",
     title: "Системы Face ID",
     body: "Системы Face ID в премиальных проектах.",
     icon: IconFaceId,
     video: "/face-id.mp4",
   },
   {
-    index: "08",
     title: "Умные замки",
     body: "Умные замки в квартирах.",
     icon: IconSmartLock,
     video: "/smart-locks.mp4",
   },
   {
-    index: "09",
     title: "Приватность и безопасность",
     body: "Продуманная система приватности и безопасности для жителей.",
     icon: IconShield,
@@ -141,7 +131,7 @@ function MobileAdvantages() {
 
       <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-10 hide-scrollbar">
         {ADVANTAGES.map((a) => (
-          <div key={a.index} className="snap-center shrink-0">
+          <div key={a.title} className="snap-center shrink-0">
             <StaticCard a={a} />
           </div>
         ))}
@@ -215,7 +205,7 @@ function DesktopAdvantages() {
           className="flex w-max gap-5 px-[6vw] sm:gap-6 sm:px-[calc(50vw-260px)] will-change-transform"
         >
           {ADVANTAGES.map((a, i) => (
-            <Card key={a.index} a={a} cardIndex={i} scrollProgress={smoothProgress} />
+            <Card key={a.title} a={a} cardIndex={i} scrollProgress={smoothProgress} />
           ))}
         </motion.div>
       </div>
@@ -252,11 +242,7 @@ function Card({
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
-      <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
-        {a.index}
-      </div>
-
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       {hasVideo ? (
         <motion.div
           style={{ scale: videoScale, opacity: videoOpacity }}
@@ -280,7 +266,7 @@ function Card({
         </div>
       )}
 
-      <div className={`relative z-10 pt-12 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
+      <div className={`relative z-10 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
         <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>
@@ -295,11 +281,7 @@ function StaticCard({ a }: { a: Advantage }) {
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-between overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
-      <div className="relative z-10 font-display text-6xl font-semibold tracking-tightest text-bone/15">
-        {a.index}
-      </div>
-
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[88vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[520px] sm:p-10">
       {hasVideo ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
@@ -314,7 +296,7 @@ function StaticCard({ a }: { a: Advantage }) {
         </div>
       )}
 
-      <div className={`relative z-10 pt-12 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
+      <div className={`relative z-10 ${hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"}`}>
         <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl">
           {a.title}
         </h3>

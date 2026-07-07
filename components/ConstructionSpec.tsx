@@ -91,9 +91,6 @@ export default function ConstructionSpec() {
                     <span className="text-eyebrow uppercase text-bone-mute">
                       {item.eyebrow}
                     </span>
-                    <span className="font-display text-lg font-semibold text-bone/20">
-                      {item.index}
-                    </span>
                   </div>
                   <h3 className="mt-3 font-display text-2xl font-semibold tracking-tightest text-bone">
                     {item.title}
