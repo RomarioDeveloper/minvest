@@ -1,13 +1,13 @@
 "use client";
 
 import RevealOnView from "@/components/RevealOnView";
-import StatsCountUp from "@/components/StatsCountUp";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 const STATS = [
-  { to: 6, suffix: "", label: "объектов в работе" },
-  { to: 1200, suffix: "+", label: "квартир продано" },
-  { to: 11, suffix: "", label: "лет на рынке" },
-  { to: 100, suffix: "%", label: "сдаём в срок" },
+  { value: 6, suffix: "", label: "Объектов в работе", note: "строим прямо сейчас" },
+  { value: 1200, suffix: "+", label: "Квартир продано", note: "довольных семей" },
+  { value: 11, suffix: "", label: "Лет на рынке", note: "с 2015 года" },
+  { value: 100, suffix: "%", label: "Сдаём в срок", note: "без переносов" },
 ];
 
 const PERKS = [
@@ -53,15 +53,34 @@ export default function CompanyAdvantages() {
         </RevealOnView>
 
         {/* Infographics */}
-        <div className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((s, i) => (
-            <RevealOnView key={s.label} delay={160 + i * 80} className="border-t border-bone/15 pt-4">
-              <StatsCountUp
-                to={s.to}
-                suffix={s.suffix}
-                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
-              />
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">{s.label}</div>
+            <RevealOnView
+              key={s.label}
+              variant="block"
+              delay={160 + i * 100}
+              className="group relative overflow-hidden rounded-2xl border border-bone/10 bg-ink-panel p-6 transition-colors duration-500 hover:border-bone/25 sm:p-7"
+            >
+              {/* Мягкое свечение сверху карточки при наведении */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(ellipse_50%_100%_at_50%_0%,rgba(244,244,245,0.07),rgba(244,244,245,0)_100%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+              <div className="flex items-baseline font-display font-semibold tracking-tightest text-bone">
+                <NumberTicker
+                  value={s.value}
+                  delay={0.15 + i * 0.12}
+                  className="text-5xl leading-none sm:text-6xl"
+                />
+                {s.suffix && (
+                  <span className="ml-1 text-3xl leading-none text-bone-mute sm:text-4xl">
+                    {s.suffix}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-5 border-t border-bone/10 pt-4">
+                <div className="text-[13px] font-semibold text-bone-soft">{s.label}</div>
+                <div className="mt-1 text-[12px] text-bone-dim">{s.note}</div>
+              </div>
             </RevealOnView>
           ))}
         </div>
