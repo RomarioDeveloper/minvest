@@ -1,7 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
-import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -104,16 +104,7 @@ export default function HorizontalAdvantages() {
     offset: ["start start", "end end"],
   });
 
-  // ВАЖНО: Добавляем физическую плавность (spring) к скроллу. 
-  // Это убирает лаги от пальца/мыши и делает свайп роскошным, как у Apple.
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 150,
-    damping: 25,
-    mass: 0.5,
-    restDelta: 0.001
-  });
-
-  const x = useTransform(smoothProgress, [0, 1], [0, -scrollRange]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
   const sectionVh = isMobile ? 35 : 45;
 
   return (
@@ -148,7 +139,7 @@ export default function HorizontalAdvantages() {
               key={a.title}
               a={a}
               cardIndex={i}
-              scrollProgress={smoothProgress}
+              scrollProgress={scrollYProgress}
               isMobile={isMobile}
             />
           ))}
@@ -197,7 +188,7 @@ function Card({
             opacity: isMobile ? 1 : videoOpacity 
           }}
           // Добавлен bg-ink-panel, чтобы моргания не были прозрачными
-          className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel will-change-transform"
+          className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel"
         >
           <EagerVideo
             src={a.video!}
@@ -215,7 +206,7 @@ function Card({
               scale: isMobile ? 1 : ringScale, 
               opacity: isMobile ? 1 : ringOpacity 
             }}
-            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
+            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]"
           />
           <motion.div
             style={{ 
@@ -223,7 +214,7 @@ function Card({
               opacity: isMobile ? 1 : iconOpacity, 
               y: isMobile ? 0 : iconY 
             }}
-            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
+            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
           >
             <Icon className="h-11 w-11 text-bone/80" />
           </motion.div>

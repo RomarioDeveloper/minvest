@@ -34,8 +34,11 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          // Убираем искусственную задержку (setTimeout), она вызывает моргание
-          if (ref.current) ref.current.play().catch(() => {});
+          // Если src уже применился, пробуем запустить.
+          // Если еще нет, нам поможет autoPlay={shouldLoad} в самом теге.
+          if (video.src) {
+            video.play().catch(() => {});
+          }
         } else {
           video.pause();
         }
@@ -73,6 +76,7 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
         src={shouldLoad ? getVideoSrc(finalSrc) : undefined}
         className={className}
         style={{ objectPosition, ...style }}
+        autoPlay={shouldLoad}
         muted
         loop
         playsInline
