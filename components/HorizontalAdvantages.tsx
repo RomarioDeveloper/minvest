@@ -145,13 +145,11 @@ export default function HorizontalAdvantages() {
 
       <div
         ref={scrollerRef}
-        className="scroll-strip-x mt-10 flex snap-x snap-mandatory gap-5 px-6 pb-4 sm:mt-12 sm:gap-6 sm:px-10 lg:px-16 md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="scroll-strip-x mt-10 flex snap-x snap-mandatory gap-5 pb-4 pl-[8vw] pr-[8vw] max-sm:[scroll-padding-inline:8vw] sm:mt-12 sm:gap-6 sm:px-[max(2.5rem,calc(50vw-240px))] md:cursor-grab [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {ADVANTAGES.map((a) => (
           <Card key={a.title} a={a} />
         ))}
-        {/* Trailing spacer so the last card can scroll fully into view. */}
-        <div aria-hidden className="w-px shrink-0" />
       </div>
     </section>
   );
@@ -162,7 +160,7 @@ function Card({ a }: { a: Advantage }) {
   const hasVideo = !!a.video;
 
   return (
-    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 snap-start flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[480px] sm:p-10">
+    <article className="relative flex h-[58vh] max-h-[560px] min-h-[420px] w-[84vw] shrink-0 snap-center flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-9 sm:w-[480px] sm:snap-start sm:p-10">
       {hasVideo ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <AdvantageVideo src={a.video!} objectPosition={a.videoPosition} />
