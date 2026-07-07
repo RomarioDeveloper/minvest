@@ -224,77 +224,137 @@ export default function HomePage() {
       {/* ---------- CONTACT ---------- */}
       <section
         id="contact"
-        className="relative border-t border-bone/10 bg-ink-deep px-6 py-28 sm:px-10 sm:py-36 lg:px-16"
+        className="relative overflow-hidden border-t border-bone/10 bg-ink-deep px-6 py-28 sm:px-10 sm:py-36 lg:px-16"
       >
-        <div className="mx-auto max-w-7xl">
-          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-            Контакты
-          </RevealOnView>
-          <RevealOnView
-            as="div"
-            variant="blur"
-            delay={120}
-            className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-          >
-            <h2 style={{ fontSize: "clamp(38px, 6.5vw, 92px)", lineHeight: 0.95 }}>
-              Запишитесь
-              <br />
-              на показ.
-            </h2>
-          </RevealOnView>
+        {/* Мягкое свечение за заголовком — блок перестаёт быть плоско-чёрным */}
+        <div className="pointer-events-none absolute -top-48 left-1/2 h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-bone/[0.05] blur-[140px]" />
 
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <RevealOnView variant="slide-left" delay={200} className="border-t border-bone/15 pt-5">
-              <div className="text-eyebrow uppercase text-bone-dim">Телефон</div>
+        <div className="relative mx-auto max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div>
+              <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
+                Контакты
+              </RevealOnView>
+              <RevealOnView
+                as="div"
+                variant="blur"
+                delay={120}
+                className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+              >
+                <h2 style={{ fontSize: "clamp(38px, 6.5vw, 92px)", lineHeight: 0.95 }}>
+                  Запишитесь
+                  <br />
+                  <span className="text-bone-mute">на показ.</span>
+                </h2>
+              </RevealOnView>
+              <RevealOnView delay={220} className="mt-6 max-w-md text-pretty leading-relaxed text-bone-soft">
+                Проведём по дому и двору, покажем планировки вживую и ответим на
+                вопросы по ипотеке, рассрочке и trade-in.
+              </RevealOnView>
+            </div>
+
+            <RevealOnView delay={320} className="flex flex-wrap items-center gap-3 lg:pb-2">
               <a
                 href="tel:+77072343333"
-                className="mt-2 block font-display text-2xl font-semibold tracking-tightest text-bone transition hover:text-bone-mute"
+                className="group inline-flex items-center gap-3 rounded-full bg-bone py-4 pl-7 pr-6 text-[13px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft"
               >
-                8 707 234 33 33
+                Позвонить сейчас
+                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
-            </RevealOnView>
-            <RevealOnView variant="slide-left" delay={280} className="border-t border-bone/15 pt-5">
-              <div className="text-eyebrow uppercase text-bone-dim">Instagram</div>
               <a
-                href="https://instagram.com/malaysary_invest"
+                href="https://wa.me/77072343333"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 block font-display text-2xl font-semibold tracking-tightest text-bone transition hover:text-bone-mute"
+                className="group inline-flex items-center gap-3 rounded-full border border-bone/25 py-4 pl-7 pr-6 text-[13px] font-semibold tracking-[0.04em] text-bone transition-colors duration-300 hover:border-bone hover:bg-bone hover:text-ink"
               >
-                @malaysary_invest
+                WhatsApp
+                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
-            </RevealOnView>
-            <RevealOnView variant="slide-left" delay={360} className="border-t border-bone/15 pt-5">
-              <div className="text-eyebrow uppercase text-bone-dim">Офис продаж</div>
-              <div className="mt-2 font-display text-xl font-semibold leading-snug tracking-tightest text-bone">
-                г. Павлодар,<br />
-                ул. Луначарского, 10<br />
-                <span className="text-bone-mute">2 этаж, кабинет 2</span>
-              </div>
             </RevealOnView>
           </div>
 
-          <RevealOnView delay={440} className="mt-16 flex flex-wrap items-center gap-4">
-            <a
-              href="tel:+77072343333"
-              className="inline-flex items-center gap-3 bg-bone px-7 py-4 text-eyebrow uppercase text-ink transition hover:bg-bone-soft"
-            >
-              Позвонить сейчас →
-            </a>
-            <a
-              href="https://instagram.com/malaysary_invest"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 border border-bone/25 px-7 py-4 text-eyebrow uppercase text-bone transition hover:border-bone hover:bg-bone hover:text-ink"
-            >
-              Instagram →
-            </a>
-          </RevealOnView>
+          {/* Контактные карточки */}
+          <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                href: "tel:+77072343333",
+                external: false,
+                label: "Телефон",
+                value: "8 707 234 33 33",
+                note: "пн-пт с 09:00 до 18:00",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
+              {
+                href: "https://instagram.com/malaysary_invest",
+                external: true,
+                label: "Instagram",
+                value: "@malaysary_invest",
+                note: "репортажи со строек",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+                  </svg>
+                ),
+              },
+              {
+                href: "https://2gis.kz/pavlodar/search/%D0%9B%D1%83%D0%BD%D0%B0%D1%87%D0%B0%D1%80%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2010",
+                external: true,
+                label: "Офис продаж",
+                value: "ул. Луначарского, 10",
+                note: "г. Павлодар · 2 этаж, кабинет 2",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0z" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                ),
+              },
+            ].map((c, i) => (
+              <RevealOnView
+                key={c.label}
+                variant="block"
+                delay={160 + i * 100}
+                className="group relative overflow-hidden rounded-2xl border border-bone/10 bg-ink-panel transition-colors duration-500 hover:border-bone/25"
+              >
+                <a
+                  href={c.href}
+                  {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="block p-6 sm:p-7"
+                >
+                  {/* Свечение сверху при наведении */}
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(ellipse_50%_100%_at_50%_0%,rgba(244,244,245,0.07),rgba(244,244,245,0)_100%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                  <div className="flex items-start justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-bone/15 text-bone-soft transition-colors duration-500 group-hover:border-bone/40 group-hover:text-bone">
+                      {c.icon}
+                    </span>
+                    <span className="text-bone-dim transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-bone">
+                      ↗
+                    </span>
+                  </div>
+
+                  <div className="mt-8 font-display text-xl font-semibold tracking-tightest text-bone sm:text-2xl">
+                    {c.value}
+                  </div>
+                  <div className="mt-2 border-t border-bone/10 pt-3">
+                    <span className="text-[13px] font-semibold text-bone-soft">{c.label}</span>
+                    <span className="ml-2 text-[12px] text-bone-dim">{c.note}</span>
+                  </div>
+                </a>
+              </RevealOnView>
+            ))}
+          </div>
 
           {/* Sales office map */}
           <RevealOnView variant="zoom" delay={200} className="mt-16">
             <div className="text-eyebrow uppercase text-bone-dim">Наши объекты на карте</div>
-            <div className="mt-5 overflow-hidden border border-bone/15">
+            <div className="mt-5 overflow-hidden rounded-2xl border border-bone/15">
               <MalaysaryMap />
             </div>
           </RevealOnView>
