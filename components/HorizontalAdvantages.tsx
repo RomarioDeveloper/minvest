@@ -1,7 +1,7 @@
 "use client";
 
 import { registerLazyVideo } from "@/lib/lazyVideo";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
   title: string;
@@ -189,19 +189,32 @@ function Card({ a }: { a: Advantage }) {
 
 function AdvantageVideo({ src, objectPosition = "center" }: { src: string; objectPosition?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    return registerLazyVideo(video);
+
+    // Fade the video in only once its first frame is actually decodable, so it
+    // eases in instead of snapping from an empty panel to a moving picture.
+    const reveal = () => setReady(true);
+    video.addEventListener("loadeddata", reveal);
+    video.addEventListener("playing", reveal);
+
+    const stop = registerLazyVideo(video);
+    return () => {
+      video.removeEventListener("loadeddata", reveal);
+      video.removeEventListener("playing", reveal);
+      stop();
+    };
   }, []);
 
   return (
     <video
       ref={ref}
       src={src}
-      className="absolute inset-0 h-full w-full object-cover"
-      style={{ objectPosition }}
+      className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out motion-reduce:transition-none"
+      style={{ objectPosition, opacity: ready ? 1 : 0 }}
       muted
       loop
       playsInline
