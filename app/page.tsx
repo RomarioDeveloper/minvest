@@ -11,7 +11,6 @@ import RevealOnView from "@/components/RevealOnView";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import TradeIn from "@/components/TradeIn";
-import TradeInDriveIn from "@/components/TradeInDriveIn";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import Header from "@/components/Header";
 
@@ -214,11 +213,6 @@ export default function HomePage() {
             }}
           />
         </RevealOnView>
-      </div>
-
-      {/* ---------- TRADE-IN CAR SCENE (replaces heavy yard videos) ---------- */}
-      <div className="relative border-t border-bone/10 bg-ink-deep">
-        <TradeInDriveIn />
       </div>
 
       {/* ---------- TRADE-IN ---------- */}
