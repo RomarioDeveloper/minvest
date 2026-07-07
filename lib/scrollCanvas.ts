@@ -69,6 +69,7 @@ type SlidingFrameLoaderOptions = {
   step?: number;
   windowRadius?: number;
   batchSize?: number;
+  preloadAll?: boolean;
   onFirstFrame?: () => void;
 };
 
@@ -80,6 +81,7 @@ export function createSlidingFrameLoader({
   step = 1,
   windowRadius = 20,
   batchSize = 3,
+  preloadAll = false,
   onFirstFrame,
 }: SlidingFrameLoaderOptions) {
   const frames: (Frame | null)[] = Array.from({ length: count }, () => null);
@@ -93,9 +95,8 @@ export function createSlidingFrameLoader({
   const shouldLoad = (index: number) => index % step === 0;
 
   // Frames further than this from the current center are released to keep
-  // memory bounded — a 1920×1080 frame costs ~8 MB decoded, so holding all
-  // of them would blow past a gigabyte on a long sequence.
-  const evictRadius = Math.max(windowRadius * 3, windowRadius + 12);
+  // memory bounded. If preloadAll is true, we never evict frames to keep them all in RAM.
+  const evictRadius = preloadAll ? count + 1 : Math.max(windowRadius * 3, windowRadius + 12);
 
   const canBitmap = typeof createImageBitmap === "function";
   const isBitmap = (f: unknown): f is ImageBitmap =>
@@ -173,7 +174,7 @@ export function createSlidingFrameLoader({
     
     // Грузим кадры в обе стороны от центра
     const order = priorityFrameOrder(c, count).filter(
-      (i) => shouldLoad(i) && Math.abs(i - c) <= windowRadius,
+      (i) => shouldLoad(i) && (preloadAll || Math.abs(i - c) <= windowRadius),
     );
 
     let queued = 0;

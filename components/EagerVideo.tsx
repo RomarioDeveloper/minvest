@@ -14,6 +14,16 @@ type Props = {
 export default function EagerVideo({ src, className = "", style, objectPosition }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const posterSrc = src.endsWith(".mp4") ? src.replace(".mp4", ".jpg") : undefined;
 
   useEffect(() => {
@@ -42,10 +52,14 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
     };
   }, []);
 
+  // Если это мобильное устройство, подменяем расширение на -mobile.mp4, если это mp4
+  const finalSrc =
+    isMobile && src.endsWith(".mp4") ? src.replace(".mp4", "-mobile.mp4") : src;
+
   return (
     <video
       ref={ref}
-      src={shouldLoad ? getVideoSrc(src) : undefined}
+      src={shouldLoad ? getVideoSrc(finalSrc) : undefined}
       className={className}
       style={{ objectPosition, ...style }}
       muted

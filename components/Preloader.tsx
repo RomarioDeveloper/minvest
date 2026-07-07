@@ -62,13 +62,18 @@ export default function Preloader() {
     };
 
     // Fullscreen-блоки — ждём в прелоадере. Остальные — в фоне, без лагов скролла.
-    warmSiteVideos(FEATURE_VIDEO_SRCS, (fraction) => {
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const getMobileSrcs = (srcs: readonly string[]) =>
+      srcs.map((s) => (isMobile && s.endsWith(".mp4") ? s.replace(".mp4", "-mobile.mp4") : s));
+
+    warmSiteVideos(getMobileSrcs(FEATURE_VIDEO_SRCS), (fraction) => {
       videoProgress = fraction;
       applyProgress();
     }).then(() => {
       areVideosReady = true;
       checkDone();
-      warmSiteVideosBackground(SITE_VIDEO_SRCS.filter((s) => !new Set<string>(FEATURE_VIDEO_SRCS).has(s)));
+      const otherVideos = SITE_VIDEO_SRCS.filter((s) => !new Set<string>(FEATURE_VIDEO_SRCS).has(s));
+      warmSiteVideosBackground(getMobileSrcs(otherVideos));
     });
 
     // Много тяжёлых роликов — даём больше времени, но не блокируем навсегда.
