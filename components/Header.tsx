@@ -51,45 +51,50 @@ export default function Header() {
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 sm:px-10"
+        className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6"
         style={{
           opacity: isMounted ? opacity : 0,
           y: isMounted ? y : -20,
           pointerEvents: isMounted ? pointerEvents : "none",
         }}
       >
-        <a
-          href="#top"
-          className="relative z-[62] flex items-center gap-3 font-display text-sm font-semibold tracking-tightest text-bone"
-        >
-          <img src="/logo-mark.webp" alt="" aria-hidden className="h-8 w-auto" />
-          <span className="hidden sm:inline">MALAYSARY INVEST</span>
-          <span className="sm:hidden">MALAYSARY</span>
-        </a>
-
-        <nav className="relative hidden gap-7 text-eyebrow uppercase text-bone-soft lg:flex">
-          {NAV_LINKS.map((link) => (
-            <a key={link.href} className="transition hover:text-bone" href={link.href}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="relative z-[62] flex items-center gap-3">
-          <a
-            href="#contact"
-            className="hidden border border-bone/20 px-4 py-2 text-eyebrow uppercase text-bone transition hover:border-bone hover:bg-bone hover:text-ink lg:inline-flex"
-          >
-            Бронь
+        <div className="relative mx-auto flex max-w-6xl items-center justify-between rounded-full border border-bone/10 bg-ink/60 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:pl-6">
+          <a href="#top" className="relative z-[62] flex items-center gap-3 text-bone">
+            <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto" />
+            <span className="font-display text-[13px] font-bold tracking-[0.14em]">
+              MALAYSARY
+              <span className="ml-1.5 font-medium text-bone-mute">INVEST</span>
+            </span>
           </a>
 
-          <button
-            type="button"
-            aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="relative flex h-11 w-11 items-center justify-center border border-bone/20 text-bone transition hover:border-bone hover:bg-bone/5 lg:hidden"
-          >
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-[13px] font-medium text-bone-soft lg:flex">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="relative py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-bone after:transition-all after:duration-300 hover:text-bone hover:after:w-full"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="relative z-[62] flex items-center gap-2">
+            <a
+              href="#contact"
+              className="group hidden items-center gap-2.5 rounded-full bg-bone py-2.5 pl-5 pr-4 text-[12px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft lg:inline-flex"
+            >
+              Записаться на показ
+              <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+            </a>
+
+            <button
+              type="button"
+              aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-bone/15 text-bone transition hover:border-bone/40 hover:bg-bone/5 lg:hidden"
+            >
             <span className="sr-only">{menuOpen ? "Закрыть" : "Меню"}</span>
             <span className="relative h-3.5 w-5">
               <motion.span
@@ -108,7 +113,8 @@ export default function Header() {
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               />
             </span>
-          </button>
+            </button>
+          </div>
         </div>
       </motion.header>
 
