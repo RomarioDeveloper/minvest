@@ -129,16 +129,17 @@ export default function HorizontalAdvantages() {
   }, [isMobile]); // Re-calculate if layout breaks
 
   // Animation constants (Unlumen cinematic values)
-  const blur = 12;
+  const blur = isMobile ? 0 : 12; // Отключаем блюр на телефоне, чтобы спасти GPU от лагов
   const dim = 25; 
-  const brightnessBoost = 40;
+  const brightnessBoost = isMobile ? 0 : 40;
   const darknessStrength = 1.4;
   const minSaturation = 20; 
   const saturationStrength = 1.5;
   const focusSpread = 0.18;
   const scaleEffect = 0.1;
   const scrollSensitivity = 0.6;
-  const scrollLength = isMobile ? 300 : 450; // Scroll distance in vh
+  // Увеличиваем высоту скролла на мобильных (snap), чтобы листать было легче и дольше
+  const scrollLength = isMobile ? 550 : 450; 
 
   // Create GSAP ScrollTrigger
   useEffect(() => {
@@ -157,8 +158,6 @@ export default function HorizontalAdvantages() {
           x: -maxShift * p,
         });
 
-        // If on mobile, maybe we just want native scrolling without the crazy blur overhead?
-        // Let's keep it on mobile too but dial it down if needed. We'll leave it identical for now.
         cards.forEach((card, index) => {
           const intensity = computeFocusIntensity(p, index, cards.length, focusSpread);
           const boostedIntensity = clamp(intensity * darknessStrength, 0, 1);
@@ -170,18 +169,19 @@ export default function HorizontalAdvantages() {
           const boostedSaturationIntensity = clamp(intensity * saturationStrength, 0, 1);
           const currentSaturation = minSaturation + (1 - boostedSaturationIntensity) * (100 - minSaturation);
           
-          const currentScale = 1 - boostedIntensity * scaleEffect;
+          // На мобилках делаем scale-эффект слабее, чтобы карточки не казались слишком мелкими
+          const currentScale = 1 - boostedIntensity * (isMobile ? 0.05 : scaleEffect);
 
-          // Instead of blurring the whole card (which blurs text too),
-          // we apply the cinematic effects ONLY to the background element (.hbs-bg).
-          // Text stays sharp, or fades slightly.
           const bg = card.querySelector(".hbs-bg");
           const content = card.querySelector(".hbs-content");
 
           if (bg) {
-            gsap.set(bg, {
-              filter: `blur(${currentBlur}px) brightness(${currentBrightness}%) saturate(${currentSaturation}%)`,
-            });
+            // Если мы на телефоне, убираем блюр из фильтра (он невероятно грузит процессор телефона)
+            const filterStr = isMobile 
+              ? `brightness(${currentBrightness}%) saturate(${currentSaturation}%)`
+              : `blur(${currentBlur}px) brightness(${currentBrightness}%) saturate(${currentSaturation}%)`;
+              
+            gsap.set(bg, { filter: filterStr });
           }
           
           gsap.set(card, {
@@ -204,6 +204,9 @@ export default function HorizontalAdvantages() {
         start: "top top",
         end: "bottom bottom",
         scrub: true,
+        // Магнитизм (snap): чтобы карточка всегда дотягивалась до центра на телефоне.
+        // Массив значений [0, 0.125, 0.25 ... 1] для 9 карточек.
+        snap: isMobile ? ADVANTAGES.map((_, i) => i / (ADVANTAGES.length - 1)) : false,
         onUpdate: (self) => applyState(self.progress),
       });
     }, sectionRef);
@@ -222,21 +225,24 @@ export default function HorizontalAdvantages() {
         
         {/* Заголовок теперь часть липкого вьюпорта, а не скроллится */}
         <div className="absolute top-0 left-0 w-full z-20 pointer-events-none">
-          <div className="mx-auto w-full max-w-7xl px-6 pt-16 sm:px-10 lg:px-16 lg:pt-24">
-            <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+          {/* На мобильных (sm) уменьшаем отступы и размер шрифта, чтобы он не налезал на карточки */}
+          <div className="mx-auto w-full max-w-7xl px-6 pt-10 sm:pt-16 sm:px-10 lg:px-16 lg:pt-24">
+            <div className="text-[11px] sm:text-eyebrow uppercase text-bone-mute tracking-wider font-semibold">Преимущества</div>
             <h2
-              className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone drop-shadow-md"
-              style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
+              className="mt-2 sm:mt-4 max-w-3xl font-display font-semibold tracking-tight text-balance text-bone drop-shadow-md"
+              style={{ fontSize: "clamp(26px, 4vw, 64px)", lineHeight: 1 }}
             >
               Почему выбирают
+              <br className="sm:hidden" />
               <span className="text-bone-mute"> Malaysary Invest.</span>
             </h2>
           </div>
         </div>
 
         {/* Track with cards */}
-        <div className="flex h-full w-full items-center pt-24 lg:pt-32">
-          <div ref={trackRef} className="flex w-max items-center px-[8vw] sm:px-[15vw]" style={{ gap: "2rem" }}>
+        <div className="flex h-full w-full items-center">
+          {/* Сдвигаем трек на мобилке, чтобы первая карточка была в центре, а не сбоку */}
+          <div ref={trackRef} className="flex w-max items-center px-[10vw] sm:px-[15vw]" style={{ gap: isMobile ? "1rem" : "2rem" }}>
             {ADVANTAGES.map((a, i) => {
               const hasVideo = !!a.video;
               const Icon = a.icon;
@@ -244,7 +250,9 @@ export default function HorizontalAdvantages() {
               return (
                 <article
                   key={a.title}
-                  className="hbs-item relative flex h-[58vh] max-h-[600px] min-h-[420px] w-[80vw] sm:w-[480px] lg:w-[540px] shrink-0 flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-8 shadow-2xl sm:p-10 transform-gpu"
+                  // Чуть уменьшаем ширину на телефоне, чтобы было видно, что есть следующая карточка
+                  // и увеличиваем нижний отступ (pb), чтобы текст не прилипал
+                  className="hbs-item relative flex h-[58vh] max-h-[600px] min-h-[380px] w-[82vw] sm:w-[480px] lg:w-[540px] shrink-0 flex-col justify-end overflow-hidden rounded-3xl border border-bone/15 bg-ink-panel p-6 pb-8 sm:p-10 transform-gpu"
                 >
                   <div className="hbs-bg absolute inset-0 w-full h-full transform-gpu overflow-hidden bg-ink-panel">
                     {hasVideo ? (
@@ -267,14 +275,14 @@ export default function HorizontalAdvantages() {
                     )}
                   </div>
 
-                  <div className="hbs-content relative z-10">
-                    <div className="mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md">
+                  <div className="hbs-content relative z-10 pointer-events-none">
+                    <div className="mb-3 sm:mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md shadow-lg">
                       {String(i + 1).padStart(2, "0")} / {String(ADVANTAGES.length).padStart(2, "0")}
                     </div>
-                    <h3 className="font-display text-[1.85rem] font-semibold leading-tight tracking-tightest text-bone sm:text-4xl drop-shadow-lg">
+                    <h3 className="font-display text-[1.5rem] font-semibold leading-tight tracking-tightest text-bone sm:text-4xl drop-shadow-lg">
                       {a.title}
                     </h3>
-                    <p className="mt-3 text-pretty text-[16px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
+                    <p className="mt-2 text-pretty text-[14px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
                       {a.body}
                     </p>
                   </div>
