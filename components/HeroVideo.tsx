@@ -31,11 +31,11 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   });
 
   // Layered transforms for the parallax feel
-  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
-  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const subtitleY = useTransform(scrollYProgress, [0, 1], ["0%", "-100%"]);
-  const subtitleOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 1]);
+  const subtitleY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
+  const subtitleOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 1]);
   const vignetteOpacity = useTransform(scrollYProgress, [0, 1], [0.55, 1]);
 
   useEffect(() => {
@@ -53,12 +53,10 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
   return (
     <section
       ref={sectionRef}
-      data-scroll-snap
       className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-ink-deep"
     >
-      <motion.div
-        className="absolute inset-0 will-change-transform"
-        style={{ scale: 1.05, y: videoY }}
+      <div
+        className="absolute inset-0"
       >
         {/* Poster as base layer — instantly visible, then crossfaded under the video */}
         <img
@@ -83,7 +81,7 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
           <source src={`${src}.webm`} type="video/webm" />
           <source src={`${src}.mp4`} type="video/mp4" />
         </video>
-      </motion.div>
+      </div>
 
       {/* Vignette that deepens on scroll */}
       <motion.div
@@ -110,8 +108,8 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
           </motion.div>
 
           <motion.h1
-            className="mt-5 font-display font-semibold text-bone tracking-tightest text-balance will-change-transform"
-            style={{ fontSize: "clamp(48px, 9vw, 148px)", lineHeight: 0.9, y: titleY, opacity: titleOpacity }}
+            className="mt-5 font-display font-semibold text-bone tracking-tightest text-balance"
+            style={{ fontSize: "clamp(48px, 9vw, 148px)", lineHeight: 0.9 }}
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
@@ -121,8 +119,8 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
 
           {subtitle && (
             <motion.p
-              className="mt-6 max-w-xl text-pretty text-bone-soft will-change-transform"
-              style={{ fontSize: "clamp(15px, 1.2vw, 19px)", lineHeight: 1.55, y: subtitleY, opacity: subtitleOpacity }}
+              className="mt-6 max-w-xl text-pretty text-bone-soft"
+              style={{ fontSize: "clamp(15px, 1.2vw, 19px)", lineHeight: 1.55 }}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, delay: 0.58, ease: [0.22, 1, 0.36, 1] }}

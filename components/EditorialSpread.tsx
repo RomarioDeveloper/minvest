@@ -78,7 +78,7 @@ export default function EditorialSpread({
   }, []);
 
   // Image: depth illusion
-  const imgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
+  // const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
 
   // Wash deepens around the middle, fades at edges
   const washOpacity = useTransform(
@@ -91,18 +91,17 @@ export default function EditorialSpread({
   const copyY = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    ["40px", "0px", "-20px", "-60px"],
+    ["0px", "0px", "0px", "0px"],
   );
   const copyOpacity = useTransform(
     scrollYProgress,
     [0, 0.18, 0.82, 1],
-    [0, 1, 1, 0],
+    [1, 1, 1, 1],
   );
 
   return (
     <section
       ref={sectionRef}
-      data-scroll-snap
       className={`relative w-full overflow-hidden bg-ink ${heightClasses[height]}`}
     >
       <div 
@@ -114,11 +113,10 @@ export default function EditorialSpread({
           transition: "transform 1.2s cubic-bezier(0.76, 0, 0.24, 1)"
         }}
       />
-      <motion.img
+      <img
         src={imageSrc}
         alt={imageAlt}
-        className="absolute inset-0 h-full w-full object-cover will-change-transform"
-        style={{ y: imgY, scale: 1.05 }}
+        className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
       />
 
@@ -138,8 +136,7 @@ export default function EditorialSpread({
         className={`relative z-10 flex h-full w-full p-6 sm:p-10 lg:p-16 ${placementClasses[placement]}`}
       >
         <motion.div
-          className="max-w-2xl will-change-transform"
-          style={{ y: copyY, opacity: copyOpacity }}
+          className="max-w-2xl"
         >
           {/* Eyebrow wipes in horizontally like a caption being typed */}
           <RevealLine progress={scrollYProgress} from={0.05} to={0.18} mode="wipe">

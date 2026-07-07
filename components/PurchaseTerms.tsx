@@ -34,7 +34,6 @@ export default function PurchaseTerms() {
   return (
     <section
       id="terms"
-      data-scroll-snap
       className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">

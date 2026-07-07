@@ -18,44 +18,21 @@ type Props = {
  * itself in as the section crosses the viewport.
  */
 export default function VideoSpread({ src, eyebrow, title, body }: Props) {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const videoY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const washOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.5, 0.75, 0.75, 0.5]);
-  const copyY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], ["36px", "0px", "-16px", "-48px"]);
-  const copyOpacity = useTransform(scrollYProgress, [0.05, 0.22, 0.82, 1], [0, 1, 1, 0]);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-[110svh] min-h-[640px] w-full overflow-hidden bg-ink"
-    >
-      <motion.div
-        className="absolute inset-0 will-change-transform"
-        style={{ y: videoY, scale: 1.05 }}
-      >
+    <section className="relative h-[100svh] w-full overflow-hidden bg-ink">
+      <div className="absolute inset-0">
         <LoopVideo src={src} className="absolute inset-0 h-full w-full object-cover" />
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
         className="pointer-events-none absolute inset-0"
         style={{
-          opacity: washOpacity,
-          background:
-            "linear-gradient(to top, rgba(8,8,10,0.95) 0%, rgba(8,8,10,0.25) 45%, rgba(8,8,10,0) 75%)",
+          background: "linear-gradient(to top, rgba(8,8,10,0.9) 0%, rgba(8,8,10,0.4) 30%, rgba(8,8,10,0) 60%)",
         }}
       />
 
-      <div className="relative z-10 flex h-full w-full items-end p-6 sm:p-10 lg:p-16">
-        <motion.div
-          className="max-w-2xl will-change-transform"
-          style={{ y: copyY, opacity: copyOpacity }}
-        >
+      <div className="relative z-10 flex h-full w-full items-end p-6 pb-20 sm:p-10 lg:p-16">
+        <div className="max-w-2xl">
           <div className="flex items-baseline gap-3 text-eyebrow uppercase text-bone-mute">
             <span className="h-[1px] w-8 bg-bone/40" />
             <span>{eyebrow}</span>
@@ -74,7 +51,7 @@ export default function VideoSpread({ src, eyebrow, title, body }: Props) {
               {body}
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

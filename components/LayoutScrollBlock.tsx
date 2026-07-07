@@ -197,7 +197,6 @@ export default function LayoutScrollBlock({
   return (
     <section
       ref={sectionRef}
-      data-scroll-snap-step-vh={mobile ? 70 : 75}
       id="layouts"
       className="relative w-full bg-transparent"
       style={{ height: `${sectionVh}dvh` }}

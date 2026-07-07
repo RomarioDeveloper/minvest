@@ -209,13 +209,22 @@ export default function BrandFilm({
       lastExact = exact;
     };
 
+    let lastScrollY = -1;
+    let lastTarget = 0;
+
     const tick = (now: number) => {
       rafId = requestAnimationFrame(tick);
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
       if (!active) return;
 
-      const target = pinProgress(section);
+      let target = lastTarget;
+      if (window.scrollY !== lastScrollY) {
+        lastScrollY = window.scrollY;
+        target = pinProgress(section);
+        lastTarget = target;
+      }
+
       // Framerate-independent ease toward the scroll position — turns
       // discrete wheel steps into weighted, cinematic motion.
       const k = 1 - Math.exp(-5 * dt);
@@ -249,7 +258,6 @@ export default function BrandFilm({
   return (
     <section
       ref={sectionRef}
-      data-scroll-snap-step-vh={mobile ? 85 : 90}
       className="relative w-full bg-ink"
       style={{ height: `${sectionVh}dvh` }}
       aria-label="Видео о доме, управляемое скроллом"

@@ -54,7 +54,7 @@ export default function HomePage() {
       </div>
 
       {/* ---------- INTRO STATS ---------- */}
-      <section data-scroll-snap className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
+      <section className="relative border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Знакомство
@@ -119,7 +119,7 @@ export default function HomePage() {
       <ObjectsCatalog />
 
       {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
-      <section data-scroll-snap className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
+      <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
             Флагман · Корпус 1
@@ -300,7 +300,6 @@ export default function HomePage() {
       {/* ---------- CONTACT ---------- */}
       <section
         id="contact"
-        data-scroll-snap
         className="relative border-t border-bone/10 bg-ink-deep px-6 py-28 sm:px-10 sm:py-36 lg:px-16"
       >
         <div className="mx-auto max-w-7xl">

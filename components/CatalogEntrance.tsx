@@ -18,7 +18,7 @@ export default function CatalogEntrance() {
   });
 
   // Parallax effects inside the image
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+  // const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "0%"]);
 
   return (
     <div 
@@ -27,7 +27,7 @@ export default function CatalogEntrance() {
         isLight ? "bg-[#efeae3] text-ink" : "bg-ink text-bone"
       }`}
     >
-      <section data-scroll-snap className="relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28">
+      <section className="relative w-full overflow-hidden pt-28 sm:pt-40 pb-20 sm:pb-28">
         <div className="relative z-10 mx-auto w-full px-4 sm:px-6 lg:px-12">
           <div className="flex w-full items-center justify-center">
             
@@ -62,11 +62,10 @@ export default function CatalogEntrance() {
                 viewport={{ once: true, margin: "-10%" }}
                 className="relative aspect-[4/3] sm:aspect-[21/9] w-full max-w-[1000px] overflow-hidden shrink-0"
               >
-                <motion.img 
+                <img 
                   src="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp" 
                   alt="Интерьер" 
                   className="absolute inset-0 h-full w-full object-cover"
-                  style={{ scale: 1.05, y: imageY }}
                 />
                 <div className={`absolute inset-0 transition-colors duration-1000 ${isLight ? "bg-white/30" : "bg-black/25 hover:bg-black/10"}`} /> 
                 
