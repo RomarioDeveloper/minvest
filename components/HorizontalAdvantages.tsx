@@ -205,8 +205,8 @@ export default function HorizontalAdvantages() {
         end: "bottom bottom",
         scrub: true,
         // Магнитизм (snap): чтобы карточка всегда дотягивалась до центра на телефоне.
-        // Массив значений [0, 0.125, 0.25 ... 1] для 9 карточек.
-        snap: isMobile ? ADVANTAGES.map((_, i) => i / (ADVANTAGES.length - 1)) : false,
+        // GSAP ScrollTrigger не принимает `false` для свойства snap, если мы хотим его отключить, лучше передать `undefined` или просто не передавать.
+        snap: isMobile ? ADVANTAGES.map((_, i) => i / (ADVANTAGES.length - 1)) : undefined,
         onUpdate: (self) => applyState(self.progress),
       });
     }, sectionRef);
