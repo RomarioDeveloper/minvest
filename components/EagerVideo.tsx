@@ -34,18 +34,15 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          // Small timeout ensures src is updated before play is called
-          setTimeout(() => {
-            if (ref.current) ref.current.play().catch(() => {});
-          }, 100);
+          // Убираем искусственную задержку (setTimeout), она вызывает моргание
+          if (ref.current) ref.current.play().catch(() => {});
         } else {
           video.pause();
         }
       },
-      // rootMargin: сжимаем зону видимости по краям экрана, чтобы видео, 
-      // которые только выезжают сбоку слайдера, еще не начинали проигрываться 
-      // и не перегружали телефон.
-      { threshold: 0, rootMargin: "0px -15% 0px -15%" },
+      // Расширяем зону предзагрузки на 50% в обе стороны. 
+      // Теперь видео начнут грузиться ДО того, как полностью въедут на экран.
+      { threshold: 0, rootMargin: "0px 50% 0px 50%" },
     );
     observer.observe(video);
 
@@ -60,17 +57,29 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
     isMobile && src.endsWith(".mp4") ? src.replace(".mp4", "-mobile.mp4") : src;
 
   return (
-    <video
-      ref={ref}
-      src={shouldLoad ? getVideoSrc(finalSrc) : undefined}
-      className={className}
-      style={{ objectPosition, ...style }}
-      muted
-      loop
-      playsInline
-      preload="none"
-      poster={posterSrc}
-      disablePictureInPicture
-    />
+    <>
+      {/* Пока видео загружается (или даже если загрузилось), держим под ним poster, 
+          чтобы не было "черных морганий" или белых пятен. */}
+      {posterSrc && (
+        <img
+          src={posterSrc}
+          alt=""
+          className={className}
+          style={{ objectPosition, ...style, position: "absolute", inset: 0, zIndex: -1 }}
+        />
+      )}
+      <video
+        ref={ref}
+        src={shouldLoad ? getVideoSrc(finalSrc) : undefined}
+        className={className}
+        style={{ objectPosition, ...style }}
+        muted
+        loop
+        playsInline
+        preload="none"
+        poster={posterSrc}
+        disablePictureInPicture
+      />
+    </>
   );
 }

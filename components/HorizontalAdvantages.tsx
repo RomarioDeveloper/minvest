@@ -196,12 +196,13 @@ function Card({
             scale: isMobile ? 1 : videoScale, 
             opacity: isMobile ? 1 : videoOpacity 
           }}
-          className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
+          // Добавлен bg-ink-panel, чтобы моргания не были прозрачными
+          className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel will-change-transform"
         >
           <EagerVideo
             src={a.video!}
             objectPosition={a.videoPosition}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
           />
           <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
           {/* Добавлен градиент снизу, чтобы текст читался на белом фоне видео */}
