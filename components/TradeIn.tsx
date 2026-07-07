@@ -1,7 +1,7 @@
 "use client";
 
 import RevealOnView from "@/components/RevealOnView";
-import { motion } from "framer-motion";
+import TradeInCarScene from "@/components/TradeInCarScene";
 
 const STEPS = [
   { n: "01", t: "Оставляете заявку", d: "Указываете марку, год и пробег автомобиля." },
@@ -68,28 +68,7 @@ export default function TradeIn() {
           </div>
         </div>
 
-        <div className="pointer-events-none relative mt-14 h-[clamp(130px,22vw,240px)] w-full overflow-hidden sm:mt-16">
-          <motion.div
-            className="absolute bottom-[30%] left-0 right-0 h-px bg-gradient-to-r from-transparent via-bone/25 to-transparent"
-            initial={{ scaleX: 0, opacity: 0 }}
-            whileInView={{ scaleX: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          />
-
-          <motion.img
-            src="/103F2-removebg-preview.png"
-            alt=""
-            aria-hidden
-            draggable={false}
-            className="absolute bottom-0 left-0 h-[88%] w-auto max-w-none select-none"
-            style={{ filter: "drop-shadow(0 20px 36px rgba(0,0,0,0.5))" }}
-            initial={{ x: "-110%", opacity: 0 }}
-            whileInView={{ x: "0%", opacity: 1 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-          />
-        </div>
+        <TradeInCarScene />
       </div>
     </section>
   );
