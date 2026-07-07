@@ -34,22 +34,34 @@ export function BlobCard({ header, children, headerHeight = 120, className }: Pr
 
   return (
     <div className={cn("relative w-full", className)}>
-      {/* Вращающаяся рамка: наружу выглядывает только кольцо в 1.5px + ореол */}
-      {!isMobile && (
-        <div className="absolute -inset-[1.5px] z-0 overflow-hidden rounded-[21.5px] opacity-50">
-          <GlowEffect />
-        </div>
-      )}
+      {/* Кольцо строится через padding 1.5px, а не отрицательный inset:
+          так радиусы рамки и карточки всегда совпадают и по углам
+          не появляются светлые «серпы». */}
+      <div className="relative overflow-hidden rounded-[21px] p-[1.5px]">
+        {!isMobile && (
+          <div className="absolute inset-0 opacity-40">
+            <GlowEffect />
+          </div>
+        )}
 
-      <div className="relative z-10 overflow-hidden rounded-[20px] border border-bone/10 bg-ink-panel">
-        <div className="relative overflow-hidden" style={{ height: headerHeight }}>
-          <FluidBlobs animate={!isMobile} />
-          {/* Растворяем низ шапки в фон карточки — без этого стык режет глаз */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink-panel" />
-          {header && <div className="relative z-10 p-6 pb-0 sm:p-7 sm:pb-0">{header}</div>}
-        </div>
+        <div className="relative overflow-hidden rounded-[19.5px] border border-bone/10 bg-ink-panel">
+          <div className="relative overflow-hidden" style={{ height: headerHeight }}>
+            <FluidBlobs animate={!isMobile} />
+            {/* Растворяем низ шапки в фон карточки — без этого стык режет глаз.
+                Градиент начинается с половины высоты, чтобы обрезанные краем
+                шапки «капли» гарантированно ушли в фон без жёсткой кромки. */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 0%, transparent 40%, #101013 96%)",
+              }}
+            />
+            {header && <div className="relative z-10 p-6 pb-0 sm:p-7 sm:pb-0">{header}</div>}
+          </div>
 
-        {children}
+          {children}
+        </div>
       </div>
     </div>
   );

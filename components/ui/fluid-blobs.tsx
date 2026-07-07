@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_COLORS = [
-  "rgba(244,244,245,0.34)",
-  "rgba(212,212,216,0.26)",
-  "rgba(161,161,170,0.30)",
-  "rgba(244,244,245,0.20)",
+  "rgba(244,244,245,0.42)",
+  "rgba(212,212,216,0.32)",
+  "rgba(161,161,170,0.38)",
+  "rgba(244,244,245,0.26)",
 ];
 
 type Props = {
@@ -28,7 +28,7 @@ type Props = {
  */
 export function FluidBlobs({
   colors = DEFAULT_COLORS,
-  blur = 36,
+  blur = 28,
   animate = true,
   className,
 }: Props) {
