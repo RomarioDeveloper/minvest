@@ -286,8 +286,10 @@ export default function BrandFilm({
             ref={overlayRef}
             className="pointer-events-none absolute inset-0 z-[3] hidden md:flex flex-col items-center justify-center"
           >
-            {/* Лёгкая подложка, чтобы текст читался на светлых облаках */}
-            <div className="absolute inset-x-0 top-1/2 h-[46vh] -translate-y-1/2 bg-[radial-gradient(ellipse_60%_100%_at_center,rgba(5,5,6,0.42),transparent_70%)]" />
+            {/* Лёгкая подложка, чтобы текст читался на светлых облаках.
+                Радиусы 50% — градиент гарантированно сходит в ноль у краёв блока,
+                иначе его границы видны как прямоугольник. */}
+            <div className="absolute inset-x-0 top-1/2 h-[52vh] -translate-y-1/2 bg-[radial-gradient(ellipse_50%_50%_at_center,rgba(5,5,6,0.38),rgba(5,5,6,0)_95%)]" />
 
             <motion.div
               className="relative flex items-center gap-4 text-eyebrow uppercase text-bone/85"
