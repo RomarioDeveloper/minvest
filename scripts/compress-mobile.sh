@@ -1,5 +1,4 @@
 #!/bin/bash
-mkdir -p public/mobile
 for f in public/*.mp4; do
   filename=$(basename "$f")
   # skip already mobile files if any
@@ -8,6 +7,6 @@ for f in public/*.mp4; do
   fi
   
   mobile_name="${filename%.mp4}-mobile.mp4"
-  # Compress to 480p, low bitrate for mobile
-  ffmpeg -y -i "$f" -vf "scale=-2:480" -c:v libx264 -crf 28 -preset veryfast -an "public/$mobile_name" < /dev/null
+  # Улучшаем качество до 720p и снижаем компрессию (crf 23) для четкости на Retina-экранах
+  ffmpeg -y -i "$f" -vf "scale=-2:720" -c:v libx264 -crf 23 -preset fast -an "public/$mobile_name" < /dev/null
 done

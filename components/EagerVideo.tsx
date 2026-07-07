@@ -37,12 +37,15 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
           // Small timeout ensures src is updated before play is called
           setTimeout(() => {
             if (ref.current) ref.current.play().catch(() => {});
-          }, 50);
+          }, 100);
         } else {
           video.pause();
         }
       },
-      { threshold: 0.15 },
+      // rootMargin: сжимаем зону видимости по краям экрана, чтобы видео, 
+      // которые только выезжают сбоку слайдера, еще не начинали проигрываться 
+      // и не перегружали телефон.
+      { threshold: 0, rootMargin: "0px -15% 0px -15%" },
     );
     observer.observe(video);
 

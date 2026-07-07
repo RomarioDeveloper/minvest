@@ -1,7 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type Advantage = {
@@ -104,7 +104,16 @@ export default function HorizontalAdvantages() {
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  // ВАЖНО: Добавляем физическую плавность (spring) к скроллу. 
+  // Это убирает лаги от пальца/мыши и делает свайп роскошным, как у Apple.
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 150,
+    damping: 25,
+    mass: 0.5,
+    restDelta: 0.001
+  });
+
+  const x = useTransform(smoothProgress, [0, 1], [0, -scrollRange]);
   const sectionVh = isMobile ? 35 : 45;
 
   return (
@@ -139,7 +148,8 @@ export default function HorizontalAdvantages() {
               key={a.title}
               a={a}
               cardIndex={i}
-              scrollProgress={scrollYProgress}
+              scrollProgress={smoothProgress}
+              isMobile={isMobile}
             />
           ))}
         </motion.div>
@@ -180,7 +190,10 @@ function Card({
     <article className="relative flex h-[52svh] max-h-[560px] min-h-[340px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-6 sm:h-[58vh] sm:min-h-[420px] sm:w-[520px] sm:p-10 rounded-2xl transform-gpu">
       {hasVideo ? (
         <motion.div
-          style={{ scale: videoScale, opacity: videoOpacity }}
+          style={{ 
+            scale: isMobile ? 1 : videoScale, 
+            opacity: isMobile ? 1 : videoOpacity 
+          }}
           className="pointer-events-none absolute inset-0 overflow-hidden will-change-transform"
         >
           <EagerVideo
@@ -195,11 +208,18 @@ function Card({
       ) : (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <motion.div
-            style={{ scale: ringScale, opacity: ringOpacity }}
+            style={{ 
+              scale: isMobile ? 1 : ringScale, 
+              opacity: isMobile ? 1 : ringOpacity 
+            }}
             className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03] will-change-transform"
           />
           <motion.div
-            style={{ scale: iconScale, opacity: iconOpacity, y: iconY }}
+            style={{ 
+              scale: isMobile ? 1 : iconScale, 
+              opacity: isMobile ? 1 : iconOpacity, 
+              y: isMobile ? 0 : iconY 
+            }}
             className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm will-change-transform"
           >
             <Icon className="h-11 w-11 text-bone/80" />
