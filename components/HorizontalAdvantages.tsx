@@ -72,8 +72,6 @@ const ADVANTAGES: Advantage[] = [
 
 export default function HorizontalAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [scrollRange, setScrollRange] = useState(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
@@ -83,157 +81,117 @@ export default function HorizontalAdvantages() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    const measure = () => {
-      if (trackRef.current) {
-        setScrollRange(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
-      }
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) observer.observe(trackRef.current);
-    window.addEventListener("resize", measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
-
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
-  const sectionVh = isMobile ? 35 : 45;
-
   return (
-    <section
-      id="advantages"
-      ref={sectionRef}
-      className="relative bg-ink-deep"
-      style={{ height: `${ADVANTAGES.length * sectionVh}vh` }}
-    >
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        {/* Уменьшены отступы на мобильных, чтобы заголовок не выталкивал карточки за пределы экрана */}
-        <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-12 sm:pb-8 sm:pt-0 sm:px-10 lg:px-16">
-          <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
-          <h2
-            className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
-          >
-            Почему выбирают
-            <span className="text-bone-mute"> Malaysary Invest.</span>
-          </h2>
-        </div>
-
-        <motion.div
-          ref={trackRef}
-          style={{ x }}
-          className={`flex w-max gap-5 sm:gap-6 will-change-transform ${
-            isMobile ? "px-6" : "px-[6vw] sm:px-[calc(50vw-260px)]"
-          }`}
+    <section id="advantages" className="relative bg-ink-deep overflow-hidden">
+      <div className="mx-auto w-full max-w-7xl px-6 pb-12 pt-24 sm:px-10 lg:px-16">
+        <div className="text-eyebrow uppercase text-bone-mute">Преимущества</div>
+        <h2
+          className="mt-4 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
+          style={{ fontSize: "clamp(30px, 4.6vw, 64px)", lineHeight: 0.98 }}
         >
-          {ADVANTAGES.map((a, i) => (
-            <Card
-              key={a.title}
-              a={a}
-              cardIndex={i}
-              scrollProgress={scrollYProgress}
-              isMobile={isMobile}
-            />
-          ))}
-        </motion.div>
+          Почему выбирают
+          <span className="text-bone-mute"> Malaysary Invest.</span>
+        </h2>
+      </div>
+
+      <div className="relative mx-auto w-full max-w-lg pb-32 px-6 sm:max-w-2xl sm:px-10" style={{ height: `${ADVANTAGES.length * 60}vh` }}>
+        {ADVANTAGES.map((a, i) => (
+          <StackedCard
+            key={a.title}
+            a={a}
+            index={i}
+            total={ADVANTAGES.length}
+            isMobile={isMobile}
+          />
+        ))}
       </div>
     </section>
   );
 }
 
-function Card({
+function StackedCard({
   a,
-  cardIndex,
-  scrollProgress,
+  index,
+  total,
   isMobile,
 }: {
   a: Advantage;
-  cardIndex: number;
-  scrollProgress: MotionValue<number>;
+  index: number;
+  total: number;
   isMobile: boolean;
 }) {
-  const spread = 0.15;
-  const peak = cardIndex / Math.max(1, ADVANTAGES.length - 1);
-
-  const active = useTransform(scrollProgress, (v) => {
-    return 1 - Math.min(1, Math.abs(v - peak) / spread);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "start start"],
   });
 
-  const iconScale = useTransform(active, [0, 1], [0.8, 1.12]);
-  const iconOpacity = useTransform(active, [0, 1], [0.4, 1]);
-  const iconY = useTransform(active, [0, 1], [10, 0]);
-  const ringScale = useTransform(active, [0, 1], [0.8, 1.35]);
-  const ringOpacity = useTransform(active, [0, 1], [0, 0.35]);
+  // Эффект наслоения: когда карточка доезжает до верха, она прилипает 
+  // и немного уменьшается по мере того, как сверху наезжают следующие карточки
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.3]);
 
-  const videoScale = useTransform(active, [0, 1], [1.05, 1]);
-  const videoOpacity = useTransform(active, [0, 1], [0.4, 1]);
-
-  const Icon = a.icon;
   const hasVideo = !!a.video;
+  const Icon = a.icon;
 
   return (
-    <article className="relative flex h-[52svh] max-h-[560px] min-h-[340px] w-[84vw] shrink-0 flex-col justify-end overflow-hidden border border-bone/12 bg-ink-panel p-6 sm:h-[58vh] sm:min-h-[420px] sm:w-[520px] sm:p-10 rounded-2xl transform-gpu">
-      {hasVideo ? (
-        <motion.div
-          style={{ 
-            scale: isMobile ? 1 : videoScale, 
-            opacity: isMobile ? 1 : videoOpacity 
-          }}
-          // Добавлен bg-ink-panel, чтобы моргания не были прозрачными
-          className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel"
-        >
-          <EagerVideo
-            src={a.video!}
-            objectPosition={a.videoPosition}
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
-          />
-          <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/35 to-transparent" />
-          {/* Добавлен градиент снизу, чтобы текст читался на белом фоне видео */}
-          <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-ink-panel/90 via-ink-panel/30 to-transparent" />
-        </motion.div>
-      ) : (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <motion.div
-            style={{ 
-              scale: isMobile ? 1 : ringScale, 
-              opacity: isMobile ? 1 : ringOpacity 
-            }}
-            className="absolute h-44 w-44 rounded-full border border-bone/20 bg-bone/[0.03]"
-          />
-          <motion.div
-            style={{ 
-              scale: isMobile ? 1 : iconScale, 
-              opacity: isMobile ? 1 : iconOpacity, 
-              y: isMobile ? 0 : iconY 
-            }}
-            className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-bone/15 bg-bone/[0.04] backdrop-blur-sm"
-          >
-            <Icon className="h-11 w-11 text-bone/80" />
-          </motion.div>
-        </div>
-      )}
-
-      <div
-        className={`relative z-10 ${
-          hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"
-        }`}
+    <motion.div
+      ref={cardRef}
+      style={{
+        scale,
+        opacity,
+        // Карточка прилипает к верху с небольшим смещением для эффекта "стопки"
+        top: `calc(15vh + ${index * 8}px)`,
+        zIndex: index,
+      }}
+      className="sticky mb-32 origin-top"
+    >
+      <article className="relative flex h-[58vh] max-h-[600px] min-h-[420px] w-full flex-col justify-end overflow-hidden rounded-[2rem] border border-bone/15 bg-ink-panel p-8 shadow-2xl sm:p-10 transform-gpu"
+        style={{
+          boxShadow: `0 -10px 40px -10px rgba(0,0,0, ${0.4 + index * 0.05})`,
+        }}
       >
-        <h3 className="font-display text-[1.65rem] font-semibold leading-tight tracking-tightest text-bone sm:text-3xl drop-shadow-md">
-          {a.title}
-        </h3>
-        <p className="mt-3 text-pretty text-[15px] leading-relaxed text-bone-soft sm:mt-4 sm:text-[17px] drop-shadow-md">
-          {a.body}
-        </p>
-      </div>
-    </article>
+        {hasVideo ? (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden bg-ink-panel">
+            <EagerVideo
+              src={a.video!}
+              objectPosition={a.videoPosition}
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+            />
+            <div className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/40 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink-panel/95 via-ink-panel/40 to-transparent" />
+          </div>
+        ) : (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="absolute h-56 w-56 rounded-full border border-bone/20 bg-bone/[0.03]" />
+            <div className="relative flex h-28 w-28 items-center justify-center rounded-[1.5rem] border border-bone/15 bg-bone/[0.04] backdrop-blur-md">
+              <Icon className="h-12 w-12 text-bone/80" />
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`relative z-10 ${
+            hasVideo ? "" : "bg-gradient-to-t from-ink-panel via-ink-panel/95 to-transparent"
+          }`}
+        >
+          <div className="mb-4 inline-flex items-center rounded-full border border-bone/20 bg-bone/5 px-3 py-1 text-[11px] font-semibold tracking-wider text-bone-soft uppercase backdrop-blur-md">
+            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          </div>
+          <h3 className="font-display text-[1.85rem] font-semibold leading-tight tracking-tightest text-bone sm:text-4xl drop-shadow-lg">
+            {a.title}
+          </h3>
+          <p className="mt-3 max-w-md text-pretty text-[16px] leading-relaxed text-bone-soft sm:mt-5 sm:text-[18px] drop-shadow-md">
+            {a.body}
+          </p>
+        </div>
+      </article>
+    </motion.div>
   );
 }
 
