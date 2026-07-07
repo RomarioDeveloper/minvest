@@ -80,18 +80,6 @@ export default function ScrollSnapMagnet() {
       snap.resize();
     };
 
-    const snapNatively = () => {
-      const threshold = snapDistanceThreshold();
-      const hit = nearestSnapPoint(window.scrollY, collectNumericSnapPoints());
-      if (!hit || hit.distance > threshold || hit.distance < 4) return;
-      window.scrollTo({ top: hit.value, behavior: "smooth" });
-    };
-
-    const scheduleNativeSnap = () => {
-      window.clearTimeout(nativeTimer);
-      nativeTimer = window.setTimeout(snapNatively, 420);
-    };
-
     const onResize = () => {
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
@@ -110,17 +98,13 @@ export default function ScrollSnapMagnet() {
     };
 
     const supportsScrollEnd = "onscrollend" in window;
-    document.documentElement.classList.add("scroll-snap-magnet");
-    waitForLenis();
-    window.addEventListener("resize", onResize);
-
-    if (usesNativeScroll()) {
-      if (supportsScrollEnd) {
-        window.addEventListener("scrollend", snapNatively);
-      } else {
-        window.addEventListener("scroll", scheduleNativeSnap, { passive: true });
-      }
+    
+    if (!usesNativeScroll()) {
+      document.documentElement.classList.add("scroll-snap-magnet");
+      waitForLenis();
     }
+    
+    window.addEventListener("resize", onResize);
 
     return () => {
       window.cancelAnimationFrame(rafId);
@@ -129,13 +113,6 @@ export default function ScrollSnapMagnet() {
       window.removeEventListener("resize", onResize);
       document.documentElement.classList.remove("scroll-snap-magnet");
       destroyLenisSnap();
-      if (usesNativeScroll()) {
-        if (supportsScrollEnd) {
-          window.removeEventListener("scrollend", snapNatively);
-        } else {
-          window.removeEventListener("scroll", scheduleNativeSnap);
-        }
-      }
     };
   }, []);
 
