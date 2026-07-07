@@ -58,7 +58,10 @@ export default function RevealOnView({
           }
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" },
+      // threshold должен быть почти нулевым: у вариантов с clip-path (block,
+      // wipe) браузер считает «видимой» только необрезанную часть элемента
+      // (~2%), поэтому порог 0.15 никогда не достигался и reveal не срабатывал.
+      { threshold: 0.01, rootMargin: "0px 0px -10% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();

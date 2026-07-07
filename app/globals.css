@@ -216,9 +216,12 @@
     transform: translateY(0) scale(1);
   }
 
-  /* Horizontal wipe — eyebrows / small caption lines write themselves in. */
+  /* Horizontal wipe — eyebrows / small caption lines write themselves in.
+     Важно: clip-path не должен обрезать элемент в ноль (inset 100%) — иначе
+     IntersectionObserver в Chrome считает его невидимым и reveal не срабатывает.
+     Оставляем 2% — элемент всё равно скрыт через opacity. */
   [data-reveal="wipe"] {
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 98% 0 0);
     opacity: 0;
     transition:
       clip-path 0.9s cubic-bezier(0.76, 0, 0.24, 1),
@@ -308,8 +311,10 @@
     BLOCK/SQUARE REVEAL
     Used for stats cards, features, or UI elements that fly in as solid blocks expanding from nothing.
   */
+  /* clip-path 98%, не 100% — см. комментарий у wipe: полностью обрезанный
+     элемент не пересекается с вьюпортом и никогда не получает .is-revealed. */
   [data-reveal="block"] {
-    clip-path: inset(100% 0 0 0);
+    clip-path: inset(98% 0 0 0);
     transform: translateY(16px) scale(0.98);
     opacity: 0;
     transition: 
