@@ -36,7 +36,7 @@ function Milestone({
 
   return (
     <motion.div
-      style={{ left: `${at * 100}%`, x: "-50%", opacity, y }}
+      style={{ left: `${(1 - at) * 100}%`, x: "-50%", opacity, y }}
       className="absolute bottom-2 flex flex-col items-center gap-1.5"
     >
       <span className="font-display text-[11px] font-semibold tracking-[0.2em] text-bone sm:text-xs">
@@ -68,14 +68,14 @@ export default function TradeInCarScene() {
     mass: 0.5,
   });
 
-  // left (% контейнера) + x (% собственной ширины) — машина проходит весь
-  // контейнер и останавливается у правого края без измерения размеров.
-  const left = useTransform(progress, (v) => `${-6 + v * 106}%`);
-  const x = useTransform(progress, (v) => `${-v * 100}%`);
+  // left (% контейнера) + x (% собственной ширины) — машина въезжает с
+  // правого края и едет влево, без измерения размеров.
+  const left = useTransform(progress, (v) => `${106 - v * 112}%`);
+  const x = useTransform(progress, (v) => `${-100 + v * 100}%`);
 
   // Наклон корпуса от «ускорения» (знак скорости скролла).
   const velocity = useVelocity(progress);
-  const tilt = useSpring(useTransform(velocity, [-1.2, 1.2], [2.2, -2.2]), {
+  const tilt = useSpring(useTransform(velocity, [-1.2, 1.2], [-2.2, 2.2]), {
     stiffness: 220,
     damping: 22,
   });
@@ -85,8 +85,8 @@ export default function TradeInCarScene() {
   const linesOpacity = useSpring(speed, { stiffness: 140, damping: 28 });
   const linesStretch = useTransform(linesOpacity, [0, 1], [0.3, 1]);
 
-  // Лёгкий параллакс дорожной разметки.
-  const dashX = useTransform(progress, (v) => `${-v * 220}px`);
+  // Лёгкий параллакс дорожной разметки (в такт движению влево).
+  const dashX = useTransform(progress, (v) => `${v * 220}px`);
 
   // Финальный бейдж: машина доехала — авто стало первым взносом.
   const badgeOpacity = useTransform(progress, [0.84, 0.96], [0, 1]);
@@ -131,22 +131,22 @@ export default function TradeInCarScene() {
         {/* Машина */}
         <motion.div style={{ left, x }} className="absolute bottom-0 h-[74%]">
           <motion.div style={{ rotate: tilt }} className="relative h-full origin-bottom">
-            {/* Линии скорости позади машины */}
+            {/* Линии скорости позади машины (тянутся вправо — авто едет влево) */}
             <motion.div
               style={{ opacity: linesOpacity }}
-              className="absolute right-[86%] top-[26%] flex w-[52%] flex-col gap-[14%]"
+              className="absolute left-[86%] top-[26%] flex w-[52%] flex-col items-end gap-[14%]"
             >
               <motion.div
                 style={{ scaleX: linesStretch }}
-                className="h-px origin-right bg-gradient-to-l from-bone/60 to-transparent"
+                className="h-px w-full origin-left bg-gradient-to-r from-bone/60 to-transparent"
               />
               <motion.div
                 style={{ scaleX: linesStretch }}
-                className="ml-[12%] h-px origin-right bg-gradient-to-l from-bone/40 to-transparent"
+                className="mr-[12%] h-px w-full origin-left bg-gradient-to-r from-bone/40 to-transparent"
               />
               <motion.div
                 style={{ scaleX: linesStretch }}
-                className="ml-[4%] h-px origin-right bg-gradient-to-l from-bone/50 to-transparent"
+                className="mr-[4%] h-px w-full origin-left bg-gradient-to-r from-bone/50 to-transparent"
               />
             </motion.div>
 
