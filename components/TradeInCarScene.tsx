@@ -96,13 +96,13 @@ export default function TradeInCarScene({ className }: { className?: string }) {
   if (reducedMotion) {
     return (
       <div className={cn("pointer-events-none relative w-full", className)} aria-hidden>
-        <div className="relative h-[clamp(150px,24vw,260px)] w-full">
+        <div className="relative h-[clamp(210px,32vw,380px)] w-full">
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-bone/25 to-transparent" />
           <img
             src={CAR_SRC}
             alt=""
             draggable={false}
-            className="absolute bottom-0 left-1/2 h-[74%] w-auto max-w-none -translate-x-1/2 select-none"
+            className="absolute bottom-0 left-1/2 h-[88%] w-auto max-w-none -translate-x-1/2 -scale-x-100 select-none"
             style={{ filter: "drop-shadow(0 20px 36px rgba(0,0,0,0.5))" }}
           />
         </div>
@@ -112,7 +112,7 @@ export default function TradeInCarScene({ className }: { className?: string }) {
 
   return (
     <div ref={ref} className={cn("pointer-events-none relative w-full", className)} aria-hidden>
-      <div className="relative h-[clamp(150px,24vw,260px)] w-full">
+      <div className="relative h-[clamp(210px,32vw,380px)] w-full">
         {/* Отметки шагов вдоль дороги */}
         {MILESTONES.map((m) => (
           <Milestone key={m.n} progress={progress} at={m.at} n={m.n} />
@@ -130,7 +130,7 @@ export default function TradeInCarScene({ className }: { className?: string }) {
         />
 
         {/* Машина */}
-        <motion.div style={{ left, x }} className="absolute bottom-0 h-[74%]">
+        <motion.div style={{ left, x }} className="absolute bottom-0 h-[88%]">
           <motion.div style={{ rotate: tilt }} className="relative h-full origin-bottom">
             {/* Линии скорости позади машины (тянутся вправо — авто едет влево) */}
             <motion.div
@@ -158,7 +158,7 @@ export default function TradeInCarScene({ className }: { className?: string }) {
               src={CAR_SRC}
               alt=""
               draggable={false}
-              className="relative h-full w-auto max-w-none select-none"
+              className="relative h-full w-auto max-w-none -scale-x-100 select-none"
               style={{ filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.45))" }}
             />
 
@@ -176,7 +176,7 @@ export default function TradeInCarScene({ className }: { className?: string }) {
             src={CAR_SRC}
             alt=""
             draggable={false}
-            className="absolute left-0 top-full h-full w-auto max-w-none -scale-y-100 select-none opacity-[0.08] [mask-image:linear-gradient(to_top,black,transparent_55%)]"
+            className="absolute left-0 top-full h-full w-auto max-w-none -scale-x-100 -scale-y-100 select-none opacity-[0.08] [mask-image:linear-gradient(to_top,black,transparent_55%)]"
           />
         </motion.div>
       </div>
