@@ -41,7 +41,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "sales",
     tagline: "Закрытый двор, гаражи и детская площадка.",
     description: "Флагманский объект Malaysary Invest — шестиэтажный кирпичный дом с закрытой территорией, собственными гаражами и благоустроенным двором. Стены 62 см, трёхкамерные окна, бесшумные лифты.",
-    image: `/${encodeURIComponent("Дюсенова 304.png")}`,
+    image: `/${encodeURIComponent("Дюсенова 304.webp")}`,
     gallery: [
       "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
       "/photos/exterior/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.webp",
@@ -63,7 +63,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "sales",
     tagline: "Кирпичные секции у городского парка.",
     description: "Семиэтажный комплекс с просторными планировками, панорамными окнами и закрытой территорией. Отдельный паркинг на каждую квартиру.",
-    image: `/${encodeURIComponent("Дюсенова 306.png")}`,
+    image: `/${encodeURIComponent("Дюсенова 306.webp")}`,
     gallery: [
       "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
       "/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp",
@@ -83,7 +83,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "soon",
     tagline: "5-ти этажный дом бизнес класса.",
     description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
-    image: `/${encodeURIComponent("Горького.png")}`,
+    image: `/${encodeURIComponent("Горького.webp")}`,
     gallery: [
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.png`,
@@ -118,7 +118,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "sales",
     tagline: "6-ти этажный дом бизнес класса.",
     description: "Коммерческие помещения: цокольный и первый этаж (цена: 550 тысяч за кв.м). Квартиры в планировках 2-х комнатные (цена: 450 тыс за кв.м).",
-    image: `/${encodeURIComponent("Естая 90 (2).png")}`,
+    image: `/${encodeURIComponent("Естая 90 (2).webp")}`,
     gallery: [
       "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
       "/photos/exterior/88b321f5ceeecb55f2d35ed2598c3e2f_65567578-29b5-45e8-8456-a1ea24bed0e0.webp",
@@ -138,7 +138,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "done",
     tagline: "12-ти этажный дом комфорт класса, 1-но подъездный.",
     description: "Цена: 350 тысяч тенге за кв.м. Коммерческие помещения на первом и втором этажах (цена: 400 тысяч за кв.м).",
-    image: `/${encodeURIComponent("Бектурова 348.png")}`,
+    image: `/${encodeURIComponent("Бектурова 348.webp")}`,
     gallery: [
       "/photos/exterior/da54d15b01f2b830a33dabea43642029_7cbfc151-4e98-4a94-953b-af8989eb8808.webp",
       "/photos/exterior/e23826c868683d844315d08a53909223_83fd141d-ecd7-429b-a381-4be2128c94c5.webp",
@@ -158,7 +158,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     status: "soon",
     tagline: "П-образный 5-ти подъездный 9-ти этажный дом комфорт класса.",
     description: "Цена: 300 тысяч за кв.м.",
-    image: `/${encodeURIComponent("Бектурова 356.png")}`,
+    image: `/${encodeURIComponent("Бектурова 356.webp")}`,
     gallery: [
       "/photos/exterior/dd54c08850a98fb706a805585bb226ca_591ee229-3407-4d4a-a44e-e3e9afb8ac00.webp",
       "/photos/exterior/34e8b126450f03bc75749cc86655fcde_349e2f67-d696-46a3-bc65-64445557ea36.webp",

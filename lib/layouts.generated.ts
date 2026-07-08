@@ -5,37 +5,37 @@ import type { ObjectLayout } from "./layouts";
 export const LAYOUTS_BY_SLUG: Record<string, ObjectLayout[]> = {
   "bekturova-348": [
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/35%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/35%20%D0%BA%D0%B2.webp",
       "area": 35,
       "kind": "apartment",
       "label": "35 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/35%20%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/35%20%D0%BA%D0%BA%D0%B2.webp",
       "area": 35,
       "kind": "commercial",
       "label": "35 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/37%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/37%20%D0%BA%D0%B2.webp",
       "area": 37,
       "kind": "apartment",
       "label": "37 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/37%20%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/37%20%D0%BA%D0%BA%D0%B2.webp",
       "area": 37,
       "kind": "commercial",
       "label": "37 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/41%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/41%20%D0%BA%D0%B2.webp",
       "area": 41,
       "kind": "apartment",
       "label": "41 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/44%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20348/44%20%D0%BA%D0%B2.webp",
       "area": 44,
       "kind": "apartment",
       "label": "44 м² · квартира"
@@ -43,151 +43,151 @@ export const LAYOUTS_BY_SLUG: Record<string, ObjectLayout[]> = {
   ],
   "bekturova-356": [
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/38%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/38%20%D0%BA%D0%B2.webp",
       "area": 38,
       "kind": "apartment",
       "label": "38 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/38%20%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/38%20%D0%BA%D0%BA%D0%B2.webp",
       "area": 38,
       "kind": "commercial",
       "label": "38 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/47%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/47%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 47,
       "kind": "commercial",
       "label": "47 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/47%20%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/47%20%D0%BA%D0%BA%D0%B2.webp",
       "area": 47,
       "kind": "commercial",
       "label": "47 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%D0%BA%D0%B2.webp",
       "area": 48,
       "kind": "apartment",
       "label": "48 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 48,
       "kind": "commercial",
       "label": "48 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%20%D0%BA%D0%B2%D0%BA.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/48%20%D0%BA%D0%B2%D0%BA.webp",
       "area": 48,
       "kind": "commercial",
       "label": "48 м² · коммерция (квк)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%D0%BA%D0%B2.webp",
       "area": 50,
       "kind": "apartment",
       "label": "50 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 50,
       "kind": "commercial",
       "label": "50 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%20%D0%BA%D0%B2%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/50%20%D0%BA%D0%B2%D0%B2%D0%B2.webp",
       "area": 50,
       "kind": "commercial",
       "label": "50 м² · коммерция (кввв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/60%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/60%20%D0%BA%D0%B2.webp",
       "area": 60,
       "kind": "apartment",
       "label": "60 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/60.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/60.webp",
       "area": 60,
       "kind": "apartment",
       "label": "60 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%D0%BA%D0%B2.webp",
       "area": 68,
       "kind": "apartment",
       "label": "68 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 68,
       "kind": "commercial",
       "label": "68 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%20%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/68%20%D0%BA%D0%BA%D0%B2.webp",
       "area": 68,
       "kind": "commercial",
       "label": "68 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/69.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/69.webp",
       "area": 69,
       "kind": "apartment",
       "label": "69 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/69%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/69%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 69,
       "kind": "commercial",
       "label": "69 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%D0%BA%D0%B2.webp",
       "area": 70,
       "kind": "apartment",
       "label": "70 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 70,
       "kind": "commercial",
       "label": "70 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%20%D0%BA%D0%B2%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/70%20%D0%BA%D0%B2%D0%BA%D0%B2.webp",
       "area": 70,
       "kind": "commercial",
       "label": "70 м² · коммерция (квкв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%D0%BA%D0%B2.webp",
       "area": 79,
       "kind": "apartment",
       "label": "79 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 79,
       "kind": "commercial",
       "label": "79 м² · коммерция (квв)"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%20%D0%BA%D0%BA%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/79%20%D0%BA%D0%BA%D0%BA%D0%B2.webp",
       "area": 79,
       "kind": "commercial",
       "label": "79 м² · коммерция"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/88%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/88%20%D0%BA%D0%B2.webp",
       "area": 88,
       "kind": "apartment",
       "label": "88 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/88.png",
+      "src": "/Планировки/%D0%91%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%BE%D0%B2%D0%B0%20356/88.webp",
       "area": 88,
       "kind": "apartment",
       "label": "88 м² · квартира"
@@ -195,37 +195,37 @@ export const LAYOUTS_BY_SLUG: Record<string, ObjectLayout[]> = {
   ],
   "estaya-90": [
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/65%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/65%20%D0%BA%D0%B2.webp",
       "area": 65,
       "kind": "apartment",
       "label": "65 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/66%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/66%20%D0%BA%D0%B2.webp",
       "area": 66,
       "kind": "apartment",
       "label": "66 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/82%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/82%20%D0%BA%D0%B2.webp",
       "area": 82,
       "kind": "apartment",
       "label": "82 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84%20%D0%BA%D0%B2.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84%20%D0%BA%D0%B2.webp",
       "area": 84,
       "kind": "apartment",
       "label": "84 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84.webp",
       "area": 84,
       "kind": "apartment",
       "label": "84 м² · квартира"
     },
     {
-      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84%20%D0%BA%D0%B2%D0%B2.png",
+      "src": "/Планировки/%D0%95%D1%81%D1%82%D0%B0%D1%8F%2090/84%20%D0%BA%D0%B2%D0%B2.webp",
       "area": 84,
       "kind": "commercial",
       "label": "84 м² · коммерция (квв)"

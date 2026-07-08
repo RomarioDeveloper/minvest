@@ -16,7 +16,7 @@ const FOLDER_TO_SLUG = {
 };
 
 function parseLayoutMeta(filename) {
-  const base = filename.replace(/\.png$/i, "").trim();
+  const base = filename.replace(/\.(png|webp)$/i, "").trim();
   const match = base.match(/^(\d+)\s*(.*)?$/i) ?? base.match(/^(\d+)(.+)?$/i);
   const area = match ? Number(match[1]) : 0;
   const suffix = (match?.[2] ?? "").toLowerCase().replace(/\s/g, "");
@@ -49,9 +49,20 @@ for (const folder of fs.readdirSync(LAYOUTS_DIR, { withFileTypes: true })) {
   if (!slug) continue;
 
   const dir = path.join(LAYOUTS_DIR, folder.name);
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => f.toLowerCase().endsWith(".png"))
+  const all = fs.readdirSync(dir);
+  const webpBases = new Set(
+    all
+      .filter((f) => f.toLowerCase().endsWith(".webp"))
+      .map((f) => f.replace(/\.webp$/i, "")),
+  );
+  // Берём .webp, а .png — только если для него ещё нет webp-версии.
+  const files = all
+    .filter((f) => {
+      const lower = f.toLowerCase();
+      if (lower.endsWith(".webp")) return true;
+      if (lower.endsWith(".png")) return !webpBases.has(f.replace(/\.png$/i, ""));
+      return false;
+    })
     .sort((a, b) => {
       const ma = parseLayoutMeta(a);
       const mb = parseLayoutMeta(b);
@@ -63,7 +74,7 @@ for (const folder of fs.readdirSync(LAYOUTS_DIR, { withFileTypes: true })) {
   bySlug[slug] = files.map((filename) => {
     const meta = parseLayoutMeta(filename);
     return {
-      src: layoutSrc(folder, filename),
+      src: layoutSrc(folder.name, filename),
       ...meta,
     };
   });
