@@ -242,73 +242,74 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
           )}
 
           {mediaTab === "layouts" && currentLayout && (
-            <>
-              <AnimatePresence initial={false} custom={dir}>
-                <motion.img
-                  key={layoutSlide}
-                  src={currentLayout.src}
-                  alt={currentLayout.label}
-                  className="absolute inset-0 h-full w-full cursor-zoom-in object-contain p-3 sm:p-4"
-                  custom={dir}
-                  variants={{
-                    enter: (d: number) => ({ x: d * 60, opacity: 0, scale: 0.98 }),
-                    center: { x: 0, opacity: 1, scale: 1 },
-                    exit: (d: number) => ({ x: d * -60, opacity: 0, scale: 0.98 }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.32, ease: [0.32, 0, 0.18, 1] }}
-                  onClick={() => setLightbox(layoutSlide)}
-                />
-              </AnimatePresence>
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-              <div className="absolute left-3 bottom-10 flex max-w-[calc(100%-7rem)] flex-col gap-1.5">
-                <span className="inline-flex w-fit items-center gap-2 bg-black/70 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-bone backdrop-blur-sm">
-                  {currentLayout.label}
-                </span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/45">
-                  {currentLayout.kind === "commercial" ? "Коммерческое помещение" : "Жилая планировка"}
-                </span>
+            <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-[#15151a] to-[#0c0c0f]">
+              {/* Плановая «бумага» */}
+              <div className="relative flex-1 overflow-hidden px-12 pb-2 pt-11">
+                <AnimatePresence initial={false} custom={dir} mode="popLayout">
+                  <motion.div
+                    key={layoutSlide}
+                    className="absolute inset-0 flex items-center justify-center px-12 pb-3 pt-11"
+                    custom={dir}
+                    variants={{
+                      enter: (d: number) => ({ x: d * 48, opacity: 0 }),
+                      center: { x: 0, opacity: 1 },
+                      exit: (d: number) => ({ x: d * -48, opacity: 0 }),
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.3, ease: [0.32, 0, 0.18, 1] }}
+                  >
+                    <button
+                      onClick={() => setLightbox(layoutSlide)}
+                      className="group relative flex h-full max-h-full w-full items-center justify-center"
+                      aria-label="Открыть планировку на весь экран"
+                    >
+                      <img
+                        src={currentLayout.src}
+                        alt={currentLayout.label}
+                        loading="lazy"
+                        className="max-h-full max-w-full rounded-lg bg-white object-contain p-2 shadow-[0_12px_40px_rgba(0,0,0,0.55)] ring-1 ring-black/5"
+                      />
+                      <span className="pointer-events-none absolute right-2 top-2 flex items-center gap-1 rounded-full bg-ink/85 px-2 py-1 text-[9px] font-semibold uppercase tracking-widest text-bone/80 opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                          <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Увеличить
+                      </span>
+                    </button>
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
-              <button
-                onClick={() => setLightbox(layoutSlide)}
-                className="absolute bottom-10 right-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 text-[10px] uppercase tracking-widest text-bone/70 backdrop-blur-sm transition hover:text-bone"
-              >
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                  <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                На весь экран
-              </button>
+              {/* Нижняя панель: подпись + счётчик */}
+              <div className="relative z-10 flex items-center justify-between gap-3 border-t border-bone/10 bg-black/30 px-4 py-2.5 backdrop-blur-sm">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span
+                    className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${currentLayout.kind === "commercial" ? "bg-amber-400" : "bg-emerald-400"}`}
+                  />
+                  <span className="truncate text-[12px] font-semibold text-bone">
+                    {currentLayout.label}
+                  </span>
+                </div>
+                <span className="shrink-0 text-[11px] font-semibold uppercase tracking-widest text-bone/45">
+                  {layoutSlide + 1} / {layouts.length}
+                </span>
+              </div>
 
               {layouts.length > 1 && (
                 <>
                   <button onClick={prevLayout} aria-label="Предыдущая планировка"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    className="absolute left-2.5 top-[calc(50%-14px)] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-bone shadow-lg ring-1 ring-bone/15 backdrop-blur-sm transition hover:bg-ink hover:ring-bone/40">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
                   <button onClick={nextLayout} aria-label="Следующая планировка"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center bg-black/50 text-bone backdrop-blur-sm transition hover:bg-black/80">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    className="absolute right-2.5 top-[calc(50%-14px)] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-bone shadow-lg ring-1 ring-bone/15 backdrop-blur-sm transition hover:bg-ink hover:ring-bone/40">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </button>
-                  <div className="absolute bottom-3 left-1/2 flex max-w-[70%] -translate-x-1/2 gap-1.5 overflow-x-auto hide-scrollbar">
-                    {layouts.map((layout, i) => (
-                      <button
-                        key={layout.src}
-                        onClick={() => goLayout(i)}
-                        title={layout.label}
-                        className={`h-1 shrink-0 rounded-full transition-all duration-300 ${i === layoutSlide ? "w-5 bg-bone" : "w-1.5 bg-bone/40"}`}
-                      />
-                    ))}
-                  </div>
                 </>
               )}
-              <div className="absolute bottom-3 right-4 text-[11px] font-semibold uppercase tracking-widest text-bone/50">
-                {layoutSlide + 1} / {layouts.length}
-              </div>
-            </>
+            </div>
           )}
 
           <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm z-10">
@@ -425,6 +426,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             images={layouts.map((layout) => layout.src)}
             labels={layouts.map((layout) => layout.label)}
             startIndex={lightbox}
+            paper
             onClose={() => setLightbox(null)}
           />
         )}
@@ -505,11 +507,13 @@ function PhotoLightbox({
   images,
   labels,
   startIndex,
+  paper = false,
   onClose,
 }: {
   images: string[];
   labels?: string[];
   startIndex: number;
+  paper?: boolean;
   onClose: () => void;
 }) {
   const [idx, setIdx] = useState(startIndex);
@@ -572,7 +576,7 @@ function PhotoLightbox({
             }}
             initial="enter" animate="center" exit="exit"
             transition={{ duration: 0.28, ease: [0.32, 0, 0.18, 1] }}
-            className="max-h-[78svh] max-w-[88vw] select-none object-contain drop-shadow-2xl"
+            className={`max-h-[78svh] max-w-[88vw] select-none object-contain drop-shadow-2xl ${paper ? "rounded-xl bg-white p-3 sm:p-5" : ""}`}
             onClick={(e) => e.stopPropagation()}
             draggable={false}
           />
@@ -589,8 +593,8 @@ function PhotoLightbox({
           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 overflow-x-auto px-16 pb-1" onClick={(e) => e.stopPropagation()}>
             {images.map((src, i) => (
               <button key={i} onClick={() => go(i)}
-                className={`h-12 w-16 shrink-0 overflow-hidden border-2 transition ${i === idx ? "border-bone" : "border-transparent opacity-40 hover:opacity-70"}`}>
-                <img src={src} alt="" className="h-full w-full object-cover" />
+                className={`h-12 w-16 shrink-0 overflow-hidden border-2 transition ${paper ? "bg-white" : ""} ${i === idx ? "border-bone" : "border-transparent opacity-40 hover:opacity-70"}`}>
+                <img src={src} alt="" className={`h-full w-full ${paper ? "object-contain p-0.5" : "object-cover"}`} />
               </button>
             ))}
           </div>
