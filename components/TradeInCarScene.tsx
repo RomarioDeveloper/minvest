@@ -10,6 +10,7 @@ import {
   useVelocity,
   type MotionValue,
 } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const CAR_SRC = "/103F2-removebg-preview.png";
 
@@ -52,7 +53,7 @@ function Milestone({
  * с инерцией, наклоном корпуса, линиями скорости и отражением.
  * В конце пути над машиной появляется бейдж «первый взнос».
  */
-export default function TradeInCarScene() {
+export default function TradeInCarScene({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -94,7 +95,7 @@ export default function TradeInCarScene() {
 
   if (reducedMotion) {
     return (
-      <div className="pointer-events-none relative mt-14 w-full sm:mt-16" aria-hidden>
+      <div className={cn("pointer-events-none relative w-full", className)} aria-hidden>
         <div className="relative h-[clamp(150px,24vw,260px)] w-full">
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-bone/25 to-transparent" />
           <img
@@ -110,7 +111,7 @@ export default function TradeInCarScene() {
   }
 
   return (
-    <div ref={ref} className="pointer-events-none relative mt-14 w-full sm:mt-16" aria-hidden>
+    <div ref={ref} className={cn("pointer-events-none relative w-full", className)} aria-hidden>
       <div className="relative h-[clamp(150px,24vw,260px)] w-full">
         {/* Отметки шагов вдоль дороги */}
         {MILESTONES.map((m) => (

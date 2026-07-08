@@ -108,49 +108,52 @@ export default function TradeIn() {
             </RevealOnView>
           </div>
 
-          {/* Шаги как связанный процесс */}
-          <ol className="relative">
-            {STEPS.map((s, i) => {
-              const Icon = s.icon;
-              const isLast = i === STEPS.length - 1;
-              return (
-                <RevealOnView
-                  as="li"
-                  key={s.n}
-                  variant="slide-right"
-                  delay={140 + i * 90}
-                  className="group relative flex gap-5 pb-8 last:pb-0 sm:gap-6"
-                >
-                  {/* Линия-соединитель + маркер шага */}
-                  <div className="relative flex flex-col items-center">
-                    <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center border border-bone/15 bg-ink-panel text-bone transition-colors duration-300 group-hover:border-bone/40">
-                      <Icon className="h-5 w-5 text-bone-mute transition-colors duration-300 group-hover:text-bone" aria-hidden />
-                    </span>
-                    {!isLast && (
-                      <span className="mt-2 w-px flex-1 bg-gradient-to-b from-bone/20 to-bone/5" />
-                    )}
-                  </div>
-
-                  <div className="flex-1 pt-1.5">
-                    <div className="flex items-baseline gap-3">
-                      <span className="font-display text-sm font-semibold tracking-[0.2em] text-bone/25 transition-colors duration-300 group-hover:text-bone/50">
-                        {s.n}
-                      </span>
-                      <h3 className="font-display text-lg font-semibold tracking-tightest text-bone">
-                        {s.t}
-                      </h3>
-                    </div>
-                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-bone-soft">
-                      {s.d}
-                    </p>
-                  </div>
-                </RevealOnView>
-              );
-            })}
-          </ol>
+          {/* Машина въезжает справа — на месте прежнего блока шагов */}
+          <RevealOnView variant="zoom" delay={160} className="lg:pl-4">
+            <TradeInCarScene />
+          </RevealOnView>
         </div>
 
-        <TradeInCarScene />
+        {/* Шаги процесса — на всю ширину под сценой */}
+        <ol className="mt-16 grid grid-cols-1 gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s, i) => {
+            const Icon = s.icon;
+            const isLast = i === STEPS.length - 1;
+            return (
+              <RevealOnView
+                as="li"
+                key={s.n}
+                variant="slide-right"
+                delay={140 + i * 90}
+                className="group relative"
+              >
+                {/* Маркер + горизонтальный соединитель к следующему шагу */}
+                <div className="flex items-center gap-4">
+                  <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center border border-bone/15 bg-ink-panel text-bone transition-colors duration-300 group-hover:border-bone/40">
+                    <Icon className="h-5 w-5 text-bone-mute transition-colors duration-300 group-hover:text-bone" aria-hidden />
+                  </span>
+                  {!isLast && (
+                    <span className="hidden h-px flex-1 bg-gradient-to-r from-bone/20 to-bone/5 lg:block" />
+                  )}
+                </div>
+
+                <div className="mt-5">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-display text-sm font-semibold tracking-[0.2em] text-bone/25 transition-colors duration-300 group-hover:text-bone/50">
+                      {s.n}
+                    </span>
+                    <h3 className="font-display text-lg font-semibold tracking-tightest text-bone">
+                      {s.t}
+                    </h3>
+                  </div>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-bone-soft">
+                    {s.d}
+                  </p>
+                </div>
+              </RevealOnView>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );
