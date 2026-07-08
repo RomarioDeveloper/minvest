@@ -37,11 +37,13 @@ export default function VideoFeatureBlocks() {
 function SplitFeatureBlock({ title, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
   return (
     <section className="relative isolate flex h-[100svh] min-h-[100svh] w-full flex-col overflow-hidden bg-ink md:flex-row">
-      <EagerVideo
-        src={video}
-        objectPosition={objectPosition}
-        className="absolute inset-0 h-full w-full min-h-full min-w-full object-cover md:left-1/2 md:w-1/2"
-      />
+      <div className="absolute inset-0 md:left-1/2 md:w-1/2">
+        <EagerVideo
+          src={video}
+          objectPosition={objectPosition}
+          className="h-full w-full object-cover"
+        />
+      </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[45%] bg-gradient-to-t from-ink via-ink/40 to-transparent md:hidden" />
 

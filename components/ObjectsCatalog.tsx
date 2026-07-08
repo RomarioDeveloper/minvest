@@ -649,7 +649,7 @@ function ZoomableImage({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.25 }}
         style={{ transform: `translate3d(${t.x}px, ${t.y}px, 0) scale(${t.scale})` }}
-        className={`max-h-full max-w-full select-none object-contain drop-shadow-2xl ${t.scale > 1 ? "cursor-grab" : "cursor-zoom-in"} ${paper ? "rounded-xl bg-white p-2 sm:p-4" : ""}`}
+        className={`h-full w-full select-none object-contain drop-shadow-2xl ${t.scale > 1 ? "cursor-grab" : "cursor-zoom-in"} ${paper ? "rounded-xl bg-white p-2 sm:p-4" : ""}`}
       />
 
       {t.scale > 1 && (
