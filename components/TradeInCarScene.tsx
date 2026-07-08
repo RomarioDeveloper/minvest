@@ -57,9 +57,11 @@ export default function TradeInCarScene({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
+  // Диапазон охватывает всё время, пока сцена в поле зрения: когда секция
+  // по центру экрана — прогресс ≈ 0.5 и машина видна по центру колонки.
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "start 0.35"],
+    offset: ["start end", "end start"],
   });
 
   // Пружина даёт инерцию: машина плавно докатывается после остановки скролла.
