@@ -28,20 +28,27 @@ export default function VideoFeatureBlocks() {
       <SplitFeatureBlock
         title="Объекты которые находятся на этапе ввода в эксплуатацию"
         video="/objects-commissioning.mp4"
-        objectPosition="center"
+        // Зум + сдвиг влево/вверх: режем соседние частные дома справа и стройку у цоколя.
+        objectPosition="12% 38%"
+        videoClassName="scale-[1.38] origin-[12%_38%]"
       />
     </div>
   );
 }
 
-function SplitFeatureBlock({ title, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
+function SplitFeatureBlock({
+  title,
+  video,
+  objectPosition = "center",
+  videoClassName = "",
+}: BlockProps & { objectPosition?: string; videoClassName?: string }) {
   return (
     <section className="relative isolate flex h-[100svh] min-h-[100svh] w-full flex-col overflow-hidden bg-ink md:flex-row">
-      <div className="absolute inset-0 md:left-1/2 md:w-1/2">
+      <div className="absolute inset-0 overflow-hidden md:left-1/2 md:w-1/2">
         <EagerVideo
           src={video}
           objectPosition={objectPosition}
-          className="h-full w-full object-cover"
+          className={`h-full w-full object-cover ${videoClassName}`}
         />
       </div>
 

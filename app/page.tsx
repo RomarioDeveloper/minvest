@@ -52,36 +52,64 @@ export default function HomePage() {
       </div>
 
       {/* ---------- INTRO STATS ---------- */}
-      <section className="relative overflow-x-clip border-y border-bone/10 bg-ink-deep px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
-            <RevealOnView variant="block" delay={150} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <StatsCountUp
-                to={6}
-                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
-              />
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">этажей</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={300} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <span className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
-                ≈ <StatsCountUp to={40} />
-              </span>
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">квартир</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={450} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <StatsCountUp
-                to={100}
-                suffix="%"
-                className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl"
-              />
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">закрытая территория</div>
-            </RevealOnView>
-            <RevealOnView variant="block" delay={600} className="border-t border-bone/15 bg-ink-panel p-5 -mx-5 sm:mx-0 sm:p-6 sm:-mt-6">
-              <div className="font-display text-4xl font-semibold tracking-tightest text-bone sm:text-5xl">
-                24 / 7
-              </div>
-              <div className="mt-2 text-eyebrow uppercase text-bone-dim">видеонаблюдение</div>
-            </RevealOnView>
+      <section className="relative overflow-x-clip border-y border-bone/10 bg-ink px-6 py-20 sm:px-10 sm:py-28 lg:px-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(244,244,245,0.05),transparent_55%)]"
+        />
+        <div className="relative mx-auto max-w-7xl">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
+            Ключевые параметры
+          </RevealOnView>
+          <RevealOnView
+            as="div"
+            variant="blur"
+            delay={100}
+            className="mt-5 max-w-2xl font-display font-semibold tracking-tightest text-balance text-bone"
+          >
+            <h2 style={{ fontSize: "clamp(28px, 3.6vw, 44px)", lineHeight: 1.02 }}>
+              Дом, в котором всё на своих местах.
+            </h2>
+          </RevealOnView>
+
+          <div className="mt-14 grid grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "Этажей", value: <StatsCountUp to={6} /> },
+              {
+                label: "Квартир",
+                value: (
+                  <>
+                    <span className="text-bone-mute">≈</span> <StatsCountUp to={40} />
+                  </>
+                ),
+              },
+              { label: "Закрытая территория", value: <StatsCountUp to={100} suffix="%" /> },
+              { label: "Видеонаблюдение", value: "24 / 7" },
+            ].map((stat, i) => (
+              <RevealOnView
+                key={stat.label}
+                variant="block"
+                delay={160 + i * 90}
+                className={[
+                  "relative py-6 pr-6 sm:py-8 sm:pr-8",
+                  i % 2 === 1 ? "pl-6 sm:pl-8" : "",
+                  i >= 2 ? "border-t border-bone/10 lg:border-t-0" : "",
+                  i > 0 ? "lg:border-l lg:border-bone/10 lg:pl-8" : "",
+                  i % 2 === 1 ? "border-l border-bone/10 lg:border-l" : "",
+                ].join(" ")}
+              >
+                <div
+                  className="font-display font-semibold tracking-tightest text-bone"
+                  style={{ fontSize: "clamp(40px, 5.5vw, 72px)", lineHeight: 0.92 }}
+                >
+                  {stat.value}
+                </div>
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="h-px w-6 bg-bone/30" />
+                  <span className="text-eyebrow uppercase text-bone-dim">{stat.label}</span>
+                </div>
+              </RevealOnView>
+            ))}
           </div>
         </div>
       </section>
