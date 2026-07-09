@@ -88,6 +88,8 @@ const ADVANTAGES: Advantage[] = [
     body: "Умные замки в квартирах.",
     icon: IconSmartLock,
     video: "/smart-locks.mp4",
+    // Клавиатура и набор кода слева — тянем кадр влево, иначе виден только рукав.
+    videoPosition: "18% center",
   },
   {
     title: "Приватность и безопасность",

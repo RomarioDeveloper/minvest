@@ -1,5 +1,4 @@
 import BrandFilm from "@/components/BrandFilm";
-import LayoutScrollBlock from "@/components/LayoutScrollBlock";
 import CompanyAdvantages from "@/components/CompanyAdvantages";
 import EditorialSpread from "@/components/EditorialSpread";
 import HeroVideo from "@/components/HeroVideo";
@@ -119,14 +118,6 @@ export default function HomePage() {
 
       {/* ---------- WIDE VIDEO BLOCKS ---------- */}
       <VideoFeatureBlocks />
-
-      {/* ---------- LAYOUTS SCROLL ---------- */}
-      <LayoutScrollBlock
-        frameBase="/layout-frames"
-        frameBaseMobile="/layout-frames-mobile"
-        frameCount={300}
-        poster="/layout-scroll-poster.jpg"
-      />
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
