@@ -102,26 +102,47 @@ export default function BrandFilm({
 
     const section = sectionRef.current;
     const startCenter = section ? Math.round(pinProgress(section) * (count - 1)) : 0;
+    const windowRadius = mobile ? 24 : 40;
+    const batchSize = mobile ? 4 : 8;
 
     const loader = createSlidingFrameLoader({
       base,
       count,
       extension: "webp",
       step: frameStep,
-      // Увеличиваем радиус предзагрузки, чтобы кадры успевали скачаться при быстром скролле
-      windowRadius: mobile ? 24 : 40,
-      // Увеличиваем размер пачки для более агрессивной загрузки
-      batchSize: mobile ? 4 : 8,
-      onFirstFrame: () => {
-        setFrameReady(true);
-        window.dispatchEvent(new CustomEvent("brandfilm:ready"));
-      },
+      windowRadius,
+      batchSize,
+      onFirstFrame: () => setFrameReady(true),
     });
 
     loader.setCenter(startCenter);
     loaderRef.current = loader;
 
+    // Прогреваем начальное окно кадров под прелоадером — первый скролл
+    // не ждёт сеть. ready шлём только когда окно готово (или по таймауту).
+    let cancelled = false;
+    const PREFETCH_CAP_MS = 8000;
+    const cap = window.setTimeout(() => {
+      if (cancelled) return;
+      window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+    }, PREFETCH_CAP_MS);
+
+    void loader
+      .prefetchWindow(windowRadius, (fraction) => {
+        if (!cancelled) {
+          window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: fraction }));
+        }
+      })
+      .then(() => {
+        if (cancelled) return;
+        window.clearTimeout(cap);
+        window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 1 }));
+        window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+      });
+
     return () => {
+      cancelled = true;
+      window.clearTimeout(cap);
       loader.destroy();
       loaderRef.current = null;
     };

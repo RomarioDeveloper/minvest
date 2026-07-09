@@ -83,7 +83,7 @@ export function createSlidingFrameLoader({
   onFirstFrame,
 }: SlidingFrameLoaderOptions) {
   const frames: (Frame | null)[] = Array.from({ length: count }, () => null);
-  const loading = new Set<number>();
+  const loading = new Map<number, Promise<void>>();
   let center = 0;
   let active = false;
   let cancelled = false;
@@ -119,44 +119,53 @@ export function createSlidingFrameLoader({
     }
   };
 
-  const loadFrame = (index: number) => {
+  const loadFrame = (index: number): Promise<void> => {
     const i = snapFrameIndex(index, count, step);
-    if (frames[i] || loading.has(i) || cancelled || !shouldLoad(i)) return;
+    if (!shouldLoad(i) || cancelled) return Promise.resolve();
+    if (frames[i]) return Promise.resolve();
+    const inflight = loading.get(i);
+    if (inflight) return inflight;
 
-    loading.add(i);
     const src = frameFileSrc(base, i, extension);
-    const finish = () => loading.delete(i);
+    const task = (async () => {
+      try {
+        if (canBitmap) {
+          // Decode off the main thread: fetch bytes, createImageBitmap on a worker.
+          const resp = await fetch(src);
+          if (!resp.ok || cancelled) return;
+          const blob = await resp.blob();
+          if (cancelled) return;
+          const bmp = await createImageBitmap(blob);
+          store(i, bmp);
+          return;
+        }
 
-    if (canBitmap) {
-      // Decode entirely off the main thread: fetch the encoded bytes and let
-      // createImageBitmap decode on a worker. Drawing the resulting bitmap is
-      // a cheap GPU upload with no synchronous decode during scroll.
-      fetch(src)
-        .then((r) => r.blob())
-        .then((blob) => createImageBitmap(blob))
-        .then((bmp) => store(i, bmp))
-        .catch(() => {})
-        .finally(finish);
-      return;
-    }
-
-    const img = new Image();
-    img.decoding = "async";
-    img.onload = () => {
-      const done = () => {
-        store(i, img);
-        finish();
-      };
-      // decode() forces the decode ahead of the first draw so drawImage never
-      // blocks the scroll thread.
-      if (typeof img.decode === "function") {
-        img.decode().then(done).catch(done);
-      } else {
-        done();
+        await new Promise<void>((resolve) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            const done = () => {
+              store(i, img);
+              resolve();
+            };
+            if (typeof img.decode === "function") {
+              img.decode().then(done).catch(done);
+            } else {
+              done();
+            }
+          };
+          img.onerror = () => resolve();
+          img.src = src;
+        });
+      } catch {
+        /* skip failed frame — nearestLoaded will fall back */
+      } finally {
+        loading.delete(i);
       }
-    };
-    img.onerror = finish;
-    img.src = src;
+    })();
+
+    loading.set(i, task);
+    return task;
   };
 
   const evict = (c: number) => {
@@ -170,8 +179,7 @@ export function createSlidingFrameLoader({
 
     const c = snapFrameIndex(center, count, step);
     evict(c);
-    
-    // Грузим кадры в обе стороны от центра
+
     const order = priorityFrameOrder(c, count).filter(
       (i) => shouldLoad(i) && Math.abs(i - c) <= windowRadius,
     );
@@ -179,7 +187,7 @@ export function createSlidingFrameLoader({
     let queued = 0;
     for (const i of order) {
       if (!frames[i] && !loading.has(i)) {
-        loadFrame(i);
+        void loadFrame(i);
         if (++queued >= batchSize) break;
       }
     }
@@ -211,6 +219,40 @@ export function createSlidingFrameLoader({
     return -1;
   };
 
+  /**
+   * Decode the initial scroll window into memory before the user starts scrubbing.
+   * Reports 0→1 progress; safe to call while the preloader curtain is still up.
+   */
+  const prefetchWindow = async (
+    radius = windowRadius,
+    onProgress?: (fraction: number) => void,
+  ) => {
+    const c = snapFrameIndex(center, count, step);
+    const indices = priorityFrameOrder(c, count).filter(
+      (i) => shouldLoad(i) && Math.abs(i - c) <= radius,
+    );
+    if (indices.length === 0) {
+      onProgress?.(1);
+      return;
+    }
+
+    let done = 0;
+    onProgress?.(0);
+    const concurrency = Math.min(batchSize, indices.length);
+    let cursor = 0;
+
+    await Promise.all(
+      Array.from({ length: concurrency }, async () => {
+        while (cursor < indices.length && !cancelled) {
+          const i = indices[cursor++];
+          await loadFrame(i);
+          done += 1;
+          onProgress?.(done / indices.length);
+        }
+      }),
+    );
+  };
+
   return {
     frames,
     setCenter(index: number) {
@@ -227,6 +269,7 @@ export function createSlidingFrameLoader({
       }
     },
     nearestLoaded,
+    prefetchWindow,
     destroy() {
       cancelled = true;
       stopPump();
