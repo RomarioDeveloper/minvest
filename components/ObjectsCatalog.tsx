@@ -74,16 +74,15 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
   return (
     <button
       onClick={onOpen}
-      className="group relative flex h-full min-h-[300px] w-full flex-col overflow-hidden text-left sm:min-h-[340px] lg:min-h-[380px]"
+      className="group relative flex h-full min-h-[280px] w-full flex-col overflow-hidden text-left sm:min-h-[320px] lg:min-h-[360px]"
     >
       <img
         src={obj.image}
         alt={obj.name}
         loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/15" />
-      <div className="absolute inset-0 bg-gradient-to-br from-ink/25 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10 transition duration-500 group-hover:via-ink/75" />
 
       <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-5">
         <div className="flex items-start justify-between gap-2">
@@ -107,41 +106,55 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
           <h3 className="mt-1.5 font-display text-xl font-semibold tracking-tightest text-bone sm:text-2xl">
             {obj.name}
           </h3>
-          <p className="mt-1.5 line-clamp-2 text-[13px] leading-snug text-bone/70">
-            {obj.tagline}
-          </p>
-
-          <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-bone/15 pt-3 text-[11px] sm:text-xs">
-            <div>
-              <div className="uppercase tracking-widest text-bone/40">Этажность</div>
-              <div className="mt-0.5 font-semibold text-bone/85">{obj.floors} эт.</div>
-            </div>
-            <div>
-              <div className="uppercase tracking-widest text-bone/40">Квартир</div>
-              <div className="mt-0.5 font-semibold text-bone/85">{obj.apartments}</div>
-            </div>
-            <div>
-              <div className="uppercase tracking-widest text-bone/40">Квадратура</div>
-              <div className="mt-0.5 font-semibold text-bone/85">{obj.rooms}</div>
-            </div>
-            <div>
-              <div className="uppercase tracking-widest text-bone/40">Срок</div>
-              <div className="mt-0.5 font-semibold text-bone/85">{obj.deadline}</div>
-            </div>
+          <div className="mt-2 font-display text-base font-semibold tracking-tightest text-bone/90 sm:text-lg">
+            {obj.priceFrom}
           </div>
 
-          <div className="mt-3 flex items-end justify-between gap-3 border-t border-bone/15 pt-3">
-            <div className="min-w-0">
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/45">
-                Цена
-              </div>
-              <div className="mt-0.5 truncate font-display text-base font-semibold tracking-tightest text-bone sm:text-lg">
-                {obj.priceFrom}
+          {/* Details: always open on touch, slide up on desktop hover */}
+          <div
+            className="
+              grid transition-[grid-template-rows,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+              max-md:grid-rows-[1fr] max-md:opacity-100 max-md:translate-y-0
+              md:grid-rows-[0fr] md:opacity-0 md:translate-y-3
+              md:group-hover:grid-rows-[1fr] md:group-hover:opacity-100 md:group-hover:translate-y-0
+              md:group-focus-visible:grid-rows-[1fr] md:group-focus-visible:opacity-100 md:group-focus-visible:translate-y-0
+            "
+          >
+            <div className="overflow-hidden">
+              <div className="mt-3 border-t border-bone/15 pt-3">
+                <p className="line-clamp-2 text-[13px] leading-snug text-bone/70">
+                  {obj.tagline}
+                </p>
+
+                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[11px] sm:text-xs">
+                  <div>
+                    <div className="uppercase tracking-widest text-bone/40">Этажность</div>
+                    <div className="mt-0.5 font-semibold text-bone/85">{obj.floors} эт.</div>
+                  </div>
+                  <div>
+                    <div className="uppercase tracking-widest text-bone/40">Квартир</div>
+                    <div className="mt-0.5 font-semibold text-bone/85">{obj.apartments}</div>
+                  </div>
+                  <div>
+                    <div className="uppercase tracking-widest text-bone/40">Квадратура</div>
+                    <div className="mt-0.5 font-semibold text-bone/85">{obj.rooms}</div>
+                  </div>
+                  <div>
+                    <div className="uppercase tracking-widest text-bone/40">Срок</div>
+                    <div className="mt-0.5 font-semibold text-bone/85">{obj.deadline}</div>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex items-center justify-between gap-3 border-t border-bone/15 pt-3">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/50">
+                    Подробнее
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-bone transition duration-300 group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </div>
               </div>
             </div>
-            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-widest text-bone/55 transition group-hover:text-bone">
-              Подробнее →
-            </span>
           </div>
         </div>
       </div>
