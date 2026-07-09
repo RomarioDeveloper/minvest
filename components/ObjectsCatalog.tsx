@@ -53,9 +53,9 @@ export default function ObjectsCatalog() {
           </RevealOnView>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-5">
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((o, i) => (
-            <RevealOnView key={o.slug} variant="zoom" delay={80 + i * 60} className="h-full">
+            <RevealOnView key={o.slug} variant="zoom" delay={120 + i * 80} className="h-full">
               <ObjectCard obj={o} onOpen={() => setSelected(o)} />
             </RevealOnView>
           ))}
@@ -72,90 +72,43 @@ export default function ObjectsCatalog() {
 /* ─── Card ─── */
 function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) {
   return (
-    <button
-      onClick={onOpen}
-      className="group relative flex h-full min-h-[280px] w-full flex-col overflow-hidden text-left sm:min-h-[320px] lg:min-h-[360px]"
-    >
-      <img
-        src={obj.image}
-        alt={obj.name}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10 transition duration-500 group-hover:via-ink/75" />
-
-      <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2 bg-ink/55 px-2.5 py-1.5 backdrop-blur-sm">
-            <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-bone-soft">
-              {STATUS_LABEL[obj.status]}
-            </span>
-          </div>
-          {obj.flagship && (
-            <div className="bg-bone px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-ink">
-              Флагман
-            </div>
-          )}
+    <button onClick={onOpen} className="group flex h-full w-full flex-col overflow-hidden border border-bone/12 bg-ink-panel text-left transition hover:border-bone/30">
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img src={obj.image} alt={obj.name} loading="lazy"
+          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
+        <div className="absolute left-4 top-4 flex items-center gap-2 bg-ink/70 px-3 py-1.5 backdrop-blur-sm">
+          <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
+          <span className="text-eyebrow uppercase text-bone-soft">{STATUS_LABEL[obj.status]}</span>
         </div>
-
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/55">
-            {obj.district}
+        {obj.flagship && (
+          <div className="absolute right-4 top-4 bg-bone px-3 py-1.5 text-eyebrow uppercase text-ink">Флагман</div>
+        )}
+        {obj.videos?.length && (
+          <div className="absolute right-4 bottom-4 flex items-center gap-1.5 bg-black/60 px-2 py-1 backdrop-blur-sm">
+            <svg className="h-3 w-3 text-bone/70" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+            </svg>
+            <span className="text-[10px] uppercase tracking-widest text-bone/60">{obj.videos.length} видео</span>
           </div>
-          <h3 className="mt-1.5 font-display text-xl font-semibold tracking-tightest text-bone sm:text-2xl">
-            {obj.name}
-          </h3>
-          <div className="mt-2 font-display text-base font-semibold tracking-tightest text-bone/90 sm:text-lg">
-            {obj.priceFrom}
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <div className="text-eyebrow uppercase text-bone-dim">{obj.district}</div>
+        <h3 className="mt-2 font-display text-2xl font-semibold tracking-tightest text-bone">{obj.name}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-bone-soft">{obj.tagline}</p>
+        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-bone/10 pt-5 text-sm">
+          <Spec label="Этажность" value={`${obj.floors} этажей`} />
+          <Spec label="Квартир" value={`${obj.apartments}`} />
+          <Spec label="Квадратура" value={obj.rooms} />
+          <Spec label="Срок сдачи" value={obj.deadline} />
+        </dl>
+        <div className="mt-6 flex items-end justify-between border-t border-bone/10 pt-5">
+          <div>
+            <div className="text-eyebrow uppercase text-bone-dim">Цена</div>
+            <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</div>
           </div>
-
-          {/* Details: always open on touch, slide up on desktop hover */}
-          <div
-            className="
-              grid transition-[grid-template-rows,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-              max-md:grid-rows-[1fr] max-md:opacity-100 max-md:translate-y-0
-              md:grid-rows-[0fr] md:opacity-0 md:translate-y-3
-              md:group-hover:grid-rows-[1fr] md:group-hover:opacity-100 md:group-hover:translate-y-0
-              md:group-focus-visible:grid-rows-[1fr] md:group-focus-visible:opacity-100 md:group-focus-visible:translate-y-0
-            "
-          >
-            <div className="overflow-hidden">
-              <div className="mt-3 border-t border-bone/15 pt-3">
-                <p className="line-clamp-2 text-[13px] leading-snug text-bone/70">
-                  {obj.tagline}
-                </p>
-
-                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[11px] sm:text-xs">
-                  <div>
-                    <div className="uppercase tracking-widest text-bone/40">Этажность</div>
-                    <div className="mt-0.5 font-semibold text-bone/85">{obj.floors} эт.</div>
-                  </div>
-                  <div>
-                    <div className="uppercase tracking-widest text-bone/40">Квартир</div>
-                    <div className="mt-0.5 font-semibold text-bone/85">{obj.apartments}</div>
-                  </div>
-                  <div>
-                    <div className="uppercase tracking-widest text-bone/40">Квадратура</div>
-                    <div className="mt-0.5 font-semibold text-bone/85">{obj.rooms}</div>
-                  </div>
-                  <div>
-                    <div className="uppercase tracking-widest text-bone/40">Срок</div>
-                    <div className="mt-0.5 font-semibold text-bone/85">{obj.deadline}</div>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between gap-3 border-t border-bone/15 pt-3">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/50">
-                    Подробнее
-                  </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-bone transition duration-300 group-hover:translate-x-0.5">
-                    →
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <span className="text-eyebrow uppercase text-bone-mute transition group-hover:text-bone">Подробнее →</span>
         </div>
       </div>
     </button>
@@ -861,5 +814,14 @@ function LayoutChip({
       {layout.area} м²
       {layout.kind === "commercial" ? " · ком." : ""}
     </button>
+  );
+}
+
+function Spec({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-eyebrow uppercase text-bone-dim">{label}</dt>
+      <dd className="mt-1 font-medium text-bone">{value}</dd>
+    </div>
   );
 }
