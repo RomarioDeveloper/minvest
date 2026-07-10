@@ -58,7 +58,10 @@ export default function Header() {
           pointerEvents: isMounted ? pointerEvents : "none",
         }}
       >
-        <div className="relative mx-auto flex max-w-6xl items-center justify-between rounded-full border border-bone/10 bg-ink/60 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:pl-6">
+        {/* backdrop-blur пересчитывается на каждый кадр скролла (под шапкой канвас и видео).
+            На мобилке блюра нет вообще — плотный фон, на десктопе md вместо xl +
+            transform-gpu, чтобы блюр жил на собственном слое композитора. */}
+        <div className="relative mx-auto flex max-w-6xl transform-gpu items-center justify-between rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6">
           <a href="#top" className="relative z-[62] flex items-center gap-3 text-bone">
             <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto" />
             <span className="font-display text-[13px] font-bold tracking-[0.14em]">
@@ -127,8 +130,10 @@ export default function Header() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            {/* Фон уже почти непрозрачный — полноэкранный backdrop-blur на телефоне
+                стоил дорого и визуально ничего не добавлял. */}
             <motion.div
-              className="absolute inset-0 bg-ink-deep/95 backdrop-blur-xl"
+              className="absolute inset-0 bg-ink-deep/[0.98]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

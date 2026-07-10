@@ -8,10 +8,18 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   objectPosition?: string;
+  /** IntersectionObserver rootMargin — сузить, если рядом много видео и играть все сразу дорого. */
+  preloadMargin?: string;
 };
 
 /** Background loop video — load and play only in view. */
-export default function EagerVideo({ src, className = "", style, objectPosition }: Props) {
+export default function EagerVideo({
+  src,
+  className = "",
+  style,
+  objectPosition,
+  preloadMargin = "0px 50% 0px 50%",
+}: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -43,9 +51,7 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
           video.pause();
         }
       },
-      // Расширяем зону предзагрузки на 50% в обе стороны. 
-      // Теперь видео начнут грузиться ДО того, как полностью въедут на экран.
-      { threshold: 0, rootMargin: "0px 50% 0px 50%" },
+      { threshold: 0, rootMargin: preloadMargin },
     );
     observer.observe(video);
 
@@ -53,7 +59,7 @@ export default function EagerVideo({ src, className = "", style, objectPosition 
       observer.disconnect();
       video.pause();
     };
-  }, []);
+  }, [preloadMargin]);
 
   // Если это мобильное устройство, подменяем расширение на -mobile.mp4, если это mp4
   const finalSrc =

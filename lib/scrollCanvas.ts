@@ -18,8 +18,13 @@ export function frameDrawable(frame: Frame | null | undefined): frame is Frame {
 }
 
 export function pinProgress(section: HTMLElement): number {
-  const viewport = window.visualViewport?.height ?? window.innerHeight;
-  const scrollable = section.offsetHeight - viewport;
+  // Прогресс меряем по фактической высоте sticky-контейнера (первый ребёнок секции),
+  // а не по высоте вьюпорта: на мобилке визуальный вьюпорт меняется при скрытии
+  // адресной строки, из-за чего прогресс (и кадр) прыгал прямо во время скролла.
+  const sticky = section.firstElementChild as HTMLElement | null;
+  const pinned =
+    sticky?.offsetHeight || (window.visualViewport?.height ?? window.innerHeight);
+  const scrollable = section.offsetHeight - pinned;
   if (scrollable <= 0) return 0;
   return clamp01(-section.getBoundingClientRect().top / scrollable);
 }

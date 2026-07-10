@@ -169,14 +169,16 @@ export default function BrandFilm({
     let velocity = 0;
 
     const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // На мобилке DPR-кап 1.5 и smoothing "medium": кадры и так меньше экрана
+      // в физических пикселях, разница не видна, а fill rate падает почти вдвое.
+      const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
       canvasW = canvas.clientWidth;
       canvasH = canvas.clientHeight;
       canvas.width = Math.max(1, Math.round(canvasW * dpr));
       canvas.height = Math.max(1, Math.round(canvasH * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      ctx.imageSmoothingQuality = mobile ? "medium" : "high";
       lastExact = -1;
     };
 
@@ -204,7 +206,9 @@ export default function BrandFilm({
       if (!loader) return;
 
       const frames = loader.frames;
-      const blend = velocity < BLEND_MAX_VELOCITY;
+      // На мобилке кросс-блендинг выключен: это второй полноэкранный drawImage
+      // на каждый тик, мобильные GPU на нём заметно проседают.
+      const blend = !mobile && velocity < BLEND_MAX_VELOCITY;
       const iRaw = snapFrameIndex(
         Math.min(count - 1, blend ? Math.floor(exact) : Math.round(exact)),
         count,
@@ -286,7 +290,9 @@ export default function BrandFilm({
     <section
       ref={sectionRef}
       className="relative w-full bg-ink"
-      style={{ height: `${sectionVh}dvh` }}
+      // svh, а не dvh: dvh меняется при скрытии адресной строки на мобилке,
+      // и вся пиннед-секция меняла высоту прямо во время скролла (рывки кадра).
+      style={{ height: `${sectionVh}svh` }}
       aria-label="Видео о доме, управляемое скроллом"
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">

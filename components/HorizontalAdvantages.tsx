@@ -132,7 +132,9 @@ export default function HorizontalAdvantages() {
   }, [isMobile]); // Re-calculate if layout breaks
 
   // Animation constants (Unlumen cinematic values)
-  const blur = isMobile ? 0 : 12; // Отключаем блюр на телефоне, чтобы спасти GPU от лагов
+  // Блюр убран полностью: анимированный blur() поверх играющих видео пересчитывает
+  // гауссово размытие на каждый кадр скролла и роняет FPS даже на средних ПК.
+  // Глубину кадра передаём затемнением + десатурацией — это дёшево для GPU.
   const dim = 25; 
   const brightnessBoost = isMobile ? 0 : 40;
   const darknessStrength = 1.4;
@@ -164,8 +166,7 @@ export default function HorizontalAdvantages() {
         cards.forEach((card, index) => {
           const intensity = computeFocusIntensity(p, index, cards.length, focusSpread);
           const boostedIntensity = clamp(intensity * darknessStrength, 0, 1);
-          
-          const currentBlur = boostedIntensity * blur;
+
           const peakBrightness = clamp(100 + brightnessBoost, 100, 220);
           const currentBrightness = dim + (1 - boostedIntensity) * (peakBrightness - dim);
           
@@ -179,12 +180,9 @@ export default function HorizontalAdvantages() {
           const content = card.querySelector(".hbs-content");
 
           if (bg) {
-            // Если мы на телефоне, убираем блюр из фильтра (он невероятно грузит процессор телефона)
-            const filterStr = isMobile 
-              ? `brightness(${currentBrightness}%) saturate(${currentSaturation}%)`
-              : `blur(${currentBlur}px) brightness(${currentBrightness}%) saturate(${currentSaturation}%)`;
-              
-            gsap.set(bg, { filter: filterStr });
+            gsap.set(bg, {
+              filter: `brightness(${currentBrightness}%) saturate(${currentSaturation}%)`,
+            });
           }
           
           gsap.set(card, {
@@ -263,6 +261,9 @@ export default function HorizontalAdvantages() {
                           src={a.video!}
                           objectPosition={a.videoPosition}
                           className="absolute inset-0 h-full w-full object-cover"
+                          // Узкая зона: одновременно декодируются только карточки у экрана,
+                          // а не полтрека — девять параллельных видео душат GPU и сеть.
+                          preloadMargin="0px 15% 0px 15%"
                         />
                         <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/40 to-transparent" />
                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-panel via-ink-panel/70 to-transparent" />
