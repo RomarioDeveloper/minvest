@@ -136,7 +136,9 @@ export function createSlidingFrameLoader({
       try {
         if (canBitmap) {
           // Decode off the main thread: fetch bytes, createImageBitmap on a worker.
-          const resp = await fetch(src);
+          // priority: "high" — кадры под пальцем важнее любых фоновых загрузок (видео, картинки ниже).
+          // (в lib.dom ещё нет типа Priority Hints, поэтому каст)
+          const resp = await fetch(src, { priority: "high" } as RequestInit);
           if (!resp.ok || cancelled) return;
           const blob = await resp.blob();
           if (cancelled) return;

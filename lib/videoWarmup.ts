@@ -14,8 +14,11 @@ export function getVideoSrc(src: string) {
   return blobUrls.get(src) ?? src;
 }
 
-async function warmWithFetch(src: string) {
-  const resp = await fetch(src);
+async function warmWithFetch(src: string, lowPriority = false) {
+  // priority: "low" — фоновый прогрев не должен отбирать полосу у кадров
+  // hero-секвенции, которые грузятся во время первого скролла.
+  // (в lib.dom ещё нет типа Priority Hints, поэтому каст)
+  const resp = await fetch(src, lowPriority ? ({ priority: "low" } as RequestInit) : undefined);
   if (!resp.ok) throw new Error(`fetch failed: ${src}`);
   const blob = await resp.blob();
   blobUrls.set(src, URL.createObjectURL(blob));
@@ -49,14 +52,14 @@ async function warmWithElement(src: string) {
   });
 }
 
-async function warmOne(src: string) {
+async function warmOne(src: string, lowPriority = false) {
   if (ready.has(src)) return;
 
   try {
     const head = await fetch(src, { method: "HEAD" });
     const size = Number(head.headers.get("content-length") ?? 0);
     if (size > 0 && size <= BLOB_MAX_BYTES) {
-      await warmWithFetch(src);
+      await warmWithFetch(src, lowPriority);
     } else {
       await warmWithElement(src);
     }
@@ -71,7 +74,11 @@ async function warmOne(src: string) {
   ready.add(src);
 }
 
-async function runPool(srcs: string[], onProgress?: (fraction: number) => void) {
+async function runPool(
+  srcs: string[],
+  onProgress?: (fraction: number) => void,
+  options?: { lowPriority?: boolean; concurrency?: number },
+) {
   const queue = srcs.filter((s) => !ready.has(s));
   const total = srcs.length;
   let done = srcs.filter((s) => ready.has(s)).length;
@@ -81,13 +88,14 @@ async function runPool(srcs: string[], onProgress?: (fraction: number) => void) 
   async function worker() {
     while (index < queue.length) {
       const src = queue[index++];
-      await warmOne(src);
+      await warmOne(src, options?.lowPriority);
       done += 1;
       onProgress?.(done / total);
     }
   }
 
-  const workers = Array.from({ length: Math.min(WARM_CONCURRENCY, queue.length || 1) }, () =>
+  const concurrency = options?.concurrency ?? WARM_CONCURRENCY;
+  const workers = Array.from({ length: Math.min(concurrency, queue.length || 1) }, () =>
     worker(),
   );
   await Promise.all(workers);
@@ -108,5 +116,8 @@ export function warmSiteVideos(
 }
 
 export function warmSiteVideosBackground(srcs: readonly string[]) {
-  void runPool([...new Set(srcs)]);
+  // Один поток и низкий приоритет: этот прогрев стартует ровно в момент,
+  // когда занавес поднимается и человек делает первый скролл — раньше он
+  // конкурировал с загрузкой кадров hero-секвенции и первый скролл дёргался.
+  void runPool([...new Set(srcs)], undefined, { lowPriority: true, concurrency: 1 });
 }

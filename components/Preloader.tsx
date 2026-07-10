@@ -66,6 +66,7 @@ export default function Preloader() {
     const getMobileSrcs = (srcs: readonly string[]) =>
       srcs.map((s) => (isMobile && s.endsWith(".mp4") ? s.replace(".mp4", "-mobile.mp4") : s));
 
+    let warmupTimer = 0;
     warmSiteVideos(getMobileSrcs(FEATURE_VIDEO_SRCS), (fraction) => {
       videoProgress = fraction;
       applyProgress();
@@ -73,7 +74,11 @@ export default function Preloader() {
       areVideosReady = true;
       checkDone();
       const otherVideos = SITE_VIDEO_SRCS.filter((s) => !new Set<string>(FEATURE_VIDEO_SRCS).has(s));
-      warmSiteVideosBackground(getMobileSrcs(otherVideos));
+      // Не стартуем фоновый прогрев сразу: занавес поднимается ровно в этот момент,
+      // и загрузка видео конкурировала с кадрами hero-секвенции на первом скролле.
+      warmupTimer = window.setTimeout(() => {
+        warmSiteVideosBackground(getMobileSrcs(otherVideos));
+      }, 6000);
     });
 
     // Много тяжёлых роликов — даём больше времени, но не блокируем навсегда.
@@ -93,6 +98,7 @@ export default function Preloader() {
     return () => {
       window.clearTimeout(timer);
       window.clearTimeout(cap);
+      window.clearTimeout(warmupTimer);
       window.removeEventListener("load", onLoad);
       window.removeEventListener("brandfilm:ready", onBrandfilmReady);
       window.removeEventListener("brandfilm:progress", onBrandfilmProgress);
