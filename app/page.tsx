@@ -58,7 +58,7 @@ export default function HomePage() {
         />
         <div className="relative mx-auto max-w-7xl">
           <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-            Ключевые параметры
+            О компании
           </RevealOnView>
           <RevealOnView
             as="div"
@@ -67,23 +67,26 @@ export default function HomePage() {
             className="mt-5 max-w-2xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
             <h2 style={{ fontSize: "clamp(28px, 3.6vw, 44px)", lineHeight: 1.02 }}>
-              Дом, в котором всё на своих местах.
+              Надёжный застройщик с многолетним опытом.
             </h2>
           </RevealOnView>
 
           <div className="mt-14 grid grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Этажей", value: <StatsCountUp to={6} /> },
+              { label: "Объектов", value: <StatsCountUp to={6} /> },
               {
                 label: "Квартир",
+                value: <StatsCountUp to={412} />,
+              },
+              {
+                label: "тыс. кв.м.",
                 value: (
                   <>
-                    <span className="text-bone-mute">≈</span> <StatsCountUp to={40} />
+                    <span className="text-bone-mute">≈</span> <StatsCountUp to={20} />
                   </>
                 ),
               },
-              { label: "Закрытая территория", value: <StatsCountUp to={100} suffix="%" /> },
-              { label: "Видеонаблюдение", value: "24 / 7" },
+              { label: "Лет на рынке", value: <StatsCountUp to={9} /> },
             ].map((stat, i) => (
               <RevealOnView
                 key={stat.label}
@@ -388,22 +391,41 @@ export default function HomePage() {
             
             {/* Left Column - Socials & Legal */}
             <div className="flex flex-col justify-between items-start">
-              <div className="flex gap-8 text-[10px] font-semibold tracking-widest uppercase text-bone-soft">
+              <div className="flex flex-wrap gap-4 sm:gap-6 text-[10px] font-semibold tracking-widest uppercase text-bone-soft">
                 <a
                   href="https://instagram.com/malaysary_invest"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border-b border-transparent transition hover:border-bone hover:text-bone pb-1"
+                  className="group flex items-center gap-2 transition hover:text-bone"
                 >
-                  Instagram
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  <span className="border-b border-transparent group-hover:border-bone pb-[1px]">Instagram</span>
                 </a>
                 <a
                   href="https://wa.me/77072343333"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border-b border-transparent transition hover:border-bone hover:text-bone pb-1"
+                  className="group flex items-center gap-2 transition hover:text-bone"
                 >
-                  WhatsApp
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1zm0 0a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0-5-5z" />
+                  </svg>
+                  <span className="border-b border-transparent group-hover:border-bone pb-[1px]">WhatsApp</span>
+                </a>
+                <a
+                  href="mailto:info@malaysaryinvest.kz"
+                  className="group flex items-center gap-2 transition hover:text-bone"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  <span className="border-b border-transparent group-hover:border-bone pb-[1px]">Email</span>
                 </a>
               </div>
               <div className="mt-16 md:mt-0 text-[10px] leading-[1.6] text-bone-dim/60 max-w-[280px]">

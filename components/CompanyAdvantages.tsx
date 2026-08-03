@@ -7,7 +7,7 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 const STATS = [
   { value: 6, suffix: "", label: "Объектов в работе", note: "строим прямо сейчас" },
   { value: 1200, suffix: "+", label: "Квартир продано", note: "довольных семей" },
-  { value: 11, suffix: "", label: "Лет на рынке", note: "с 2015 года" },
+  { value: 9, suffix: "", label: "Лет на рынке", note: "надёжной работы" },
   { value: 100, suffix: "%", label: "Сдаём в срок", note: "без переносов" },
 ];
 

@@ -104,10 +104,14 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
           <Spec label="Срок сдачи" value={obj.deadline} />
         </dl>
         <div className="mt-6 flex items-end justify-between border-t border-bone/10 pt-5">
-          <div>
-            <div className="text-eyebrow uppercase text-bone-dim">Цена</div>
-            <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</div>
-          </div>
+          {obj.priceFrom ? (
+            <div>
+              <div className="text-eyebrow uppercase text-bone-dim">Цена</div>
+              <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</div>
+            </div>
+          ) : (
+            <div className="text-sm font-medium text-bone-mute">Свободных квартир нет</div>
+          )}
           <span className="text-eyebrow uppercase text-bone-mute transition group-hover:text-bone">Подробнее →</span>
         </div>
       </div>

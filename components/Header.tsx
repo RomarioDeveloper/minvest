@@ -10,6 +10,40 @@ const NAV_LINKS = [
   { href: "#contact", label: "Контакты" },
 ];
 
+const SOCIAL_LINKS = [
+  {
+    href: "https://instagram.com/malaysary_invest",
+    label: "Instagram",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[18px] w-[18px]">
+        <rect x="2" y="2" width="20" height="20" rx="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    href: "https://wa.me/77072343333",
+    label: "WhatsApp",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[18px] w-[18px]">
+        <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+        <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1zm0 0a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0-5-5z" />
+      </svg>
+    ),
+  },
+  {
+    href: "mailto:info@malaysaryinvest.kz",
+    label: "Email",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-[18px] w-[18px]">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+      </svg>
+    ),
+  },
+];
+
 export default function Header() {
   const { scrollY } = useScroll();
   const [isMounted, setIsMounted] = useState(false);
@@ -51,7 +85,7 @@ export default function Header() {
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6"
+        className="fixed inset-x-0 top-0 z-[62] px-4 pt-4 sm:px-6"
         style={{
           opacity: isMounted ? opacity : 0,
           y: isMounted ? y : -20,
@@ -62,9 +96,9 @@ export default function Header() {
             На мобилке блюра нет вообще — плотный фон, на десктопе md вместо xl +
             transform-gpu, чтобы блюр жил на собственном слое композитора. */}
         <div className="relative mx-auto flex max-w-6xl transform-gpu items-center justify-between rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6">
-          <a href="#top" className="relative z-[62] flex items-center gap-3 text-bone">
+          <a href="#top" className="relative z-[62] flex items-center gap-3 text-bone" onClick={closeMenu}>
             <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto" />
-            <span className="font-display text-[13px] font-bold tracking-[0.14em]">
+            <span className="font-display text-[13px] font-bold tracking-[0.14em] hidden sm:block">
               MALAYSARY
               <span className="ml-1.5 font-medium text-bone-mute">INVEST</span>
             </span>
@@ -82,7 +116,22 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="relative z-[62] flex items-center gap-2">
+          <div className="relative z-[62] flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-3">
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="text-bone-soft transition hover:text-bone"
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
+
             <a
               href="#contact"
               className="group hidden items-center gap-2.5 rounded-full bg-bone py-2.5 pl-5 pr-4 text-[12px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft lg:inline-flex"
@@ -178,7 +227,21 @@ export default function Header() {
                 >
                   Забронировать →
                 </a>
-                <p className="mt-5 text-center text-eyebrow uppercase text-bone-dim">
+                <div className="mt-8 flex justify-center gap-6">
+                  {SOCIAL_LINKS.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="flex h-12 w-12 items-center justify-center rounded-full border border-bone/15 text-bone-soft transition hover:border-bone/40 hover:bg-bone/5 hover:text-bone"
+                    >
+                      {social.icon}
+                    </a>
+                  ))}
+                </div>
+                <p className="mt-6 text-center text-[11px] uppercase tracking-widest text-bone-dim">
                   Malaysary Invest · Павлодар
                 </p>
               </motion.div>
