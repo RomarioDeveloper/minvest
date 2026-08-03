@@ -72,7 +72,7 @@ export default function PaymentTerms() {
           </div>
 
           {/* Правая часть: Визуализация (Чёрная карточка под углом) */}
-          <RevealOnView variant="fade" delay={300} className="relative flex justify-center lg:justify-end perspective-[1000px] mt-10 lg:mt-0">
+          <RevealOnView variant="blur" delay={300} className="relative flex justify-center lg:justify-end perspective-[1000px] mt-10 lg:mt-0">
             {/* Декоративное свечение за карточкой */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] bg-bone/5 rounded-full blur-[80px] pointer-events-none z-0" />
             
