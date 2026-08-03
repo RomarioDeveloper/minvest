@@ -37,14 +37,14 @@ export function BlobCard({ header, children, headerHeight = 120, className }: Pr
       {/* Кольцо строится через padding 1.5px, а не отрицательный inset:
           так радиусы рамки и карточки всегда совпадают и по углам
           не появляются светлые «серпы». */}
-      <div className="relative overflow-hidden rounded-[21px] p-[1.5px]">
+      <div className="relative overflow-hidden rounded-[21px] p-[1.5px] [transform:translateZ(0)]">
         {!isMobile && (
           <div className="absolute inset-0 opacity-40">
             <GlowEffect />
           </div>
         )}
 
-        <div className="relative overflow-hidden rounded-[19.5px] border border-bone/10 bg-ink-panel">
+        <div className="relative overflow-hidden rounded-[19.5px] border border-bone/10 bg-ink-panel [transform:translateZ(0)]">
           <div className="relative overflow-hidden" style={{ height: headerHeight }}>
             <FluidBlobs animate={!isMobile} />
             {/* Растворяем низ шапки в фон карточки — без этого стык режет глаз.

@@ -10,7 +10,7 @@ import RevealOnView from "@/components/RevealOnView";
 import { BlobCard } from "@/components/ui/blob-card";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
-import TradeIn from "@/components/TradeIn";
+import PaymentTerms from "@/components/PaymentTerms";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import Header from "@/components/Header";
 
@@ -238,8 +238,8 @@ export default function HomePage() {
         </RevealOnView>
       </div>
 
-      {/* ---------- TRADE-IN ---------- */}
-      <TradeIn />
+      {/* ---------- PAYMENT TERMS ---------- */}
+      <PaymentTerms />
 
       {/* ---------- COMPANY ADVANTAGES + INFOGRAPHICS ---------- */}
       <CompanyAdvantages />
@@ -272,7 +272,7 @@ export default function HomePage() {
               </RevealOnView>
               <RevealOnView delay={220} className="mt-6 max-w-md text-pretty leading-relaxed text-bone-soft">
                 Проведём по дому и двору, покажем планировки вживую и ответим на
-                вопросы по ипотеке, рассрочке и trade-in.
+                вопросы по ипотеке и рассрочке.
               </RevealOnView>
             </div>
 
