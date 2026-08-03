@@ -81,7 +81,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     name: "Горького, 46",
     district: "ул. Горького",
     status: "soon",
-    tagline: "5-ти этажный дом бизнес класса.",
+    tagline: "Последние две квартиры",
     description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
     image: `/${encodeURIComponent("Горького.webp")}`,
     gallery: [

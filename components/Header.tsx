@@ -151,17 +151,17 @@ export default function Header() {
             <span className="relative h-3.5 w-5">
               <motion.span
                 className="absolute left-0 top-0 block h-[1.5px] w-full origin-center bg-bone"
-                animate={menuOpen ? { y: 7, rotate: 45 } : { y: 0, rotate: 0 }}
+                animate={menuOpen ? { y: 6.25, rotate: 45 } : { y: 0, rotate: 0 }}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               />
               <motion.span
-                className="absolute left-0 top-[7px] block h-[1.5px] w-full bg-bone"
+                className="absolute left-0 top-[6.25px] block h-[1.5px] w-full bg-bone"
                 animate={menuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
                 transition={{ duration: 0.2 }}
               />
               <motion.span
                 className="absolute bottom-0 left-0 block h-[1.5px] w-full origin-center bg-bone"
-                animate={menuOpen ? { y: -7, rotate: -45 } : { y: 0, rotate: 0 }}
+                animate={menuOpen ? { y: -6.25, rotate: -45 } : { y: 0, rotate: 0 }}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               />
             </span>
