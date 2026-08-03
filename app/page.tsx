@@ -6,6 +6,8 @@ import HorizontalAdvantages from "@/components/HorizontalAdvantages";
 import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
+import CommercialInvestment from "@/components/CommercialInvestment";
+import ConsultationBanner from "@/components/ConsultationBanner";
 import RevealOnView from "@/components/RevealOnView";
 import { BlobCard } from "@/components/ui/blob-card";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
@@ -124,6 +126,12 @@ export default function HomePage() {
 
       {/* ---------- OBJECTS CATALOG ---------- */}
       <ObjectsCatalog />
+
+      {/* ---------- COMMERCIAL INVESTMENT ---------- */}
+      <CommercialInvestment />
+
+      {/* ---------- CONSULTATION BANNER ---------- */}
+      <ConsultationBanner />
 
       {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
       <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
