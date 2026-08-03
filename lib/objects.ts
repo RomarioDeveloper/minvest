@@ -24,6 +24,8 @@ export type RealtyObject = {
   deadline: string;
   rooms: string;
   flagship?: boolean;
+  /** Горящий бейдж на карточке (например «Последние две квартиры») */
+  badgeLabel?: string;
   description?: string;
 };
 
@@ -80,8 +82,9 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     slug: "gorkogo-46",
     name: "Горького, 46",
     district: "ул. Горького",
-    status: "soon",
-    tagline: "Последние две квартиры",
+    status: "sales",
+    badgeLabel: "Последние две квартиры",
+    tagline: "5-ти этажный дом бизнес класса.",
     description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
     image: `/${encodeURIComponent("Горького.webp")}`,
     gallery: [

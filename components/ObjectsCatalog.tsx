@@ -20,6 +20,26 @@ const statusDot: Record<ObjectStatus, string> = {
   done: "bg-bone-dim",
 };
 
+function StatusBadge({ obj, className = "" }: { obj: RealtyObject; className?: string }) {
+  const isHot = !!obj.badgeLabel;
+  const label = obj.badgeLabel ?? STATUS_LABEL[obj.status];
+
+  return (
+    <div
+      className={[
+        "flex items-center gap-2 px-3 py-1.5 backdrop-blur-sm",
+        isHot
+          ? "border border-red-500/50 bg-red-950/90 text-red-100 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
+          : "bg-ink/70 text-bone-soft",
+        className,
+      ].join(" ")}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${isHot ? "animate-pulse bg-red-500" : statusDot[obj.status]}`} />
+      <span className="text-eyebrow uppercase">{label}</span>
+    </div>
+  );
+}
+
 export default function ObjectsCatalog() {
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<RealtyObject | null>(null);
@@ -77,9 +97,8 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
         <img src={obj.image} alt={obj.name} loading="lazy"
           className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
-        <div className="absolute left-4 top-4 flex items-center gap-2 bg-ink/70 px-3 py-1.5 backdrop-blur-sm">
-          <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
-          <span className="text-eyebrow uppercase text-bone-soft">{STATUS_LABEL[obj.status]}</span>
+        <div className="absolute left-4 top-4">
+          <StatusBadge obj={obj} />
         </div>
         {obj.flagship && (
           <div className="absolute right-4 top-4 bg-bone px-3 py-1.5 text-eyebrow uppercase text-ink">Флагман</div>
@@ -317,9 +336,8 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             </div>
           )}
 
-          <div className="absolute left-3 top-3 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 backdrop-blur-sm z-10">
-            <span className={`h-1.5 w-1.5 rounded-full ${statusDot[obj.status]}`} />
-            <span className="text-eyebrow uppercase text-bone-soft">{STATUS_LABEL[obj.status]}</span>
+          <div className="absolute left-3 top-3 z-10">
+            <StatusBadge obj={obj} className="px-2.5 py-1" />
           </div>
           {obj.flagship && (
             <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">Флагман</div>
