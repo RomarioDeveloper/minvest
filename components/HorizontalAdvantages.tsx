@@ -236,7 +236,7 @@ export default function HorizontalAdvantages() {
             >
               {t("horiz.section_subtitle")}
               <br className="sm:hidden" />
-              <span className="text-bone-mute">{t("horiz.section_subtitle2")}</span>
+              <span className="text-bone-mute"> {t("horiz.section_subtitle2")}</span>
             </h2>
           </div>
         </div>
