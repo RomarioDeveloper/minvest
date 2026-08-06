@@ -1,21 +1,23 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-/** Координаты совпадают с филиалами Malaysary Invest в 2ГИС. */
-const LOCATIONS = [
-  { lat: 52.261471, lng: 76.947641, label: "Дюсенова, 304", address: "ул. Генерала Дюсенова, 304" },
-  { lat: 52.260749, lng: 76.947619, label: "Дюсенова, 306", address: "ул. Генерала Дюсенова, 306" },
-  { lat: 52.271532, lng: 76.945941, label: "Горького, 46", address: "ул. Горького, 46" },
-  { lat: 52.281397, lng: 76.954259, label: "Естая, 90", address: "ул. Естая, 90" },
-  { lat: 52.261685, lng: 76.949892, label: "Бектурова, 348", address: "ул. Академика Бектурова, 348" },
-  { lat: 52.261449, lng: 76.949094, label: "Бектурова, 356", address: "ул. Академика Бектурова, 356" },
-  { lat: 52.277323, lng: 76.941557, label: "Офис продаж", address: "ул. Луначарского, 10, 2 этаж" },
-];
+import { useI18n } from "@/lib/i18n";
 
 export default function MalaysaryMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<unknown>(null);
+  const { t } = useI18n();
+
+  /** Координаты совпадают с филиалами Malaysary Invest в 2ГИС. */
+  const LOCATIONS = [
+    { lat: 52.261471, lng: 76.947641, label: t("obj.dyusenova_304.district"), address: "ул. Генерала Дюсенова, 304" },
+    { lat: 52.260749, lng: 76.947619, label: t("obj.dyusenova_306.district"), address: "ул. Генерала Дюсенова, 306" },
+    { lat: 52.271532, lng: 76.945941, label: t("obj.gorkogo_46.district"), address: "ул. Горького, 46" },
+    { lat: 52.281397, lng: 76.954259, label: t("obj.estaya_90.district"), address: "ул. Естая, 90" },
+    { lat: 52.261685, lng: 76.949892, label: t("obj.bekturova_348.district"), address: "ул. Академика Бектурова, 348" },
+    { lat: 52.261449, lng: 76.949094, label: t("obj.bekturova_356.district"), address: "ул. Академика Бектурова, 356" },
+    { lat: 52.277323, lng: 76.941557, label: t("contact.office"), address: t("contact.office.addr") + ", " + t("contact.office.note") },
+  ];
 
   useEffect(() => {
     if (mapInstanceRef.current || !mapRef.current) return;

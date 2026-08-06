@@ -176,7 +176,16 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
   },
 ];
 
-export const OBJECTS: RealtyObject[] = OBJECTS_RAW.map((obj) => ({
-  ...obj,
-  layouts: LAYOUTS_BY_SLUG[obj.slug],
-}));
+export const OBJECTS = (t: (key: string) => string): RealtyObject[] => OBJECTS_RAW.map((obj) => {
+  // Translate the data
+  const i18nKey = obj.slug.replace("-", "_");
+  return {
+    ...obj,
+    district: t(`obj.${i18nKey}.district`) || obj.district,
+    tagline: t(`obj.${i18nKey}.tagline`) || obj.tagline,
+    description: t(`obj.${i18nKey}.description`) || obj.description,
+    badgeLabel: obj.badgeLabel ? (t(`obj.${i18nKey}.badge`) || obj.badgeLabel) : undefined,
+    rooms: t(`obj.${i18nKey}.rooms`) || obj.rooms,
+    layouts: LAYOUTS_BY_SLUG[obj.slug],
+  };
+});

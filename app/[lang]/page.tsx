@@ -16,7 +16,13 @@ import PaymentTerms from "@/components/PaymentTerms";
 import TwoUpFeature from "@/components/TwoUpFeature";
 import Header from "@/components/Header";
 
-export default function HomePage() {
+import { getDictionary } from "@/lib/dictionaries";
+import { Locale } from "@/lib/i18n";
+
+export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const t = (key: string) => getDictionary(lang as Locale)[key] || key;
+
   return (
     <main className="relative w-full max-w-full bg-ink text-bone">
       <ScrollProgressBar />
@@ -38,18 +44,7 @@ export default function HomePage() {
 
       {/* ---------- HERO ---------- */}
       <div>
-        <HeroVideo
-          src="/video/1"
-          eyebrow="Старт продаж · 2026"
-          title={
-            <>
-              Дом,
-              <br />
-              который видно.
-            </>
-          }
-          subtitle="Шестиэтажный жилой комплекс с закрытой территорией, гаражами и собственной детской площадкой. Изучите его со всех сторон."
-        />
+        <HeroVideo src="/video/1" />
       </div>
 
       {/* ---------- INTRO STATS ---------- */}
@@ -60,7 +55,7 @@ export default function HomePage() {
         />
         <div className="relative mx-auto max-w-7xl">
           <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-            О компании
+            {t("stats.title")}
           </RevealOnView>
           <RevealOnView
             as="div"
@@ -69,26 +64,26 @@ export default function HomePage() {
             className="mt-5 max-w-2xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
             <h2 style={{ fontSize: "clamp(28px, 3.6vw, 44px)", lineHeight: 1.02 }}>
-              Надёжный застройщик с многолетним опытом.
+              {t("stats.subtitle")}
             </h2>
           </RevealOnView>
 
           <div className="mt-14 grid grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Объектов", value: <StatsCountUp to={6} /> },
+              { label: t("stats.objects"), value: <StatsCountUp to={6} /> },
               {
-                label: "Квартир",
+                label: t("stats.apartments"),
                 value: <StatsCountUp to={412} />,
               },
               {
-                label: "тыс. кв.м.",
+                label: t("stats.sqm"),
                 value: (
                   <>
                     <span className="text-bone-mute">≈</span> <StatsCountUp to={20} />
                   </>
                 ),
               },
-              { label: "Лет на рынке", value: <StatsCountUp to={9} /> },
+              { label: t("stats.years"), value: <StatsCountUp to={9} /> },
             ].map((stat, i) => (
               <RevealOnView
                 key={stat.label}
@@ -437,8 +432,8 @@ export default function HomePage() {
                 </a>
               </div>
               <div className="mt-16 md:mt-0 text-[10px] leading-[1.6] text-bone-dim/60 max-w-[280px]">
-                <p>Материалы, представленные на сайте,<br />не являются публичной офертой.</p>
-                <p className="mt-3">Изображения — визуализация проекта.</p>
+                <p>{t("footer.disclaimer1")}</p>
+                <p className="mt-3">{t("footer.disclaimer2")}</p>
               </div>
             </div>
 
@@ -450,7 +445,7 @@ export default function HomePage() {
                 className="h-14 md:h-[68px] w-auto opacity-90"
               />
               <div className="mt-6 text-[9px] uppercase tracking-[0.2em] text-bone-dim/50 text-center">
-                Застройщик комфортной среды
+                {t("footer.slogan")}
               </div>
             </div>
 
@@ -464,11 +459,10 @@ export default function HomePage() {
               </a>
               <div className="mt-10 md:mt-0 text-[10px] leading-[1.6] text-bone-dim/80">
                 <p>
-                  Офис продаж:<br />
-                  г. Павлодар, ул. Луначарского, 10
+                  {t("footer.schedule1")}
                 </p>
                 <p className="mt-3 text-bone-dim/60">
-                  пн-пт: 09:00–18:00, сб-вс: выходной
+                  {t("footer.schedule2")}
                 </p>
               </div>
             </div>

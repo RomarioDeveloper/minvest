@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
+import { useI18n } from "@/lib/i18n";
 
 export default function PaymentTerms() {
+  const { t } = useI18n();
+
   return (
     <section
       id="payment"
@@ -18,7 +21,7 @@ export default function PaymentTerms() {
           {/* Левая часть: Типографика и контент */}
           <div>
             <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-              Условия оплаты
+              {t("payment.title")}
             </RevealOnView>
             
             <RevealOnView
@@ -28,9 +31,9 @@ export default function PaymentTerms() {
               className="mt-6 font-display font-semibold tracking-tightest text-balance text-bone"
             >
               <h2 style={{ fontSize: "clamp(34px, 5.4vw, 64px)", lineHeight: 1.05 }}>
-                Честная рассрочка
+                {t("payment.subtitle1")}
                 <br />
-                <span className="text-bone-mute">без банков.</span>
+                <span className="text-bone-mute">{t("payment.subtitle2")}</span>
               </h2>
             </RevealOnView>
 
@@ -40,9 +43,9 @@ export default function PaymentTerms() {
                   <span className="font-display text-lg font-bold">50%</span>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-bone">Первый взнос</h3>
+                  <h3 className="text-lg font-semibold text-bone">{t("payment.step1.title")}</h3>
                   <p className="mt-1 text-sm text-bone-soft leading-relaxed">
-                    Оплачивается сразу при заключении договора. Это гарантирует фиксацию цены и бронь вашей квартиры.
+                    {t("payment.step1.desc")}
                   </p>
                 </div>
               </div>
@@ -52,9 +55,9 @@ export default function PaymentTerms() {
                   <span className="font-display text-lg font-bold">0%</span>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-bone">Остаток на 12–24 месяца</h3>
+                  <h3 className="text-lg font-semibold text-bone">{t("payment.step2.title")}</h3>
                   <p className="mt-1 text-sm text-bone-soft leading-relaxed">
-                    Рассрочка оформляется напрямую от застройщика Malaysary Invest. Никаких скрытых комиссий, страховок и переплат.
+                    {t("payment.step2.desc")}
                   </p>
                 </div>
               </div>
@@ -65,7 +68,7 @@ export default function PaymentTerms() {
                 href="#contact"
                 className="group inline-flex items-center gap-3 rounded-full bg-bone py-3.5 pl-6 pr-5 text-[13px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft"
               >
-                Рассчитать график платежей
+                {t("payment.calc")}
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
             </RevealOnView>
@@ -122,7 +125,7 @@ export default function PaymentTerms() {
               {/* Нижняя часть карты (Название и VIP) */}
               <div className="relative z-10">
                 <div className="font-display text-xl sm:text-2xl font-bold tracking-[0.1em] text-bone-soft opacity-90 drop-shadow-md">
-                  0% РАССРОЧКА
+                  {t("payment.card.title")}
                 </div>
                 <div className="mt-4 sm:mt-6 flex justify-between items-end">
                   <div className="text-[11px] sm:text-[13px] font-semibold tracking-widest text-bone-mute uppercase">

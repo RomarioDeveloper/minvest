@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
-import { OBJECTS, STATUS_LABEL, type ObjectLayout, type ObjectStatus, type RealtyObject } from "@/lib/objects";
+import { OBJECTS, type ObjectLayout, type ObjectStatus, type RealtyObject } from "@/lib/objects";
+import { useI18n } from "@/lib/i18n";
 
 type Filter = "all" | ObjectStatus;
 
@@ -21,8 +22,9 @@ const statusDot: Record<ObjectStatus, string> = {
 };
 
 function StatusBadge({ obj, className = "" }: { obj: RealtyObject; className?: string }) {
+  const { t } = useI18n();
   const isHot = !!obj.badgeLabel;
-  const label = obj.badgeLabel ?? STATUS_LABEL[obj.status];
+  const label = isHot ? obj.badgeLabel : t(`catalog.filter.${obj.status}`);
 
   return (
     <div
@@ -41,9 +43,18 @@ function StatusBadge({ obj, className = "" }: { obj: RealtyObject; className?: s
 }
 
 export default function ObjectsCatalog() {
+  const { t } = useI18n();
+
+  const currentFilters = [
+    { id: "all", label: t("catalog.filter.all") },
+    { id: "sales", label: t("catalog.filter.sales") },
+    { id: "soon", label: t("catalog.filter.soon") },
+    { id: "done", label: t("catalog.filter.done") },
+  ] as typeof FILTERS;
+
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<RealtyObject | null>(null);
-  const visible = OBJECTS.filter((o) => filter === "all" || o.status === filter);
+  const visible = OBJECTS(t).filter((o) => filter === "all" || o.status === filter);
 
   useEffect(() => {
     document.body.style.overflow = selected ? "hidden" : "";
@@ -55,16 +66,16 @@ export default function ObjectsCatalog() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">Каталог объектов</RevealOnView>
+            <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">{t("catalog.title")}</RevealOnView>
             <RevealOnView as="div" variant="blur" delay={120} className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone">
               <h2 style={{ fontSize: "clamp(34px, 5.4vw, 72px)", lineHeight: 0.98 }}>
-                Проекты<br />
-                <span className="text-bone-mute">Malaysary Invest.</span>
+                {t("catalog.subtitle1")}<br />
+                <span className="text-bone-mute">{t("catalog.subtitle2")}</span>
               </h2>
             </RevealOnView>
           </div>
           <RevealOnView delay={200} className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => (
+            {currentFilters.map((f) => (
               <button key={f.id} onClick={() => setFilter(f.id)}
                 className={`border px-4 py-2 text-eyebrow uppercase transition ${filter === f.id ? "border-bone bg-bone text-ink" : "border-bone/20 text-bone-soft hover:border-bone/50"}`}>
                 {f.label}
@@ -91,6 +102,8 @@ export default function ObjectsCatalog() {
 
 /* ─── Card ─── */
 function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) {
+  const { t } = useI18n();
+
   return (
     <button onClick={onOpen} className="group flex h-full w-full flex-col overflow-hidden border border-bone/12 bg-ink-panel text-left transition hover:border-bone/30">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -101,14 +114,14 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
           <StatusBadge obj={obj} />
         </div>
         {obj.flagship && (
-          <div className="absolute right-4 top-4 bg-bone px-3 py-1.5 text-eyebrow uppercase text-ink">Флагман</div>
+          <div className="absolute right-4 top-4 bg-bone px-3 py-1.5 text-eyebrow uppercase text-ink">{t("catalog.flagship")}</div>
         )}
         {obj.videos?.length && (
           <div className="absolute right-4 bottom-4 flex items-center gap-1.5 bg-black/60 px-2 py-1 backdrop-blur-sm">
             <svg className="h-3 w-3 text-bone/70" fill="currentColor" viewBox="0 0 20 20">
               <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
             </svg>
-            <span className="text-[10px] uppercase tracking-widest text-bone/60">{obj.videos.length} видео</span>
+            <span className="text-[10px] uppercase tracking-widest text-bone/60">{obj.videos.length} {t("catalog.videos")}</span>
           </div>
         )}
       </div>
@@ -117,21 +130,21 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
         <h3 className="mt-2 font-display text-2xl font-semibold tracking-tightest text-bone">{obj.name}</h3>
         <p className="mt-2 text-sm leading-relaxed text-bone-soft">{obj.tagline}</p>
         <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-bone/10 pt-5 text-sm">
-          <Spec label="Этажность" value={`${obj.floors} этажей`} />
-          <Spec label="Квартир" value={`${obj.apartments}`} />
-          <Spec label="Квадратура" value={obj.rooms} />
-          <Spec label="Срок сдачи" value={obj.deadline} />
+          <Spec label={t("catalog.floors")} value={`${obj.floors}`} />
+          <Spec label={t("catalog.apartments")} value={`${obj.apartments}`} />
+          <Spec label={t("catalog.sqm")} value={obj.rooms} />
+          <Spec label={t("catalog.deadline")} value={obj.deadline} />
         </dl>
         <div className="mt-6 flex items-end justify-between border-t border-bone/10 pt-5">
           {obj.priceFrom ? (
             <div>
-              <div className="text-eyebrow uppercase text-bone-dim">Цена</div>
+              <div className="text-eyebrow uppercase text-bone-dim">{t("catalog.price")}</div>
               <div className="mt-1 font-display text-xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</div>
             </div>
           ) : (
-            <div className="text-sm font-medium text-bone-mute">Свободных квартир нет</div>
+            <div className="text-sm font-medium text-bone-mute">{t("catalog.sold_out")}</div>
           )}
-          <span className="text-eyebrow uppercase text-bone-mute transition group-hover:text-bone">Подробнее →</span>
+          <span className="text-eyebrow uppercase text-bone-mute transition group-hover:text-bone">{t("catalog.more")}</span>
         </div>
       </div>
     </button>
@@ -140,6 +153,7 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
 
 /* ─── Modal ─── */
 function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void }) {
+  const { t } = useI18n();
   const [mediaTab, setMediaTab] = useState<"photo" | "video" | "layouts">("photo");
   const [photoSlide, setPhotoSlide] = useState(0);
   const [layoutSlide, setLayoutSlide] = useState(0);
@@ -229,7 +243,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
                 <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                   <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                На весь экран
+                {t("catalog.fullscreen")}
               </button>
 
               {obj.gallery.length > 1 && (
@@ -299,7 +313,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
                           <circle cx="6" cy="6" r="4.2" stroke="currentColor" strokeWidth="1.4"/>
                           <path d="M9.2 9.2L12.5 12.5M6 4.2v3.6M4.2 6h3.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
                         </svg>
-                        Увеличить
+                        {t("catalog.increase")}
                       </span>
                     </button>
                   </motion.div>
@@ -340,7 +354,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
             <StatusBadge obj={obj} className="px-2.5 py-1" />
           </div>
           {obj.flagship && (
-            <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">Флагман</div>
+            <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">{t("catalog.flagship")}</div>
           )}
           <button onClick={onClose} aria-label="Закрыть"
             className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black">
@@ -353,20 +367,20 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
           <div className="flex shrink-0 border-b border-bone/10 bg-ink-panel/50">
             <button onClick={() => setMediaTab("photo")}
               className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "photo" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
-              Фото ({obj.gallery.length})
+              {t("catalog.photo")} ({obj.gallery.length})
               {mediaTab === "photo" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
             </button>
             {hasVideos && (
               <button onClick={() => setMediaTab("video")}
                 className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "video" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
-                Видео ({obj.videos!.length})
+                {t("catalog.video")} ({obj.videos!.length})
                 {mediaTab === "video" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
               </button>
             )}
             {hasLayouts && (
               <button onClick={() => setMediaTab("layouts")}
                 className={`relative flex-1 py-3.5 text-[11px] font-semibold uppercase tracking-widest transition ${mediaTab === "layouts" ? "text-bone bg-white/5" : "text-bone/40 hover:text-bone/70 hover:bg-white/[0.02]"}`}>
-                Планировки ({layouts.length})
+                {t("catalog.layouts")} ({layouts.length})
                 {mediaTab === "layouts" && <motion.div layoutId="modal-tab" className="absolute inset-x-0 bottom-0 h-0.5 bg-bone" />}
               </button>
             )}
@@ -385,10 +399,10 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
 
             <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-bone/10">
               {[
-                { label: "Этажность", value: `${obj.floors} эт.` },
-                { label: "Квартир", value: `${obj.apartments}` },
-                { label: "Квадратура", value: obj.rooms },
-                { label: "Срок сдачи", value: obj.deadline },
+                { label: t("catalog.floors"), value: `${obj.floors}` },
+                { label: t("catalog.apartments"), value: `${obj.apartments}` },
+                { label: t("catalog.sqm"), value: obj.rooms },
+                { label: t("catalog.deadline"), value: obj.deadline },
               ].map((s) => (
                 <div key={s.label} className="bg-ink/40 px-4 py-3">
                   <div className="text-[10px] font-semibold uppercase tracking-widest text-bone/35">{s.label}</div>
@@ -430,7 +444,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         <div className="shrink-0 border-t border-bone/10 bg-[#111113] px-5 pb-6 pt-4 sm:px-6">
           <a href="#contact" onClick={onClose}
             className="flex w-full items-center justify-center bg-bone py-3.5 text-eyebrow font-semibold uppercase tracking-wider text-ink transition hover:bg-bone/90 active:scale-[0.98]">
-            Записаться на показ →
+            {t("nav.book_showing")} →
           </a>
           <button onClick={onClose}
             className="mt-2.5 w-full py-3 text-[11px] font-semibold uppercase tracking-widest text-bone/40 transition hover:text-bone/70">

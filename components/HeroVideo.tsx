@@ -4,12 +4,10 @@ import EagerLoopVideo from "@/components/EagerLoopVideo";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
+import { useI18n } from "@/lib/i18n";
+
 type Props = {
-  /** Base path without extension, e.g. "/video/1". Looks up .mp4/.webm/.jpg. */
   src: string;
-  eyebrow: string;
-  title: React.ReactNode;
-  subtitle?: string;
 };
 
 /**
@@ -21,8 +19,9 @@ type Props = {
  * This is the trick TAG Heuer / Apple Pro pages use: the hero doesn't just
  * scroll away, it transforms in place.
  */
-export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
+export default function HeroVideo({ src }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useI18n();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -77,7 +76,7 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            {eyebrow}
+            {t("hero.start")}
           </motion.div>
 
           <motion.h1
@@ -87,20 +86,20 @@ export default function HeroVideo({ src, eyebrow, title, subtitle }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
           >
-            {title}
+            {t("hero.title1")}
+            <br />
+            <span className="text-bone-soft">{t("hero.title2")}</span>
           </motion.h1>
 
-          {subtitle && (
-            <motion.p
-              className="mt-6 max-w-xl text-pretty text-bone-soft"
-              style={{ fontSize: "clamp(15px, 1.2vw, 19px)", lineHeight: 1.55 }}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, delay: 0.58, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {subtitle}
-            </motion.p>
-          )}
+          <motion.p
+            className="mt-6 max-w-xl text-pretty text-bone-soft"
+            style={{ fontSize: "clamp(15px, 1.2vw, 19px)", lineHeight: 1.55 }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, delay: 0.58, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {t("hero.subtitle")}
+          </motion.p>
         </div>
       </div>
 

@@ -2,19 +2,22 @@
 
 import { motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
+import { useI18n } from "@/lib/i18n";
 
 export default function CommercialInvestment() {
+  const { t } = useI18n();
+
   return (
     <section className="relative border-t border-bone/10 bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute mb-8">
-          Инвестиции
+          {t("invest.title")}
         </RevealOnView>
 
         <RevealOnView variant="blur" delay={100}>
           <div className="flex flex-col gap-10">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-bone max-w-3xl leading-tight">
-              Ваши вложения могут стать источником стабильного дохода, который начнёт работать на вас на долгие годы
+              {t("invest.subtitle")}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -27,26 +30,26 @@ export default function CommercialInvestment() {
                       <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                   </div>
-                  <h3 className="mt-6 text-2xl font-bold text-bone tracking-tight">Обычные<br />квартиры</h3>
+                  <h3 className="mt-6 text-2xl font-bold text-bone tracking-tight">{t("invest.apt.title1")}<br />{t("invest.apt.title2")}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6 mt-10">
                   <div>
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">Окупаемость</div>
-                    <div className="text-lg font-bold text-bone mt-1.5">15–20 лет</div>
+                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.payback")}</div>
+                    <div className="text-lg font-bold text-bone mt-1.5">{t("invest.payback.apt")}</div>
                   </div>
                   <div>
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">Доход в год</div>
-                    <div className="text-lg font-bold text-bone mt-1.5">1.7–2.5 млн ₸</div>
+                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.income")}</div>
+                    <div className="text-lg font-bold text-bone mt-1.5">{t("invest.income.apt")}</div>
                   </div>
                   <div className="col-span-2">
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">Доходность</div>
+                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.yield")}</div>
                     <div className="text-lg font-bold text-bone mt-1.5">4–7%</div>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-bone-soft mt-8 leading-relaxed font-medium border-t border-bone/10 pt-5">
-                  Срок окупаемости — до 20 лет. Среднегодовая прибыль — до 2.5 млн тенге. Доходность — в среднем около 5%.
+                  {t("invest.desc.apt")}
                 </p>
               </div>
 
@@ -67,26 +70,26 @@ export default function CommercialInvestment() {
                       <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                     </svg>
                   </div>
-                  <h3 className="mt-6 text-2xl font-bold tracking-tight">Коммерческое<br />помещение</h3>
+                  <h3 className="mt-6 text-2xl font-bold tracking-tight">{t("invest.comm.title1")}<br />{t("invest.comm.title2")}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6 mt-10 relative z-10">
                   <div>
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">Окупаемость</div>
-                    <div className="text-lg font-bold mt-1.5">7–10 лет</div>
+                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.payback")}</div>
+                    <div className="text-lg font-bold mt-1.5">{t("invest.payback.comm")}</div>
                   </div>
                   <div>
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">Доход в год</div>
-                    <div className="text-lg font-bold mt-1.5">5–14 млн ₸</div>
+                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.income")}</div>
+                    <div className="text-lg font-bold mt-1.5">{t("invest.income.comm")}</div>
                   </div>
                   <div className="col-span-2">
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">Доходность</div>
+                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.yield")}</div>
                     <div className="text-lg font-bold mt-1.5 text-emerald-700">10–15%</div>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-ink/70 mt-8 leading-relaxed font-medium relative z-10 border-t border-ink/10 pt-5">
-                  Срок окупаемости — до 10 лет. Среднегодовая прибыль — до 14 млн тенге. Доходность — в среднем около 12%.
+                  {t("invest.desc.comm")}
                 </p>
               </div>
             </div>

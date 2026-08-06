@@ -1,6 +1,7 @@
 "use client";
 
 import EagerVideo from "@/components/EagerVideo";
+import { useI18n } from "@/lib/i18n";
 
 type BlockProps = {
   title: string;
@@ -8,25 +9,27 @@ type BlockProps = {
 };
 
 export default function VideoFeatureBlocks() {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-col">
       <FeatureBlock
-        title="Закрытые детские площадки — ваши дети будут в безопасности"
+        title={t("feat.title1")}
         video="/entrance-gate.mp4"
         objectPosition="center top"
       />
       <FeatureBlock
-        title="Тишина и уют"
+        title={t("feat.title2")}
         video="/16745009121910.mp4"
         objectPosition="center"
       />
       <FeatureBlock
-        title="Экибастузский кирпич"
+        title={t("feat.title3")}
         video="/16744999619190.mp4"
         objectPosition="center"
       />
       <SplitFeatureBlock
-        title="Объекты которые находятся на этапе ввода в эксплуатацию"
+        title={t("feat.title4")}
         video="/objects-commissioning.mp4"
         // Зум + сдвиг влево/вверх: режем соседние частные дома справа и стройку у цоколя.
         objectPosition="12% 38%"

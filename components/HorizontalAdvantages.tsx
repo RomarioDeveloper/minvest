@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { cn } from "@/lib/utils";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import EagerVideo from "@/components/EagerVideo";
+import { useI18n } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,73 +39,73 @@ export interface Advantage {
   videoPosition?: string;
 }
 
-const ADVANTAGES: Advantage[] = [
-  {
-    title: "Бесшумные лифты",
-    body: "Современные бесшумные лифты.",
-    icon: IconElevator,
-    video: "/01.mp4",
-    videoPosition: "80% center", // Сдвигает само видео левее, чтобы правая часть с лифтом попала в кадр
-  },
-  {
-    title: "Пятикамерные окна",
-    body: "Пятикамерные окна с высокой тепло- и шумоизоляцией.",
-    icon: IconWindow,
-    video: "/okna.mp4",
-  },
-  {
-    title: "Удобные планировки",
-    body: "Удобные и функциональные планировки квартир.",
-    icon: IconLayout,
-    video: "/sleek-modern-kitchen-interior-design-2025-12-17-13-06-28-utc.mp4",
-  },
-  {
-    title: "Гаражи и парковки",
-    body: "Собственные гаражи и парковочные решения.",
-    icon: IconGarage,
-    video: "/car-parked-crooked-in-empty-parking-lot-aerial-2025-12-17-21-25-21-utc.mp4",
-    videoPosition: "center top",
-  },
-  {
-    title: "Коммерческие помещения",
-    body: "Коммерческие помещения на первых и цокольных этажах в отдельных проектах.",
-    icon: IconStore,
-    video: "/commercial.mp4",
-  },
-  {
-    title: "Закрытая территория",
-    body: "Закрытые территории с контролем доступа.",
-    icon: IconFence,
-    video: "/cctv.mp4",
-  },
-  {
-    title: "Системы Face ID",
-    body: "Системы Face ID в премиальных проектах.",
-    icon: IconFaceId,
-    video: "/face-id.mp4",
-  },
-  {
-    title: "Умные замки",
-    body: "Умные замки в квартирах.",
-    icon: IconSmartLock,
-    video: "/smart-locks.mp4",
-    // Клавиатура и набор кода слева — тянем кадр влево, иначе виден только рукав.
-    videoPosition: "18% center",
-  },
-  {
-    title: "Приватность и безопасность",
-    body: "Продуманная система приватности и безопасности для жителей.",
-    icon: IconShield,
-    video: "/security-guard.mp4",
-  },
-];
-
 export default function HorizontalAdvantages() {
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [maxShift, setMaxShift] = useState(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const { t } = useI18n();
+
+  const ADVANTAGES: Advantage[] = [
+    {
+      title: t("horiz.title1"),
+      body: t("horiz.body1"),
+      icon: IconElevator,
+      video: "/01.mp4",
+      videoPosition: "80% center", 
+    },
+    {
+      title: t("horiz.title2"),
+      body: t("horiz.body2"),
+      icon: IconWindow,
+      video: "/okna.mp4",
+    },
+    {
+      title: t("horiz.title3"),
+      body: t("horiz.body3"),
+      icon: IconLayout,
+      video: "/sleek-modern-kitchen-interior-design-2025-12-17-13-06-28-utc.mp4",
+    },
+    {
+      title: t("horiz.title4"),
+      body: t("horiz.body4"),
+      icon: IconGarage,
+      video: "/car-parked-crooked-in-empty-parking-lot-aerial-2025-12-17-21-25-21-utc.mp4",
+      videoPosition: "center top",
+    },
+    {
+      title: t("horiz.title5"),
+      body: t("horiz.body5"),
+      icon: IconStore,
+      video: "/commercial.mp4",
+    },
+    {
+      title: t("horiz.title6"),
+      body: t("horiz.body6"),
+      icon: IconFence,
+      video: "/cctv.mp4",
+    },
+    {
+      title: t("horiz.title7"),
+      body: t("horiz.body7"),
+      icon: IconFaceId,
+      video: "/face-id.mp4",
+    },
+    {
+      title: t("horiz.title8"),
+      body: t("horiz.body8"),
+      icon: IconSmartLock,
+      video: "/smart-locks.mp4",
+      videoPosition: "18% center",
+    },
+    {
+      title: t("horiz.title9"),
+      body: t("horiz.body9"),
+      icon: IconShield,
+      video: "/security-guard.mp4",
+    },
+  ];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
@@ -228,14 +229,14 @@ export default function HorizontalAdvantages() {
         {/* Заголовок */}
         <div className="w-full z-20 pointer-events-none shrink-0 pt-24 sm:pt-28 pb-4 sm:pb-6">
           <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16">
-            <div className="text-[11px] sm:text-eyebrow uppercase text-bone-mute tracking-wider font-semibold">Преимущества</div>
+            <div className="text-[11px] sm:text-eyebrow uppercase text-bone-mute tracking-wider font-semibold">{t("horiz.section_title")}</div>
             <h2
               className="mt-2 sm:mt-4 max-w-3xl font-display font-semibold tracking-tight text-balance text-bone drop-shadow-md"
               style={{ fontSize: "clamp(26px, 4vw, 64px)", lineHeight: 1 }}
             >
-              Почему выбирают
+              {t("horiz.section_subtitle")}
               <br className="sm:hidden" />
-              <span className="text-bone-mute"> Malaysary Invest.</span>
+              <span className="text-bone-mute">{t("horiz.section_subtitle2")}</span>
             </h2>
           </div>
         </div>

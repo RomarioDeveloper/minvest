@@ -3,17 +3,25 @@ import Preloader from "@/components/Preloader";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import ScrollSnapMagnet from "@/components/ScrollSnapMagnet";
 import SmoothScroller from "@/components/SmoothScroller";
-import "./globals.css";
+import "../globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { getDictionary } from "@/lib/dictionaries";
+import { I18nProvider, Locale } from "@/lib/i18n";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-export const metadata: Metadata = {
-  title: "Malaysary Invest — застройщик",
-  description:
-    "Надёжный застройщик Malaysary Invest: жилые комплексы с закрытой территорией, гаражами и детскими площадками. Ипотека и рассрочка.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const t = (key: string) => getDictionary(lang)[key] || key;
+  
+  return {
+    title: "Malaysary Invest — " + (lang === 'ru' ? 'застройщик' : 'құрылыс салушы'),
+    description: lang === 'ru' 
+      ? "Надёжный застройщик Malaysary Invest: жилые комплексы с закрытой территорией, гаражами и детскими площадками. Ипотека и рассрочка."
+      : "Malaysary Invest сенімді құрылыс салушысы: жабық аумағы, гараждары және балалар алаңдары бар тұрғын үй кешендері. Ипотека және бөліп төлеу.",
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#08080a",
@@ -21,9 +29,23 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export async function generateStaticParams() {
+  return [{ lang: "ru" }, { lang: "kk" }];
+}
+
+export default async function RootLayout({ 
+  children,
+  params 
+}: { 
+  children: React.ReactNode;
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  const locale = lang as Locale;
+  const dict = getDictionary(locale);
+
   return (
-    <html lang="ru" className={cn("font-sans", geist.variable)}>
+    <html lang={locale} className={cn("font-sans", geist.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -46,11 +68,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <ScrollRestoration />
-        <SmoothScroller />
-        <ScrollSnapMagnet />
-        <Preloader />
-        {children}
+        <I18nProvider lang={locale} dict={dict}>
+          <ScrollRestoration />
+          <SmoothScroller />
+          <ScrollSnapMagnet />
+          <Preloader />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

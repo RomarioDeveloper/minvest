@@ -2,13 +2,8 @@
 
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
-
-const NAV_LINKS = [
-  { href: "#objects", label: "Объекты" },
-  { href: "#advantages", label: "Преимущества" },
-  { href: "#company", label: "О компании" },
-  { href: "#contact", label: "Контакты" },
-];
+import { useI18n } from "@/lib/i18n";
+import LangSwitcher from "./LangSwitcher";
 
 const SOCIAL_LINKS = [
   {
@@ -46,6 +41,14 @@ const SOCIAL_LINKS = [
 
 export default function Header() {
   const { scrollY } = useScroll();
+  const { t, lang } = useI18n();
+
+  const NAV_LINKS = [
+    { href: `/${lang}#objects`, label: t("nav.objects") },
+    { href: `/${lang}#advantages`, label: t("nav.advantages") },
+    { href: `/${lang}#company`, label: t("nav.company") },
+    { href: `/${lang}#contact`, label: t("nav.contact") },
+  ];
   const [isMounted, setIsMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [threshold, setThreshold] = useState(1000);
@@ -131,12 +134,14 @@ export default function Header() {
                 </a>
               ))}
             </div>
+            
+            <LangSwitcher />
 
             <a
-              href="#contact"
+              href={`/${lang}#contact`}
               className="group hidden items-center gap-2.5 rounded-full bg-bone py-2.5 pl-5 pr-4 text-[12px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft lg:inline-flex"
             >
-              Записаться на показ
+              {t("nav.book_showing")}
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
             </a>
 
@@ -220,12 +225,33 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.4 }}
               >
+                <div className="flex justify-center mb-8">
+                  {/* Мобильный свитчер */}
+                  <div className="flex bg-ink border border-bone/10 p-1 rounded-lg shadow-inner">
+                    <button
+                      onClick={() => {
+                        if(lang !== 'ru') window.location.href = '/ru' + window.location.hash;
+                      }}
+                      className={`px-6 py-2.5 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all ${lang === 'ru' ? 'bg-bone text-ink shadow-sm' : 'text-bone-soft'}`}
+                    >
+                      Рус
+                    </button>
+                    <button
+                      onClick={() => {
+                        if(lang !== 'kk') window.location.href = '/kk' + window.location.hash;
+                      }}
+                      className={`px-6 py-2.5 rounded-md text-[11px] font-bold uppercase tracking-widest transition-all ${lang === 'kk' ? 'bg-bone text-ink shadow-sm' : 'text-bone-soft'}`}
+                    >
+                      Қаз
+                    </button>
+                  </div>
+                </div>
                 <a
-                  href="#contact"
+                  href={`/${lang}#contact`}
                   onClick={closeMenu}
-                  className="flex w-full items-center justify-center bg-bone px-7 py-4 text-eyebrow uppercase text-ink transition hover:bg-bone-soft"
+                  className="flex w-full items-center justify-center rounded-full bg-bone px-7 py-4 text-[13px] font-bold tracking-widest uppercase text-ink transition hover:bg-bone-soft"
                 >
-                  Забронировать →
+                  {t("nav.book")}
                 </a>
                 <div className="mt-8 flex justify-center gap-6">
                   {SOCIAL_LINKS.map((social) => (
@@ -242,7 +268,7 @@ export default function Header() {
                   ))}
                 </div>
                 <p className="mt-6 text-center text-[11px] uppercase tracking-widest text-bone-dim">
-                  Malaysary Invest · Павлодар
+                  {t("nav.city")}
                 </p>
               </motion.div>
             </motion.nav>

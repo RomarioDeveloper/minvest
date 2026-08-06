@@ -3,34 +3,37 @@
 import RevealOnView from "@/components/RevealOnView";
 import { BlobCard } from "@/components/ui/blob-card";
 import { NumberTicker } from "@/components/ui/number-ticker";
-
-const STATS = [
-  { value: 6, suffix: "", label: "Объектов в работе", note: "строим прямо сейчас" },
-  { value: 1200, suffix: "+", label: "Квартир продано", note: "довольных семей" },
-  { value: 9, suffix: "", label: "Лет на рынке", note: "надёжной работы" },
-  { value: 100, suffix: "%", label: "Сдаём в срок", note: "без переносов" },
-];
-
-const PERKS = [
-  {
-    title: "Жилые комплексы нового поколения",
-    body: "Мы создаём жилые пространства, где архитектура, технологии и комфорт объединяются в единый стандарт современной жизни. Каждый проект — продуманная среда для тех, кто ценит качество, безопасность и эстетику.",
-  },
-  {
-    title: "Надёжная кирпичная технология",
-    body: "Строим дома из кирпича — надежная основа вашего будущего. Прочность, тепло и долговечность в каждом проекте.",
-  },
-  {
-    title: "Безопасность и технологии",
-    body: "Закрытые территории с контролем доступа, системы Face ID в премиальных проектах, умные замки в квартирах — продуманная система приватности для каждого жителя.",
-  },
-  {
-    title: "Философия — больше, чем квадратные метры",
-    body: "Мы создаём не просто жилые дома — мы создаём среду, в которой хочется жить. Где каждый элемент продуман для комфорта, безопасности и эстетического удовольствия.",
-  },
-];
+import { useI18n } from "@/lib/i18n";
 
 export default function CompanyAdvantages() {
+  const { t } = useI18n();
+  
+  const STATS = [
+    { value: 6, suffix: "", label: t("adv.stat1.label"), note: t("adv.stat1.note") },
+    { value: 1200, suffix: "+", label: t("adv.stat2.label"), note: t("adv.stat2.note") },
+    { value: 9, suffix: "", label: t("adv.stat3.label"), note: t("adv.stat3.note") },
+    { value: 100, suffix: "%", label: t("adv.stat4.label"), note: t("adv.stat4.note") },
+  ];
+
+  const PERKS = [
+    {
+      title: t("adv.perk1.title"),
+      body: t("adv.perk1.body"),
+    },
+    {
+      title: t("adv.perk2.title"),
+      body: t("adv.perk2.body"),
+    },
+    {
+      title: t("adv.perk3.title"),
+      body: t("adv.perk3.body"),
+    },
+    {
+      title: t("adv.perk4.title"),
+      body: t("adv.perk4.body"),
+    },
+  ];
+
   return (
     <section
       id="company"
@@ -38,7 +41,7 @@ export default function CompanyAdvantages() {
     >
       <div className="mx-auto max-w-7xl">
         <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-          О компании
+          {t("adv.title")}
         </RevealOnView>
         <RevealOnView
           as="div"
@@ -47,9 +50,9 @@ export default function CompanyAdvantages() {
           className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
         >
           <h2 style={{ fontSize: "clamp(34px, 5.4vw, 72px)", lineHeight: 0.98 }}>
-            Malaysary Invest —
+            {t("adv.subtitle1")}
             <br />
-            <span className="text-bone-mute">строим среду для жизни.</span>
+            <span className="text-bone-mute">{t("adv.subtitle2")}</span>
           </h2>
         </RevealOnView>
 
