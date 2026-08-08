@@ -45,11 +45,10 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     description: "Флагманский объект Malaysary Invest — шестиэтажный кирпичный дом с закрытой территорией, собственными гаражами и благоустроенным двором. Стены 62 см, пятикамерные окна, бесшумные лифты.",
     image: `/${encodeURIComponent("Дюсенова 304.webp")}`,
     gallery: [
-      "/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp",
-      "/photos/exterior/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.webp",
-      "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
-      "/photos/entrance/4adedb6da6327883ce2ea4f732eb86fd_6a83d1d0-68a8-4c80-833c-98dfff0b3088.webp",
-      "/photos/entrance/a1363237a0b8e8b582fb3403ecdb66ff_3ea6281a-adc0-4b89-841f-70f6c62204d0.webp",
+      `/${encodeURIComponent("Дюсенова 304.webp")}`,
+      ...["IMG_1324", "IMG_1325", "IMG_1326", "IMG_1327", "IMG_1328", "IMG_1334", "IMG_1335", "IMG_1338", "IMG_1339"].map(
+        (name) => `/${encodeURIComponent("Дюсенова 304")}/${name}.webp`
+      ),
     ],
     floors: 6,
     apartments: 40,
@@ -67,10 +66,10 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     description: "Семиэтажный комплекс с просторными планировками, панорамными окнами и закрытой территорией. Отдельный паркинг на каждую квартиру.",
     image: `/${encodeURIComponent("Дюсенова 306.webp")}`,
     gallery: [
-      "/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp",
-      "/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp",
-      "/photos/exterior/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.webp",
-      "/photos/entrance/124ff09e7dc6c177fbe814461e08cdf1_db043c37-390e-4974-9f33-d8e943653299.webp",
+      `/${encodeURIComponent("Дюсенова 306.webp")}`,
+      ...["IMG_1329", "IMG_1330", "IMG_1331", "IMG_1332", "IMG_1333", "IMG_1336", "IMG_1337"].map(
+        (name) => `/${encodeURIComponent("Дюсенова 306")}/${name}.webp`
+      ),
     ],
     floors: 7,
     apartments: 58,
