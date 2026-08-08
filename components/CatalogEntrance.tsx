@@ -63,8 +63,8 @@ export default function CatalogEntrance() {
                 className="relative aspect-[4/3] sm:aspect-[21/9] w-full max-w-[1000px] overflow-hidden shrink-0"
               >
                 <img 
-                  src="/photos/exterior/d8acdf54501cf768e20eb02848d822ff_12e5751c-a425-49cf-87ad-b55f03a90aca.webp" 
-                  alt="Интерьер" 
+                  src={`/${encodeURIComponent("Дюсенова 306.webp")}`}
+                  alt="Жилой комплекс Malaysary Invest" 
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div className={`absolute inset-0 transition-colors duration-1000 ${isLight ? "bg-white/30" : "bg-black/25 hover:bg-black/10"}`} /> 

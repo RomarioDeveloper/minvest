@@ -153,8 +153,8 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <div id="facade" className="relative">
         <RevealOnView variant="shutter" offset={0} as="div">
           <EditorialSpread
-            imageSrc="/photos/exterior/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.webp"
-            imageAlt="Ночной вид жилого дома с подсветкой"
+            imageSrc={`/${encodeURIComponent("Дюсенова 304")}/IMG_1334.webp`}
+            imageAlt="Фасад жилого дома Malaysary Invest"
             eyebrow="Архитектура"
             title={
               <>
@@ -186,8 +186,8 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <div id="yard" className="relative">
         <RevealOnView variant="shutter-left" offset={0} as="div">
           <EditorialSpread
-            imageSrc="/photos/exterior/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.webp"
-            imageAlt="Аэросъёмка двора и закрытой территории"
+            imageSrc={`/${encodeURIComponent("Дюсенова 304.webp")}`}
+            imageAlt="Закрытый двор жилого комплекса"
             eyebrow="Закрытый двор"
             title={
               <>
@@ -214,8 +214,8 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         <RevealOnView variant="shutter-right" offset={0} as="div">
           <TwoUpFeature
             left={{
-              imageSrc: "/photos/garages/3af31198-00f7-4aae-96c6-180b7fef755e.webp",
-              imageAlt: "Капитальные кирпичные гаражи во дворе",
+              imageSrc: `/${encodeURIComponent("Дюсенова 306")}/IMG_1331.webp`,
+              imageAlt: "Входная группа и территория комплекса",
               eyebrow: "Гаражи",
               title: <>Капитальный кирпич. Свой бокс на машину.</>,
               body: (
@@ -226,7 +226,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
               ),
             }}
             right={{
-              imageSrc: "/photos/playground/298ff71b-9791-4543-b9ba-5d14ff3673e5.webp",
+              imageSrc: "/playground-aerial.jpg",
               imageAlt: "Детская площадка во дворе",
               eyebrow: "Детская площадка",
               title: <>Безопасное покрытие. Тёплый свет вечером.</>,
