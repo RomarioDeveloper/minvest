@@ -206,12 +206,12 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
 
   return (
     <>
-      <motion.div className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm"
+      <motion.div className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }} onClick={onClose} />
 
       <motion.div
-        className="fixed inset-x-0 bottom-0 z-[61] flex h-[88svh] flex-col bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
+        className="fixed inset-x-0 bottom-0 z-[71] flex h-[88svh] flex-col bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
         initial={{ y: "100%", opacity: 0.6 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", stiffness: 380, damping: 40, mass: 0.85 }}
         onClick={(e) => e.stopPropagation()}

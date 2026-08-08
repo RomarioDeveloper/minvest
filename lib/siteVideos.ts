@@ -1,7 +1,8 @@
 /** Fullscreen feature blocks (VideoFeatureBlocks). */
 export const FEATURE_VIDEO_SRCS = [
   "/entrance-gate.mp4",
-  "/16745009121910.mp4",
+  "/blockanimation/woman-tea.mp4",
+  "/blockanimation/woman-book.mp4",
   "/16744999619190.mp4",
   "/objects-commissioning.mp4",
 ] as const;
