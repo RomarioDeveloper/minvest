@@ -63,6 +63,10 @@ export const dictionaries = {
     "catalog.video": "Видео",
     "catalog.layouts": "Планировки",
     "catalog.increase": "Увеличить",
+    "carousel.eyebrow": "Наши объекты",
+    "carousel.title": "Объекты Malaysary Invest",
+    "carousel.prev": "Предыдущий объект",
+    "carousel.next": "Следующий объект",
     
     "invest.title": "Инвестиции",
     "invest.subtitle": "Ваши вложения могут стать источником стабильного дохода, который начнёт работать на вас на долгие годы",
@@ -232,6 +236,10 @@ export const dictionaries = {
     "catalog.video": "Бейне",
     "catalog.layouts": "Жоспарлар",
     "catalog.increase": "Үлкейту",
+    "carousel.eyebrow": "Біздің нысандар",
+    "carousel.title": "Malaysary Invest нысандары",
+    "carousel.prev": "Алдыңғы нысан",
+    "carousel.next": "Келесі нысан",
     
     "invest.title": "Инвестициялар",
     "invest.subtitle": "Сіздің салымдарыңыз ұзақ жылдар бойы сізге жұмыс істейтін тұрақты табыс көзіне айнала алады",
