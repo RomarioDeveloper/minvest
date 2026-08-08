@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 type BlockProps = {
   title: string;
+  body?: string;
   video: string;
 };
 
@@ -31,6 +32,7 @@ export default function VideoFeatureBlocks() {
       />
       <FeatureBlock
         title={t("feat.title3")}
+        body={t("feat.body3")}
         video="/16744999619190.mp4"
         objectPosition="center"
       />
@@ -77,7 +79,7 @@ function SplitFeatureBlock({
   );
 }
 
-function FeatureBlock({ title, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
+function FeatureBlock({ title, body, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
   return (
     <section className="relative isolate h-[100svh] min-h-[100svh] w-full overflow-hidden bg-ink">
       <EagerVideo
@@ -94,13 +96,21 @@ function FeatureBlock({ title, video, objectPosition = "center" }: BlockProps & 
       />
 
       <div className="relative z-10 flex h-full w-full items-end p-6 pb-20 sm:p-10 lg:p-16">
-        <div className="max-w-4xl">
+        <div className="max-w-3xl">
           <h2
-            className="font-display font-semibold tracking-tightest text-balance text-bone"
-            style={{ fontSize: "clamp(32px, 5vw, 80px)", lineHeight: 0.95 }}
+            className="font-display font-semibold tracking-tightest text-pretty text-bone"
+            style={{ fontSize: "clamp(32px, 5vw, 72px)", lineHeight: 0.98 }}
           >
             {title}
           </h2>
+          {body && (
+            <p
+              className="mt-5 max-w-xl font-display font-medium tracking-tight text-pretty text-bone/80"
+              style={{ fontSize: "clamp(18px, 2.2vw, 28px)", lineHeight: 1.25 }}
+            >
+              {body}
+            </p>
+          )}
         </div>
       </div>
     </section>
