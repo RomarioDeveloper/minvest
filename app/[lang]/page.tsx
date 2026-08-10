@@ -190,7 +190,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <div id="yard" className="relative">
         <RevealOnView variant="shutter-left" offset={0} as="div">
           <EditorialSpread
-            imageSrc={`/${encodeURIComponent("Дюсенова 304.webp")}`}
+            imageSrc={`/${encodeURIComponent("Дюсенова 306")}/IMG_1332.webp`}
             imageAlt="Закрытый двор жилого комплекса"
             eyebrow="Закрытый двор"
             title={
