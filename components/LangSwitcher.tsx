@@ -24,7 +24,7 @@ export default function LangSwitcher() {
   };
 
   return (
-    <div className="relative z-[62] hidden lg:block ml-2 mr-4">
+    <div className="relative z-[62] hidden shrink-0 md:block">
       <button 
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-bone transition hover:text-bone-mute"

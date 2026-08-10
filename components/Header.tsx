@@ -98,29 +98,30 @@ export default function Header() {
         {/* backdrop-blur пересчитывается на каждый кадр скролла (под шапкой канвас и видео).
             На мобилке блюра нет вообще — плотный фон, на десктопе md вместо xl +
             transform-gpu, чтобы блюр жил на собственном слое композитора. */}
-        <div className="relative mx-auto flex max-w-6xl transform-gpu items-center justify-between rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6">
-          <a href="#top" className="relative z-[62] flex items-center gap-3 text-bone" onClick={closeMenu}>
-            <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto" />
-            <span className="font-display text-[13px] font-bold tracking-[0.14em] hidden sm:block">
+        <div className="relative mx-auto grid max-w-6xl transform-gpu grid-cols-[1fr_auto] items-center gap-3 rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6 xl:grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1.1fr)] xl:gap-4">
+          <a href="#top" className="relative z-[62] flex min-w-0 items-center gap-3 text-bone" onClick={closeMenu}>
+            <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto shrink-0" />
+            <span className="font-display text-[13px] font-bold tracking-[0.14em] hidden truncate sm:block">
               MALAYSARY
               <span className="ml-1.5 font-medium text-bone-mute">INVEST</span>
             </span>
           </a>
 
-          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-[13px] font-medium text-bone-soft lg:flex">
+          {/* Полное меню только от xl — на ~1000–1200px оно наезжало на соцсети/CTA */}
+          <nav className="hidden items-center gap-6 text-[13px] font-medium text-bone-soft 2xl:gap-8 xl:flex">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="relative py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-bone after:transition-all after:duration-300 hover:text-bone hover:after:w-full"
+                className="relative whitespace-nowrap py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-bone after:transition-all after:duration-300 hover:text-bone hover:after:w-full"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="relative z-[62] flex items-center gap-4">
-            <div className="hidden lg:flex items-center gap-3">
+          <div className="relative z-[62] flex items-center justify-end gap-2 sm:gap-3">
+            <div className="hidden items-center gap-2.5 2xl:flex">
               {SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.label}
@@ -139,7 +140,7 @@ export default function Header() {
 
             <a
               href={`/${lang}#contact`}
-              className="group hidden items-center gap-2.5 rounded-full bg-bone py-2.5 pl-5 pr-4 text-[12px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft lg:inline-flex"
+              className="group hidden items-center gap-2 rounded-full bg-bone py-2.5 pl-4 pr-3.5 text-[12px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft whitespace-nowrap md:inline-flex xl:gap-2.5 xl:pl-5 xl:pr-4"
             >
               {t("nav.book_showing")}
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
@@ -150,7 +151,7 @@ export default function Header() {
               aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-bone/15 text-bone transition hover:border-bone/40 hover:bg-bone/5 lg:hidden"
+              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bone/15 text-bone transition hover:border-bone/40 hover:bg-bone/5 xl:hidden"
             >
             <span className="sr-only">{menuOpen ? "Закрыть" : "Меню"}</span>
             <span className="relative h-3.5 w-5">
@@ -178,7 +179,7 @@ export default function Header() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[61] lg:hidden"
+            className="fixed inset-0 z-[61] xl:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
