@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import RevealOnView from "@/components/RevealOnView";
 import { useI18n } from "@/lib/i18n";
 
@@ -8,94 +7,157 @@ export default function CommercialInvestment() {
   const { t } = useI18n();
 
   return (
-    <section className="relative border-t border-bone/10 bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
-      <div className="mx-auto max-w-6xl">
-        <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute mb-8">
+    <section className="relative overflow-hidden border-t border-bone/10 bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 right-0 h-[420px] w-[520px] rounded-full bg-bone/[0.04] blur-[120px]"
+      />
+
+      <div className="relative mx-auto max-w-6xl">
+        <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
           {t("invest.title")}
         </RevealOnView>
 
-        <RevealOnView variant="blur" delay={100}>
-          <div className="flex flex-col gap-10">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-bone max-w-3xl leading-tight">
-              {t("invest.subtitle")}
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Обычные квартиры */}
-              <div className="bg-ink-panel border border-bone/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-colors duration-500 hover:border-bone/30">
-                <div>
-                  <div className="w-12 h-12 bg-ink border border-bone/15 rounded-full flex items-center justify-center text-bone-soft">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                  </div>
-                  <h3 className="mt-6 text-2xl font-bold text-bone tracking-tight">{t("invest.apt.title1")}<br />{t("invest.apt.title2")}</h3>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6 mt-10">
-                  <div>
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.payback")}</div>
-                    <div className="text-lg font-bold text-bone mt-1.5">{t("invest.payback.apt")}</div>
-                  </div>
-                  <div>
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.income")}</div>
-                    <div className="text-lg font-bold text-bone mt-1.5">{t("invest.income.apt")}</div>
-                  </div>
-                  <div className="col-span-2">
-                    <div className="text-[11px] uppercase text-bone-dim font-bold tracking-widest">{t("invest.yield")}</div>
-                    <div className="text-lg font-bold text-bone mt-1.5">4–7%</div>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-bone-soft mt-8 leading-relaxed font-medium border-t border-bone/10 pt-5">
-                  {t("invest.desc.apt")}
-                </p>
-              </div>
-
-              {/* Коммерческое помещение */}
-              <div className="bg-bone rounded-2xl p-6 sm:p-8 flex flex-col justify-between text-ink relative overflow-hidden transition-transform duration-500 hover:-translate-y-1">
-                {/* Абстрактный паттерн здания на фоне */}
-                <div className="absolute right-0 bottom-0 opacity-5 pointer-events-none translate-x-1/4 translate-y-1/4">
-                  <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 21h18v-2H3v2zm4-16h2v14H7V5zm6 0h2v14h-2V5zm-6-4h8v2H7V1z"/>
-                    <rect x="5" y="7" width="14" height="12"/>
-                  </svg>
-                </div>
-
-                <div className="relative z-10">
-                  <div className="w-12 h-12 bg-ink/5 border border-ink/10 rounded-full flex items-center justify-center text-ink">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    </svg>
-                  </div>
-                  <h3 className="mt-6 text-2xl font-bold tracking-tight">{t("invest.comm.title1")}<br />{t("invest.comm.title2")}</h3>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6 mt-10 relative z-10">
-                  <div>
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.payback")}</div>
-                    <div className="text-lg font-bold mt-1.5">{t("invest.payback.comm")}</div>
-                  </div>
-                  <div>
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.income")}</div>
-                    <div className="text-lg font-bold mt-1.5">{t("invest.income.comm")}</div>
-                  </div>
-                  <div className="col-span-2">
-                    <div className="text-[11px] uppercase text-ink/60 font-bold tracking-widest">{t("invest.yield")}</div>
-                    <div className="text-lg font-bold mt-1.5 text-emerald-700">10–15%</div>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-ink/70 mt-8 leading-relaxed font-medium relative z-10 border-t border-ink/10 pt-5">
-                  {t("invest.desc.comm")}
-                </p>
-              </div>
-            </div>
-          </div>
+        <RevealOnView
+          as="div"
+          variant="blur"
+          delay={100}
+          className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-pretty text-bone"
+        >
+          <h2 style={{ fontSize: "clamp(30px, 4.8vw, 56px)", lineHeight: 1.02 }}>
+            {t("invest.subtitle1")}
+            <br />
+            <span className="text-bone-mute">{t("invest.subtitle2")}</span>
+          </h2>
         </RevealOnView>
+
+        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Обычные квартиры */}
+          <RevealOnView variant="block" delay={160}>
+            <article className="flex h-full flex-col justify-between border border-bone/10 bg-ink-panel p-7 sm:p-9 transition-colors duration-500 hover:border-bone/30">
+              <div>
+                <div className="text-eyebrow uppercase tracking-[0.18em] text-bone-dim">01</div>
+                <h3
+                  className="mt-4 font-display font-semibold tracking-tightest text-bone"
+                  style={{ fontSize: "clamp(28px, 3.2vw, 40px)", lineHeight: 0.98 }}
+                >
+                  {t("invest.apt.title1")}
+                  <br />
+                  <span className="text-bone-mute">{t("invest.apt.title2")}</span>
+                </h3>
+              </div>
+
+              <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-8">
+                <Stat
+                  label={t("invest.payback")}
+                  value={t("invest.payback.apt")}
+                />
+                <Stat
+                  label={t("invest.income")}
+                  value={t("invest.income.apt")}
+                />
+                <div className="col-span-2 border-t border-bone/10 pt-6">
+                  <div className="text-eyebrow uppercase tracking-[0.18em] text-bone-dim">
+                    {t("invest.yield")}
+                  </div>
+                  <div
+                    className="mt-2 font-display font-semibold tracking-tightest text-bone"
+                    style={{ fontSize: "clamp(40px, 5vw, 56px)", lineHeight: 0.92 }}
+                  >
+                    4–7%
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-8 border-t border-bone/10 pt-5 text-[13px] leading-relaxed text-bone-soft">
+                {t("invest.desc.apt")}
+              </p>
+            </article>
+          </RevealOnView>
+
+          {/* Коммерческое помещение */}
+          <RevealOnView variant="block" delay={240}>
+            <article className="relative flex h-full flex-col justify-between overflow-hidden bg-bone p-7 text-ink sm:p-9 transition-transform duration-500 hover:-translate-y-1">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-8 -bottom-10 font-display text-[180px] font-semibold leading-none tracking-tightest text-ink/[0.06] select-none"
+              >
+                %
+              </div>
+
+              <div className="relative z-10">
+                <div className="text-eyebrow uppercase tracking-[0.18em] text-ink/45">02</div>
+                <h3
+                  className="mt-4 font-display font-semibold tracking-tightest"
+                  style={{ fontSize: "clamp(28px, 3.2vw, 40px)", lineHeight: 0.98 }}
+                >
+                  {t("invest.comm.title1")}
+                  <br />
+                  <span className="text-ink/55">{t("invest.comm.title2")}</span>
+                </h3>
+              </div>
+
+              <div className="relative z-10 mt-12 grid grid-cols-2 gap-x-6 gap-y-8">
+                <Stat
+                  label={t("invest.payback")}
+                  value={t("invest.payback.comm")}
+                  dark
+                />
+                <Stat
+                  label={t("invest.income")}
+                  value={t("invest.income.comm")}
+                  dark
+                />
+                <div className="col-span-2 border-t border-ink/10 pt-6">
+                  <div className="text-eyebrow uppercase tracking-[0.18em] text-ink/45">
+                    {t("invest.yield")}
+                  </div>
+                  <div
+                    className="mt-2 font-display font-semibold tracking-tightest text-emerald-800"
+                    style={{ fontSize: "clamp(40px, 5vw, 56px)", lineHeight: 0.92 }}
+                  >
+                    10–15%
+                  </div>
+                </div>
+              </div>
+
+              <p className="relative z-10 mt-8 border-t border-ink/10 pt-5 text-[13px] leading-relaxed text-ink/65">
+                {t("invest.desc.comm")}
+              </p>
+            </article>
+          </RevealOnView>
+        </div>
       </div>
     </section>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  dark = false,
+}: {
+  label: string;
+  value: string;
+  dark?: boolean;
+}) {
+  return (
+    <div>
+      <div
+        className={`text-eyebrow uppercase tracking-[0.18em] ${
+          dark ? "text-ink/45" : "text-bone-dim"
+        }`}
+      >
+        {label}
+      </div>
+      <div
+        className={`mt-2 font-display font-semibold tracking-tightest ${
+          dark ? "text-ink" : "text-bone"
+        }`}
+        style={{ fontSize: "clamp(20px, 2.2vw, 26px)", lineHeight: 1.05 }}
+      >
+        {value}
+      </div>
+    </div>
   );
 }

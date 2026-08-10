@@ -70,6 +70,8 @@ export const dictionaries = {
     
     "invest.title": "Инвестиции",
     "invest.subtitle": "Ваши вложения могут стать источником стабильного дохода, который начнёт работать на вас на долгие годы",
+    "invest.subtitle1": "Ваши вложения — источник",
+    "invest.subtitle2": "стабильного дохода на годы вперёд.",
     "invest.apt.title1": "Обычные",
     "invest.apt.title2": "квартиры",
     "invest.comm.title1": "Коммерческое",
@@ -244,6 +246,8 @@ export const dictionaries = {
     
     "invest.title": "Инвестициялар",
     "invest.subtitle": "Сіздің салымдарыңыз ұзақ жылдар бойы сізге жұмыс істейтін тұрақты табыс көзіне айнала алады",
+    "invest.subtitle1": "Сіздің салымдарыңыз —",
+    "invest.subtitle2": "ұзақ жылдарға тұрақты табыс көзі.",
     "invest.apt.title1": "Қарапайым",
     "invest.apt.title2": "пәтерлер",
     "invest.comm.title1": "Коммерциялық",

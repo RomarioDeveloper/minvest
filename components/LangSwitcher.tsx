@@ -16,7 +16,7 @@ export default function LangSwitcher() {
       setOpen(false);
       return;
     }
-    
+      
     // Replace the current locale in the path with the new one
     const newPath = pathname.replace(`/${lang}`, `/${newLang}`);
     router.push(newPath || `/${newLang}`);
