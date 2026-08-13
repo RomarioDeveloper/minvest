@@ -192,6 +192,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
           <EditorialSpread
             imageSrc={`/${encodeURIComponent("Дюсенова 306")}/IMG_1332.webp`}
             imageAlt="Закрытый двор жилого комплекса"
+            videoSrc={`/${encodeURIComponent("46209a6f2e6a8871ead9da32f4113e83_1b2b3c46_919c_4dd4_8d16_2fb63fa84426 2.mp4")}`}
             eyebrow="Закрытый двор"
             title={
               <>
@@ -218,7 +219,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         <RevealOnView variant="shutter-right" offset={0} as="div">
           <TwoUpFeature
             left={{
-              imageSrc: `/${encodeURIComponent("Дюсенова 306")}/IMG_1331.webp`,
+              imageSrc: `/${encodeURIComponent("hf_20260616_163945_a4602a1f-ca26-4d7c-a86f-48d1d2629e77 (1).png")}`,
               imageAlt: "Входная группа и территория комплекса",
               eyebrow: "Входная группа",
               title: <>Стильные и безопасные подъезды.</>,
