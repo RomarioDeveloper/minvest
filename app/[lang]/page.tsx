@@ -186,31 +186,45 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         </RevealOnView>
       </div>
 
-      {/* ---------- EDITORIAL: YARD / AERIAL ---------- */}
+      {/* ---------- YARD: text left, video right ---------- */}
       <div id="yard" className="relative">
         <RevealOnView variant="shutter-left" offset={0} as="div">
-          <EditorialSpread
-            imageSrc={`/${encodeURIComponent("Дюсенова 306")}/IMG_1332.webp`}
-            imageAlt="Закрытый двор жилого комплекса"
-            videoSrc={`/${encodeURIComponent("46209a6f2e6a8871ead9da32f4113e83_1b2b3c46_919c_4dd4_8d16_2fb63fa84426 2.mp4")}`}
-            eyebrow="Закрытый двор"
-            title={
-              <>
-                Только для тех,
-                <br />
-                кто здесь живёт.
-              </>
-            }
-            body={
-              <>
-                Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
-                периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
-                бывает у дома без забора.
-              </>
-            }
-            placement="bottom-right"
-            height="tall"
-          />
+          <section className="relative grid min-h-[100svh] bg-ink lg:grid-cols-2">
+            <div className="flex items-end px-6 py-16 sm:px-10 sm:py-20 lg:items-center lg:px-16 lg:py-24">
+              <div className="max-w-xl">
+                <div className="flex items-baseline gap-3 text-eyebrow uppercase text-bone-mute">
+                  <span className="h-[1px] w-8 bg-bone/40" />
+                  <span>Закрытый двор</span>
+                </div>
+                <h2
+                  className="mt-5 font-display font-semibold tracking-tightest text-balance text-bone"
+                  style={{ fontSize: "clamp(36px, 5vw, 72px)", lineHeight: 0.95 }}
+                >
+                  Только для тех,
+                  <br />
+                  кто здесь живёт.
+                </h2>
+                <p
+                  className="mt-6 max-w-md text-pretty text-bone-soft"
+                  style={{ fontSize: "clamp(15px, 1.15vw, 18px)", lineHeight: 1.6 }}
+                >
+                  Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
+                  периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
+                  бывает у дома без забора.
+                </p>
+              </div>
+            </div>
+            <div className="relative h-[55svh] min-h-[320px] overflow-hidden lg:h-auto lg:min-h-full">
+              <video
+                src={`/${encodeURIComponent("46209a6f2e6a8871ead9da32f4113e83_1b2b3c46_919c_4dd4_8d16_2fb63fa84426 2.mp4")}`}
+                className="absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            </div>
+          </section>
         </RevealOnView>
       </div>
 

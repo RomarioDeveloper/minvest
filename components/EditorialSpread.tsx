@@ -12,8 +12,6 @@ type Props = {
   placement?: "bottom-left" | "bottom-right" | "top-left" | "top-right" | "center";
   height?: "screen" | "tall" | "short";
   meta?: { label: string; value: string }[];
-  /** Optional looping video instead of the still image. */
-  videoSrc?: string;
 };
 
 const placementClasses: Record<NonNullable<Props["placement"]>, string> = {
@@ -51,7 +49,6 @@ export default function EditorialSpread({
   placement = "bottom-left",
   height = "screen",
   meta,
-  videoSrc,
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -116,24 +113,12 @@ export default function EditorialSpread({
           transition: "transform 1.2s cubic-bezier(0.76, 0, 0.24, 1)"
         }}
       />
-      {videoSrc ? (
-        <video
-          src={videoSrc}
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster={imageSrc}
-        />
-      ) : (
-        <img
-          src={imageSrc}
-          alt={imageAlt}
-          className="absolute inset-0 h-full w-full object-cover"
-          loading="lazy"
-        />
-      )}
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        className="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+      />
 
       {/* Legibility wash — direction picks the heaviest side away from copy */}
       <motion.div
