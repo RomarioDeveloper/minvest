@@ -140,6 +140,8 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     image: `/${encodeURIComponent("Бектурова 348.webp")}`,
     gallery: [
       `/${encodeURIComponent("Бектурова 348.webp")}`,
+      `/${encodeURIComponent("348 бектурова")}/01.jpg`,
+      `/${encodeURIComponent("348 бектурова")}/4 (1).jpg`,
     ],
     floors: 12,
     apartments: 46,
@@ -157,6 +159,12 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     image: `/${encodeURIComponent("Бектурова 356.webp")}`,
     gallery: [
       `/${encodeURIComponent("Бектурова 356.webp")}`,
+      `/${encodeURIComponent("Бектурова 356")}/10.png`,
+      `/${encodeURIComponent("Бектурова 356")}/15.png`,
+      `/${encodeURIComponent("Бектурова 356")}/18.png`,
+      `/${encodeURIComponent("Бектурова 356")}/20.png`,
+      `/${encodeURIComponent("Бектурова 356")}/24.png`,
+      `/${encodeURIComponent("Бектурова 356")}/hf_20260616_163945_a4602a1f-ca26-4d7c-a86f-48d1d2629e77.png`,
     ],
     floors: 9,
     apartments: 72,
