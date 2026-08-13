@@ -14,7 +14,6 @@ import { BlobCard } from "@/components/ui/blob-card";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import PaymentTerms from "@/components/PaymentTerms";
-import TwoUpFeature from "@/components/TwoUpFeature";
 import Header from "@/components/Header";
 
 import { getDictionary } from "@/lib/dictionaries";
@@ -228,33 +227,21 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         </RevealOnView>
       </div>
 
-      {/* ---------- TWO-UP: ENTRANCE + PLAYGROUND ---------- */}
+      {/* ---------- ENTRANCE ---------- */}
       <div className="relative border-t border-bone/10 bg-ink-deep">
         <RevealOnView variant="shutter-right" offset={0} as="div">
-          <TwoUpFeature
-            left={{
-              imageSrc: `/${encodeURIComponent("hf_20260616_163945_a4602a1f-ca26-4d7c-a86f-48d1d2629e77 (1).png")}`,
-              imageAlt: "Входная группа и территория комплекса",
-              eyebrow: "Входная группа",
-              title: <>Стильные и безопасные подъезды.</>,
-              body: (
-                <>
-                  Просторные холлы, безбарьерная среда и современные домофоны для вашего комфорта и безопасности.
-                </>
-              ),
-            }}
-            right={{
-              imageSrc: "/playground-aerial.jpg",
-              imageAlt: "Детская площадка во дворе",
-              eyebrow: "Детская площадка",
-              title: <>Безопасное покрытие. Тёплый свет вечером.</>,
-              body: (
-                <>
-                  Прорезиненное покрытие, современные игровые формы, прямой обзор с балконов
-                  и от подъезда.
-                </>
-              ),
-            }}
+          <EditorialSpread
+            imageSrc={`/${encodeURIComponent("hf_20260616_163945_a4602a1f-ca26-4d7c-a86f-48d1d2629e77 (1).png")}`}
+            imageAlt="Входная группа и территория комплекса"
+            eyebrow="Входная группа"
+            title={<>Стильные и безопасные подъезды.</>}
+            body={
+              <>
+                Просторные холлы, безбарьерная среда и современные домофоны для вашего комфорта и безопасности.
+              </>
+            }
+            placement="bottom-left"
+            height="screen"
           />
         </RevealOnView>
       </div>

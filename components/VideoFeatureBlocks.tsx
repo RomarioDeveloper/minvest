@@ -9,6 +9,7 @@ type BlockProps = {
   title: string;
   body?: string;
   video: string;
+  compactBody?: boolean;
 };
 
 const LIFESTYLE_VIDEOS = [
@@ -23,6 +24,8 @@ export default function VideoFeatureBlocks() {
     <div className="flex flex-col">
       <FeatureBlock
         title={t("feat.title1")}
+        body={t("feat.body1")}
+        compactBody
         video="/entrance-gate.mp4"
         objectPosition="center top"
       />
@@ -79,7 +82,13 @@ function SplitFeatureBlock({
   );
 }
 
-function FeatureBlock({ title, body, video, objectPosition = "center" }: BlockProps & { objectPosition?: string }) {
+function FeatureBlock({
+  title,
+  body,
+  video,
+  objectPosition = "center",
+  compactBody = false,
+}: BlockProps & { objectPosition?: string }) {
   return (
     <section className="relative isolate h-[100svh] min-h-[100svh] w-full overflow-hidden bg-ink">
       <EagerVideo
@@ -105,8 +114,15 @@ function FeatureBlock({ title, body, video, objectPosition = "center" }: BlockPr
           </h2>
           {body && (
             <p
-              className="mt-5 max-w-xl font-display font-medium tracking-tight text-pretty text-bone/80"
-              style={{ fontSize: "clamp(18px, 2.2vw, 28px)", lineHeight: 1.25 }}
+              className={`mt-5 max-w-xl text-pretty ${
+                compactBody
+                  ? "text-bone/70"
+                  : "font-display font-medium tracking-tight text-bone/80"
+              }`}
+              style={{
+                fontSize: compactBody ? "clamp(14px, 1.3vw, 18px)" : "clamp(18px, 2.2vw, 28px)",
+                lineHeight: compactBody ? 1.5 : 1.25,
+              }}
             >
               {body}
             </p>
