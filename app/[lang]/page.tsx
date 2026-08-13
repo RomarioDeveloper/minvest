@@ -3,9 +3,10 @@ import CompanyAdvantages from "@/components/CompanyAdvantages";
 import HeroVideo from "@/components/HeroVideo";
 import HorizontalAdvantages from "@/components/HorizontalAdvantages";
 import VideoFeatureBlocks from "@/components/VideoFeatureBlocks";
+import EditorialSpread from "@/components/EditorialSpread";
 import MalaysaryMap from "@/components/MalaysaryMap";
 import ObjectsCatalog from "@/components/ObjectsCatalog";
-import ObjectsScrollSpreads from "@/components/ObjectsScrollSpreads";
+import ObjectsPhotoCarousel from "@/components/ObjectsPhotoCarousel";
 import CommercialInvestment from "@/components/CommercialInvestment";
 import ConsultationBanner from "@/components/ConsultationBanner";
 import RevealOnView from "@/components/RevealOnView";
@@ -13,6 +14,7 @@ import { BlobCard } from "@/components/ui/blob-card";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import StatsCountUp from "@/components/StatsCountUp";
 import PaymentTerms from "@/components/PaymentTerms";
+import TwoUpFeature from "@/components/TwoUpFeature";
 import Header from "@/components/Header";
 
 import { getDictionary } from "@/lib/dictionaries";
@@ -127,8 +129,120 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       {/* ---------- CONSULTATION BANNER ---------- */}
       <ConsultationBanner />
 
-      {/* ---------- OBJECTS: full-screen house photos with shutter transitions ---------- */}
-      <ObjectsScrollSpreads />
+      {/* ---------- OBJECTS PHOTO CAROUSEL ---------- */}
+      <ObjectsPhotoCarousel />
+
+      {/* ---------- FLAGSHIP SHOWCASE INTRO ---------- */}
+      <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
+        <div className="mx-auto max-w-7xl">
+          <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
+            Флагман · Корпус 1
+          </RevealOnView>
+          <RevealOnView
+            as="div"
+            variant="blur"
+            delay={120}
+            className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
+          >
+            <h2 style={{ fontSize: "clamp(30px, 4.8vw, 64px)", lineHeight: 0.98 }}>
+              Загляните внутрь дома,
+              <br />
+              <span className="text-bone-mute">который уже строится.</span>
+            </h2>
+          </RevealOnView>
+        </div>
+      </section>
+
+      {/* ---------- EDITORIAL: NIGHT FACADE ---------- */}
+      <div id="facade" className="relative">
+        <RevealOnView variant="shutter" offset={0} as="div">
+          <EditorialSpread
+            imageSrc={`/${encodeURIComponent("Дюсенова 304")}/IMG_1334.webp`}
+            imageAlt="Фасад жилого дома Malaysary Invest"
+            eyebrow="Архитектура"
+            title={
+              <>
+                Тёплый свет
+                <br />
+                в каждом окне.
+              </>
+            }
+            body={
+              <>
+                Вентилируемый фасад с крупноформатными плитами, контрастные тёмные углы и
+                вертикальная шахта остекления. Архитектурная подсветка фасада и пешеходных
+                дорожек включается с наступлением сумерек.
+              </>
+            }
+            placement="bottom-left"
+            height="screen"
+            meta={[
+              { label: "Высота", value: "6 этажей" },
+              { label: "Фасад", value: "HPL-панели" },
+              { label: "Остекление", value: "2-камерное" },
+              { label: "Освещение", value: "Архитектурное" },
+            ]}
+          />
+        </RevealOnView>
+      </div>
+
+      {/* ---------- EDITORIAL: YARD / AERIAL ---------- */}
+      <div id="yard" className="relative">
+        <RevealOnView variant="shutter-left" offset={0} as="div">
+          <EditorialSpread
+            imageSrc={`/${encodeURIComponent("Дюсенова 306")}/IMG_1332.webp`}
+            imageAlt="Закрытый двор жилого комплекса"
+            eyebrow="Закрытый двор"
+            title={
+              <>
+                Только для тех,
+                <br />
+                кто здесь живёт.
+              </>
+            }
+            body={
+              <>
+                Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
+                периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
+                бывает у дома без забора.
+              </>
+            }
+            placement="bottom-right"
+            height="tall"
+          />
+        </RevealOnView>
+      </div>
+
+      {/* ---------- TWO-UP: ENTRANCE + PLAYGROUND ---------- */}
+      <div className="relative border-t border-bone/10 bg-ink-deep">
+        <RevealOnView variant="shutter-right" offset={0} as="div">
+          <TwoUpFeature
+            left={{
+              imageSrc: `/${encodeURIComponent("Дюсенова 306")}/IMG_1331.webp`,
+              imageAlt: "Входная группа и территория комплекса",
+              eyebrow: "Входная группа",
+              title: <>Стильные и безопасные подъезды.</>,
+              body: (
+                <>
+                  Просторные холлы, безбарьерная среда и современные домофоны для вашего комфорта и безопасности.
+                </>
+              ),
+            }}
+            right={{
+              imageSrc: "/playground-aerial.jpg",
+              imageAlt: "Детская площадка во дворе",
+              eyebrow: "Детская площадка",
+              title: <>Безопасное покрытие. Тёплый свет вечером.</>,
+              body: (
+                <>
+                  Прорезиненное покрытие, современные игровые формы, прямой обзор с балконов
+                  и от подъезда.
+                </>
+              ),
+            }}
+          />
+        </RevealOnView>
+      </div>
 
       {/* ---------- PAYMENT TERMS ---------- */}
       <PaymentTerms />
