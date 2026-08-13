@@ -140,8 +140,15 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     image: `/${encodeURIComponent("Бектурова 348.webp")}`,
     gallery: [
       `/${encodeURIComponent("Бектурова 348.webp")}`,
-      `/${encodeURIComponent("348 бектурова")}/01.jpg`,
-      `/${encodeURIComponent("348 бектурова")}/4 (1).jpg`,
+      `/${encodeURIComponent("348 бектурова")}/44.png`,
+      `/${encodeURIComponent("348 бектурова")}/55.png`,
+      `/${encodeURIComponent("348 бектурова")}/6.png`,
+      `/${encodeURIComponent("348 бектурова")}/7.png`,
+    ],
+    videos: [
+      `/${encodeURIComponent("348 бектурова")}/2.mp4`,
+      `/${encodeURIComponent("348 бектурова")}/4.mp4`,
+      `/${encodeURIComponent("348 бектурова")}/5.mp4`,
     ],
     floors: 12,
     apartments: 46,
