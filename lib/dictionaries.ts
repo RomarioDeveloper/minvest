@@ -122,20 +122,20 @@ export const dictionaries = {
     "footer.schedule2": "пн-пт: 09:00–18:00, сб-вс: выходной",
 
     "obj.dyusenova_304.district": "ул. Дюсенова",
-    "obj.dyusenova_304.tagline": "Сдан, свободных квартир нет.",
-    "obj.dyusenova_304.description": "Флагманский объект Malaysary Invest — шестиэтажный кирпичный дом с закрытой территорией, собственными гаражами и благоустроенным двором. Стены 62 см, пятикамерные окна, бесшумные лифты.",
-    "obj.dyusenova_304.rooms": "1–3 комнаты",
+    "obj.dyusenova_304.tagline": "2-х подъездный 9-ти этажный дом, 72 квартиры. 2-х и 3-х комнатные квартиры.",
+    "obj.dyusenova_304.description": "Флагманский объект Malaysary Invest — девятиэтажный кирпичный дом на два подъезда, 72 квартиры. Закрытая территория, собственные гаражи и благоустроенный двор. Стены 62 см, пятикамерные окна, бесшумные лифты.",
+    "obj.dyusenova_304.rooms": "2–3 комнаты",
     
     "obj.dyusenova_306.district": "ул. Дюсенова",
-    "obj.dyusenova_306.tagline": "Сдан, свободных квартир нет.",
-    "obj.dyusenova_306.description": "Семиэтажный комплекс с просторными планировками, панорамными окнами и закрытой территорией. Отдельный паркинг на каждую квартиру.",
-    "obj.dyusenova_306.rooms": "1–4 комнаты",
+    "obj.dyusenova_306.tagline": "11-ти этажный дом, 50 квартир. Однокомнатные квартиры.",
+    "obj.dyusenova_306.description": "Одиннадцатиэтажный комплекс с однокомнатными квартирами, панорамными окнами и закрытой территорией. Отдельный паркинг на каждую квартиру.",
+    "obj.dyusenova_306.rooms": "1 комната",
 
     "obj.gorkogo_46.district": "ул. Горького",
     "obj.gorkogo_46.badge": "Последние две квартиры",
     "obj.gorkogo_46.tagline": "5-ти этажный дом бизнес класса.",
     "obj.gorkogo_46.description": "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
-    "obj.gorkogo_46.rooms": "52–57 м²",
+    "obj.gorkogo_46.rooms": "52 / 57 / 75 м²",
 
     "obj.estaya_90.district": "ул. Естая",
     "obj.estaya_90.tagline": "6-ти этажный дом бизнес класса.",
@@ -148,8 +148,9 @@ export const dictionaries = {
     "obj.bekturova_348.rooms": "35–44 м²",
 
     "obj.bekturova_356.district": "ул. Бектурова",
-    "obj.bekturova_356.tagline": "П-образный 5-ти подъездный 9-ти этажный дом комфорт класса.",
-    "obj.bekturova_356.description": "Цена: 300 тысяч за кв.м.",
+    "obj.bekturova_356.tagline": "П-образный 5-ти подъездный 9-ти этажный дом комфорт класса. 1-, 2- и 3-комнатные квартиры.",
+    "obj.bekturova_356.description": "Цена: 300 тысяч за кв.м. 1-, 2- и 3-комнатные квартиры, квадратуры от 37 до 89 м².",
+    "obj.bekturova_356.rooms": "37–89 м²",
     "horiz.title1": "Бесшумные лифты",
     "horiz.body1": "Современные бесшумные лифты.",
     "horiz.title2": "Пятикамерные окна",
@@ -176,7 +177,39 @@ export const dictionaries = {
     "feat.title2": "Тишина и уют",
     "feat.title3": "Строим дома из кирпича",
     "feat.body3": "Надежная основа вашего будущего. Прочность, тепло и долговечность в каждом проекте.",
-    "feat.title4": "Объекты, которые находятся на этапе ввода в эксплуатацию"
+    "feat.title4": "Объекты, которые находятся на этапе ввода в эксплуатацию",
+
+    "status.sales": "В продаже",
+    "status.soon": "Скоро",
+    "status.done": "Сдан",
+
+    "flagship.eyebrow": "Флагман · Корпус 1",
+    "flagship.title1": "Загляните внутрь дома,",
+    "flagship.title2": "который уже строится.",
+
+    "facade.eyebrow": "Архитектура",
+    "facade.title1": "Тёплый свет",
+    "facade.title2": "в каждом окне.",
+    "facade.body": "Вентилируемый фасад с крупноформатными плитами, контрастные тёмные углы и вертикальная шахта остекления. Архитектурная подсветка фасада и пешеходных дорожек включается с наступлением сумерек.",
+    "facade.meta.height": "Высота",
+    "facade.meta.height.value": "9 этажей",
+    "facade.meta.facade": "Фасад",
+    "facade.meta.facade.value": "HPL-панели",
+    "facade.meta.glazing": "Остекление",
+    "facade.meta.glazing.value": "2-камерное",
+    "facade.meta.light": "Освещение",
+    "facade.meta.light.value": "Архитектурное",
+
+    "yard.eyebrow": "Закрытый двор",
+    "yard.title1": "Только для тех,",
+    "yard.title2": "кто здесь живёт.",
+    "yard.body": "Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не бывает у дома без забора.",
+
+    "entrance.eyebrow": "Входная группа",
+    "entrance.title": "Стильные и безопасные подъезды.",
+    "entrance.body": "Просторные холлы, безбарьерная среда и современные домофоны для вашего комфорта и безопасности.",
+
+    "invest.intro": "Мы предлагаем два формата инвестиций, каждый из которых обеспечивает надёжное сохранение и приумножение вашего капитала."
   },
   kk: {
     "nav.objects": "Нысандар",
@@ -226,7 +259,7 @@ export const dictionaries = {
     "catalog.filter.sales": "Сатылымда",
     "catalog.filter.soon": "Жақында",
     "catalog.filter.done": "Тапсырылды",
-    "catalog.flagship": "Флагман",
+    "catalog.flagship": "Басты нысан",
     "catalog.videos": "бейне",
     "catalog.floors": "Қабаттылығы",
     "catalog.apartments": "Пәтерлер саны",
@@ -299,20 +332,20 @@ export const dictionaries = {
     "footer.schedule2": "дс-жм: 09:00–18:00, сенбі-жексенбі: демалыс",
 
     "obj.dyusenova_304.district": "Дүйсенов көш.",
-    "obj.dyusenova_304.tagline": "Тапсырылды, бос пәтерлер жоқ.",
-    "obj.dyusenova_304.description": "Malaysary Invest флагмандық нысаны — жабық аумағы, жеке гараждары және абаттандырылған ауласы бар алты қабатты кірпіш үй. Қабырғалары 62 см, бес камералы терезелер, шусыз лифттер.",
-    "obj.dyusenova_304.rooms": "1–3 бөлмелі",
+    "obj.dyusenova_304.tagline": "2 кіреберісті 9 қабатты үй, 72 пәтер. 2 және 3 бөлмелі пәтерлер.",
+    "obj.dyusenova_304.description": "Malaysary Invest флагмандық нысаны — екі кіреберісті тоғыз қабатты кірпіш үй, 72 пәтер. Жабық аумақ, жеке гараждар және абаттандырылған аула. Қабырғалары 62 см, бес камералы терезелер, шусыз лифттер.",
+    "obj.dyusenova_304.rooms": "2–3 бөлмелі",
     
     "obj.dyusenova_306.district": "Дүйсенов көш.",
-    "obj.dyusenova_306.tagline": "Тапсырылды, бос пәтерлер жоқ.",
-    "obj.dyusenova_306.description": "Кең жоспарлары, панорамалық терезелері және жабық аумағы бар жеті қабатты кешен. Әр пәтерге жеке автотұрақ.",
-    "obj.dyusenova_306.rooms": "1–4 бөлмелі",
+    "obj.dyusenova_306.tagline": "11 қабатты үй, 50 пәтер. Бір бөлмелі пәтерлер.",
+    "obj.dyusenova_306.description": "Бір бөлмелі пәтерлері, панорамалық терезелері және жабық аумағы бар он бір қабатты кешен. Әр пәтерге жеке автотұрақ.",
+    "obj.dyusenova_306.rooms": "1 бөлмелі",
 
     "obj.gorkogo_46.district": "Горький көш.",
     "obj.gorkogo_46.badge": "Соңғы екі пәтер",
     "obj.gorkogo_46.tagline": "5 қабатты бизнес класс үйі.",
     "obj.gorkogo_46.description": "Еркін жоспардағы 2 және 3 бөлмелі пәтерлер. Бағасы: шаршы метріне 500 мың.",
-    "obj.gorkogo_46.rooms": "52–57 м²",
+    "obj.gorkogo_46.rooms": "52 / 57 / 75 м²",
 
     "obj.estaya_90.district": "Естай көш.",
     "obj.estaya_90.tagline": "6 қабатты бизнес класс үйі.",
@@ -325,8 +358,9 @@ export const dictionaries = {
     "obj.bekturova_348.rooms": "35–44 м²",
 
     "obj.bekturova_356.district": "Бектұров көш.",
-    "obj.bekturova_356.tagline": "П-тәрізді 5 кіреберісті 9 қабатты жайлылық класындағы үй.",
-    "obj.bekturova_356.description": "Бағасы: шаршы метріне 300 мың.",
+    "obj.bekturova_356.tagline": "П-тәрізді 5 кіреберісті 9 қабатты жайлылық класындағы үй. 1, 2 және 3 бөлмелі пәтерлер.",
+    "obj.bekturova_356.description": "Бағасы: шаршы метріне 300 мың. 1, 2 және 3 бөлмелі пәтерлер, ауданы 37-ден 89 м²-ге дейін.",
+    "obj.bekturova_356.rooms": "37–89 м²",
     "horiz.title1": "Шусыз лифттер",
     "horiz.body1": "Заманауи шусыз лифттер.",
     "horiz.title2": "Бес камералы терезелер",
@@ -353,11 +387,47 @@ export const dictionaries = {
     "feat.title2": "Тыныштық пен жайлылық",
     "feat.title3": "Біз кірпіштен үйлер саламыз",
     "feat.body3": "Бұл сіздің болашағыңыздың сенімді негізі. Әр жобада беріктік, жылу және төзімділік.",
-    "feat.title4": "Пайдалануға беру сатысында тұрған нысандар"
+    "feat.title4": "Пайдалануға беру сатысында тұрған нысандар",
+
+    "status.sales": "Сатылымда",
+    "status.soon": "Жақында",
+    "status.done": "Тапсырылды",
+
+    "flagship.eyebrow": "Флагман · 1-корпус",
+    "flagship.title1": "Үйдің ішіне үңіліңіз,",
+    "flagship.title2": "ол қазір салынып жатыр.",
+
+    "facade.eyebrow": "Сәулет",
+    "facade.title1": "Жылы жарық",
+    "facade.title2": "әр терезеде.",
+    "facade.body": "Ірі форматты плиталары бар желдетілетін қасбет, контрастты қараңғы бұрыштар және тік шынылау шахтасы. Қасбет пен жаяу жолдардың сәулеттік жарығы ымырт түскенде қосылады.",
+    "facade.meta.height": "Биіктігі",
+    "facade.meta.height.value": "9 қабат",
+    "facade.meta.facade": "Қасбет",
+    "facade.meta.facade.value": "HPL-панельдер",
+    "facade.meta.glazing": "Шынылау",
+    "facade.meta.glazing.value": "2 камералы",
+    "facade.meta.light": "Жарықтандыру",
+    "facade.meta.light.value": "Сәулеттік",
+
+    "yard.eyebrow": "Жабық аула",
+    "yard.title1": "Тек осында",
+    "yard.title2": "тұратындар үшін.",
+    "yard.body": "Жалғыз кіреберіс — шлагбаум арқылы. Қонақтар шақырумен кіреді. Периметр ішінде — көгал, жолдар, ландшафтық көгалдандыру және қоршауы жоқ үйде болмайтын тыныштық.",
+
+    "entrance.eyebrow": "Кіреберіс тобы",
+    "entrance.title": "Сәнді әрі қауіпсіз кіреберістер.",
+    "entrance.body": "Кең холдар, кедергісіз орта және жайлылық пен қауіпсіздік үшін заманауи домофондар.",
+
+    "invest.intro": "Біз инвестицияның екі форматын ұсынамыз, олардың әрқайсысы капиталыңызды сенімді сақтау мен көбейтуді қамтамасыз етеді."
   }
 };
 
 // Common strings to be replaced across app components.
 export function getDictionary(lang: Locale): Record<string, string> {
-  return (dictionaries[lang] as Record<string, string>) || (dictionaries.ru as Record<string, string>);
+  const ru = dictionaries.ru as Record<string, string>;
+  if (lang === "kk") {
+    return { ...ru, ...(dictionaries.kk as Record<string, string>) };
+  }
+  return ru;
 }

@@ -135,7 +135,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <section className="relative bg-ink px-6 pt-24 sm:px-10 sm:pt-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-            Флагман · Корпус 1
+            {t("flagship.eyebrow")}
           </RevealOnView>
           <RevealOnView
             as="div"
@@ -144,9 +144,9 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
             className="mt-6 max-w-4xl font-display font-semibold tracking-tightest text-balance text-bone"
           >
             <h2 style={{ fontSize: "clamp(30px, 4.8vw, 64px)", lineHeight: 0.98 }}>
-              Загляните внутрь дома,
+              {t("flagship.title1")}
               <br />
-              <span className="text-bone-mute">который уже строится.</span>
+              <span className="text-bone-mute">{t("flagship.title2")}</span>
             </h2>
           </RevealOnView>
         </div>
@@ -157,29 +157,23 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         <RevealOnView variant="shutter" offset={0} as="div">
           <EditorialSpread
             imageSrc={`/${encodeURIComponent("Дюсенова 304")}/IMG_1334.webp`}
-            imageAlt="Фасад жилого дома Malaysary Invest"
-            eyebrow="Архитектура"
+            imageAlt={t("facade.eyebrow")}
+            eyebrow={t("facade.eyebrow")}
             title={
               <>
-                Тёплый свет
+                {t("facade.title1")}
                 <br />
-                в каждом окне.
+                {t("facade.title2")}
               </>
             }
-            body={
-              <>
-                Вентилируемый фасад с крупноформатными плитами, контрастные тёмные углы и
-                вертикальная шахта остекления. Архитектурная подсветка фасада и пешеходных
-                дорожек включается с наступлением сумерек.
-              </>
-            }
+            body={t("facade.body")}
             placement="bottom-left"
             height="screen"
             meta={[
-              { label: "Высота", value: "6 этажей" },
-              { label: "Фасад", value: "HPL-панели" },
-              { label: "Остекление", value: "2-камерное" },
-              { label: "Освещение", value: "Архитектурное" },
+              { label: t("facade.meta.height"), value: t("facade.meta.height.value") },
+              { label: t("facade.meta.facade"), value: t("facade.meta.facade.value") },
+              { label: t("facade.meta.glazing"), value: t("facade.meta.glazing.value") },
+              { label: t("facade.meta.light"), value: t("facade.meta.light.value") },
             ]}
           />
         </RevealOnView>
@@ -193,23 +187,21 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
               <div className="max-w-xl">
                 <div className="flex items-baseline gap-3 text-eyebrow uppercase text-bone-mute">
                   <span className="h-[1px] w-8 bg-bone/40" />
-                  <span>Закрытый двор</span>
+                  <span>{t("yard.eyebrow")}</span>
                 </div>
                 <h2
                   className="mt-5 font-display font-semibold tracking-tightest text-balance text-bone"
                   style={{ fontSize: "clamp(36px, 5vw, 72px)", lineHeight: 0.95 }}
                 >
-                  Только для тех,
+                  {t("yard.title1")}
                   <br />
-                  кто здесь живёт.
+                  {t("yard.title2")}
                 </h2>
                 <p
                   className="mt-6 max-w-md text-pretty text-bone-soft"
                   style={{ fontSize: "clamp(15px, 1.15vw, 18px)", lineHeight: 1.6 }}
                 >
-                  Единственный въезд — через шлагбаум. Гости проходят по приглашению. Внутри
-                  периметра — газон, дорожки, ландшафтное озеленение и тишина, которой не
-                  бывает у дома без забора.
+                  {t("yard.body")}
                 </p>
               </div>
             </div>
@@ -232,14 +224,10 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         <RevealOnView variant="shutter-right" offset={0} as="div">
           <EditorialSpread
             imageSrc={`/${encodeURIComponent("hf_20260616_163945_a4602a1f-ca26-4d7c-a86f-48d1d2629e77 (1).png")}`}
-            imageAlt="Входная группа и территория комплекса"
-            eyebrow="Входная группа"
-            title={<>Стильные и безопасные подъезды.</>}
-            body={
-              <>
-                Просторные холлы, безбарьерная среда и современные домофоны для вашего комфорта и безопасности.
-              </>
-            }
+            imageAlt={t("entrance.eyebrow")}
+            eyebrow={t("entrance.eyebrow")}
+            title={t("entrance.title")}
+            body={t("entrance.body")}
             placement="bottom-left"
             height="screen"
           />
@@ -264,7 +252,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
           <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <RevealOnView variant="wipe" className="text-eyebrow uppercase text-bone-mute">
-                Контакты
+                {t("contact.title")}
               </RevealOnView>
               <RevealOnView
                 as="div"
@@ -273,14 +261,13 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
                 className="mt-6 max-w-3xl font-display font-semibold tracking-tightest text-balance text-bone"
               >
                 <h2 style={{ fontSize: "clamp(38px, 6.5vw, 92px)", lineHeight: 0.95 }}>
-                  Запишитесь
+                  {t("contact.subtitle1")}
                   <br />
-                  <span className="text-bone-mute">на показ.</span>
+                  <span className="text-bone-mute">{t("contact.subtitle2")}</span>
                 </h2>
               </RevealOnView>
               <RevealOnView delay={220} className="mt-6 max-w-md text-pretty leading-relaxed text-bone-soft">
-                Проведём по дому и двору, покажем планировки вживую и ответим на
-                вопросы по ипотеке и рассрочке.
+                {t("contact.desc")}
               </RevealOnView>
             </div>
 
@@ -289,7 +276,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
                 href="tel:+77072343333"
                 className="group inline-flex items-center gap-3 rounded-full bg-bone py-4 pl-7 pr-6 text-[13px] font-semibold tracking-[0.04em] text-ink transition-colors duration-300 hover:bg-bone-soft"
               >
-                Позвонить сейчас
+                {t("contact.call")}
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
               <a
@@ -310,9 +297,9 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
               {
                 href: "tel:+77072343333",
                 external: false,
-                label: "Телефон",
+                label: t("contact.phone"),
                 value: "8 707 234 33 33",
-                note: "пн-пт с 09:00 до 18:00",
+                note: t("contact.phone.note"),
                 icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" />
@@ -324,7 +311,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
                 external: true,
                 label: "Instagram",
                 value: "@malaysary_invest",
-                note: "репортажи со строек",
+                note: t("contact.inst.note"),
                 icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
                     <rect x="2" y="2" width="20" height="20" rx="5" />
@@ -336,9 +323,9 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
               {
                 href: "https://2gis.kz/pavlodar/search/%D0%9B%D1%83%D0%BD%D0%B0%D1%87%D0%B0%D1%80%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2010",
                 external: true,
-                label: "Офис продаж",
-                value: "ул. Луначарского, 10",
-                note: "г. Павлодар · 2 этаж, кабинет 2",
+                label: t("contact.office"),
+                value: t("contact.office.addr"),
+                note: t("contact.office.note"),
                 icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0z" strokeLinecap="round" strokeLinejoin="round" />
@@ -383,7 +370,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
 
           {/* Sales office map */}
           <RevealOnView variant="zoom" delay={200} className="mt-16">
-            <div className="text-eyebrow uppercase text-bone-dim">Наши объекты на карте</div>
+            <div className="text-eyebrow uppercase text-bone-dim">{t("contact.map")}</div>
             <div className="mt-5 overflow-hidden rounded-2xl border border-bone/15">
               <MalaysaryMap />
             </div>

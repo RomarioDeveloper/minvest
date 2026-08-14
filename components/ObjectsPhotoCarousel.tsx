@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import { OBJECTS, STATUS_LABEL } from "@/lib/objects";
+import { OBJECTS } from "@/lib/objects";
 
 const SWIPE_OFFSET = 80;
 const SWIPE_VELOCITY = 500;
@@ -111,7 +111,7 @@ export default function ObjectsPhotoCarousel() {
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <span className="text-eyebrow uppercase text-bone/55">{current.district}</span>
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/40">
-                  {STATUS_LABEL[current.status]}
+                  {t(`status.${current.status}`)}
                 </span>
               </div>
               <h2

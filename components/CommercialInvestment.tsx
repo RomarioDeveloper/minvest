@@ -41,7 +41,7 @@ export default function CommercialInvestment() {
 
             <RevealOnView variant="blur" delay={200} className="mt-10 hidden lg:block">
               <p className="max-w-md text-base leading-relaxed text-bone-soft">
-                Мы предлагаем два формата инвестиций, каждый из которых обеспечивает надежное сохранение и приумножение вашего капитала.
+                {t("invest.intro")}
               </p>
             </RevealOnView>
           </div>
