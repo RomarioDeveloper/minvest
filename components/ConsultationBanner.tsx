@@ -12,11 +12,11 @@ export default function ConsultationBanner() {
         <RevealOnView variant="zoom" delay={200}>
           <div className="relative overflow-hidden rounded-[32px] border border-bone/10 bg-ink-panel">
             <div className="flex flex-col items-center md:flex-row md:items-end">
-              <div className="relative z-10 w-[210px] shrink-0 pt-6 sm:w-[240px] md:w-[300px] md:pt-6 lg:w-[340px]">
+              <div className="relative z-10 w-[230px] shrink-0 pt-6 sm:w-[260px] md:w-[300px] md:pt-6 lg:w-[340px]">
                 <img
                   src="/consult-character-down.webp"
                   alt=""
-                  className="mx-auto block h-auto w-full select-none object-contain object-bottom md:hidden"
+                  className="mx-auto -mb-10 block h-auto w-full select-none object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_72%,transparent)] md:hidden"
                   draggable={false}
                 />
                 <img
@@ -27,7 +27,7 @@ export default function ConsultationBanner() {
                 />
               </div>
 
-              <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-7 px-8 pb-10 pt-6 text-center sm:px-12 md:py-12">
+              <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-7 px-8 pb-10 pt-2 text-center sm:px-12 md:py-12 md:pt-12">
                 <div className="max-w-md">
                   <h3 className="font-display text-xl font-semibold leading-tight text-bone sm:text-2xl">
                     {t("consult.title")}
