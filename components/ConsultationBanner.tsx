@@ -11,23 +11,23 @@ export default function ConsultationBanner() {
     <section className="relative bg-ink px-6 pb-24 sm:px-10 sm:pb-32 lg:px-16">
       <div className="mx-auto max-w-5xl">
         <RevealOnView variant="zoom" delay={200}>
-          <div className="relative overflow-hidden rounded-[32px] bg-ink-panel border border-bone/10 px-8 py-10 sm:px-14 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="relative overflow-hidden rounded-[32px] bg-ink-panel border border-bone/10 px-8 pt-10 sm:px-14 sm:pt-12 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 md:gap-8">
             
             <motion.div
-              className="relative z-10 w-36 shrink-0 sm:w-44 md:w-52"
+              className="relative z-10 w-52 shrink-0 sm:w-64 md:w-72 lg:w-80 -mb-2 md:-mb-1 md:-ml-6"
               animate={{ y: [-4, 4, -4] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
               <img
                 src={`/${encodeURIComponent("Gemini_Generated_Image_y7l4imy7l4imy7l4-removebg-preview.png")}`}
                 alt=""
-                className="h-auto w-full select-none object-contain"
+                className="h-auto w-full select-none object-contain object-bottom"
                 draggable={false}
               />
             </motion.div>
 
             {/* Контент и кнопка */}
-            <div className="flex-1 flex flex-col md:flex-row items-center md:items-start md:justify-between w-full gap-8 text-center md:text-left z-10">
+            <div className="flex-1 flex flex-col items-center w-full gap-8 text-center z-10 pb-10 sm:pb-12">
               <div className="max-w-md">
                 <h3 className="font-display text-xl sm:text-2xl font-semibold text-bone leading-tight">
                   {t("consult.title")}

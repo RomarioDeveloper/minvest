@@ -20,6 +20,8 @@ const TASKS = [
   { file: "Бектурова 356.png", maxWidth: 2000, quality: 80 },
 ];
 
+const GALLERY_DIRS = ["Бектурова 356", "348 бектурова"];
+
 async function convert(absPng, { maxWidth, quality }) {
   const absWebp = absPng.replace(/\.png$/i, ".webp");
   const before = fs.statSync(absPng).size;
@@ -55,6 +57,21 @@ async function main() {
     const { before, after } = await convert(abs, t);
     totalBefore += before;
     totalAfter += after;
+  }
+
+  console.log("\n=== Галереи Бектуровой ===");
+  for (const dirName of GALLERY_DIRS) {
+    const dir = path.join(PUBLIC, dirName);
+    if (!fs.existsSync(dir)) continue;
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.toLowerCase().endsWith(".png")) continue;
+      const { before, after } = await convert(path.join(dir, name), {
+        maxWidth: 2000,
+        quality: 80,
+      });
+      totalBefore += before;
+      totalAfter += after;
+    }
   }
 
   console.log("\n=== Планировки ===");
