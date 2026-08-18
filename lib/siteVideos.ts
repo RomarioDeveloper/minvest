@@ -23,6 +23,9 @@ export const ADVANTAGE_VIDEO_SRCS = [
 /** Hero section (HeroVideo). */
 export const HERO_VIDEO_SRCS = ["/video/1.mp4", "/video/1.webm"] as const;
 
+/** Brand film on mobile — same footage as the scroll sequence, plain playback. */
+export const BRAND_VIDEO_MOBILE_SRC = "/hero-scrub-mobile-temp-mobile.mp4";
+
 /** All page videos — preloaded during the entry preloader, no lazy loading. */
 export const SITE_VIDEO_SRCS: string[] = [
   ...new Set([...FEATURE_VIDEO_SRCS, ...ADVANTAGE_VIDEO_SRCS, ...HERO_VIDEO_SRCS]),

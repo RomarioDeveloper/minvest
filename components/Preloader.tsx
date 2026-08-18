@@ -1,7 +1,7 @@
 "use client";
 
 import { scrollToTop } from "@/lib/scrollRestoration";
-import { FEATURE_VIDEO_SRCS, SITE_VIDEO_SRCS } from "@/lib/siteVideos";
+import { BRAND_VIDEO_MOBILE_SRC, FEATURE_VIDEO_SRCS, SITE_VIDEO_SRCS } from "@/lib/siteVideos";
 import { warmSiteVideos, warmSiteVideosBackground } from "@/lib/videoWarmup";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -67,7 +67,9 @@ export default function Preloader() {
       srcs.map((s) => (isMobile && s.endsWith(".mp4") ? s.replace(".mp4", "-mobile.mp4") : s));
 
     let warmupTimer = 0;
-    warmSiteVideos(getMobileSrcs(FEATURE_VIDEO_SRCS), (fraction) => {
+    warmSiteVideos(
+      [...getMobileSrcs(FEATURE_VIDEO_SRCS), ...(isMobile ? [BRAND_VIDEO_MOBILE_SRC] : [])],
+      (fraction) => {
       videoProgress = fraction;
       applyProgress();
     }).then(() => {

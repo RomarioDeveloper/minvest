@@ -19,9 +19,10 @@ type Props = {
   frameCountMobile?: number;
   poster?: string;
   posterMobile?: string;
+  /** То же видео, что секвенция кадров — на телефоне играет как обычный ролик. */
+  videoSrcMobile?: string;
 };
 
-const SECTION_VH_MOBILE = 300;
 const SECTION_VH_DESKTOP = 520;
 
 function useMobileViewport() {
@@ -55,6 +56,7 @@ export default function BrandFilm({
   frameCountMobile,
   poster,
   posterMobile,
+  videoSrcMobile = "/hero-scrub-mobile-temp.mp4",
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,11 +93,17 @@ export default function BrandFilm({
   const base = mobile ? (frameBaseMobile ?? frameBase) : frameBase;
   const count = mobile ? (frameCountMobile ?? frameCount) : frameCount;
   const videoPoster = mobile ? (posterMobile ?? poster) : poster;
-  const sectionVh = isMobile === false ? SECTION_VH_DESKTOP : SECTION_VH_MOBILE;
   const frameStep = mobile ? 2 : 1;
 
+  // На телефоне секвенция не нужна — сразу отпускаем прелоадер.
   useEffect(() => {
-    if (!ready || !base) return;
+    if (!ready || !mobile) return;
+    window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 1 }));
+    window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+  }, [ready, mobile]);
+
+  useEffect(() => {
+    if (!ready || mobile || !base) return;
 
     setFrameReady(false);
     window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 0 }));
@@ -150,7 +158,7 @@ export default function BrandFilm({
 
   // Render loop: eased progress → blended frames on canvas.
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || mobile) return;
 
     const section = sectionRef.current;
     const canvas = canvasRef.current;
@@ -289,29 +297,59 @@ export default function BrandFilm({
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-ink"
-      // svh, а не dvh: dvh меняется при скрытии адресной строки на мобилке,
-      // и вся пиннед-секция меняла высоту прямо во время скролла (рывки кадра).
-      style={{ height: `${sectionVh}svh` }}
-      aria-label="Видео о доме, управляемое скроллом"
+      className="relative w-full overflow-hidden bg-ink md:overflow-visible"
+      // На телефоне — один экран с обычным видео. На ПК — длинная пин-секция.
+      // svh, а не dvh: dvh меняется при скрытии адресной строки.
+      style={{ height: mobile === false ? `${SECTION_VH_DESKTOP}svh` : "100svh" }}
+      aria-label={mobile ? "Видео о доме" : "Видео о доме, управляемое скроллом"}
     >
-      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]">
-        {videoPoster && !frameReady && (
-          <img
-            src={videoPoster}
-            alt=""
-            aria-hidden
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-            draggable={false}
-          />
+      <div className={mobile
+        ? "absolute inset-0 overflow-hidden bg-ink"
+        : "sticky top-0 h-[100dvh] w-full overflow-hidden bg-ink supports-[height:100svh]:h-[100svh]"
+      }>
+        {mobile ? (
+          <>
+            {videoPoster && (
+              <img
+                src={videoPoster}
+                alt=""
+                aria-hidden
+                className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                draggable={false}
+              />
+            )}
+            <video
+              className="absolute inset-0 z-[1] h-full w-full object-cover"
+              src={videoSrcMobile.replace(/\.mp4$/, "-mobile.mp4")}
+              poster={videoPoster}
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="auto"
+              disablePictureInPicture
+            />
+          </>
+        ) : (
+          <>
+            {videoPoster && !frameReady && (
+              <img
+                src={videoPoster}
+                alt=""
+                aria-hidden
+                className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                draggable={false}
+              />
+            )}
+            <canvas
+              ref={canvasRef}
+              className={`pointer-events-none absolute inset-0 z-[1] h-full w-full transition-opacity duration-300 ${
+                frameReady ? "opacity-100" : "opacity-0"
+              }`}
+              aria-hidden
+            />
+          </>
         )}
-        <canvas
-          ref={canvasRef}
-          className={`pointer-events-none absolute inset-0 z-[1] h-full w-full transition-opacity duration-300 ${
-            frameReady ? "opacity-100" : "opacity-0"
-          }`}
-          aria-hidden
-        />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
 
         {/* Брендовый заголовок — только на ПК, поверх облаков */}
