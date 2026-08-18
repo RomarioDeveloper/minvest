@@ -12,11 +12,17 @@ export default function ConsultationBanner() {
         <RevealOnView variant="zoom" delay={200}>
           <div className="relative overflow-hidden rounded-[32px] border border-bone/10 bg-ink-panel">
             <div className="flex flex-col items-center md:flex-row md:items-end">
-              <div className="relative z-10 w-[220px] shrink-0 pt-8 sm:w-[260px] md:w-[300px] md:pt-6 lg:w-[340px]">
+              <div className="relative z-10 w-[210px] shrink-0 pt-6 sm:w-[240px] md:w-[300px] md:pt-6 lg:w-[340px]">
+                <img
+                  src="/consult-character-down.webp"
+                  alt=""
+                  className="mx-auto block h-auto w-full select-none object-contain object-bottom md:hidden"
+                  draggable={false}
+                />
                 <img
                   src="/consult-character.webp"
                   alt=""
-                  className="mx-auto block h-auto w-full select-none object-contain object-bottom"
+                  className="mx-auto hidden h-auto w-full select-none object-contain object-bottom md:block"
                   draggable={false}
                 />
               </div>
