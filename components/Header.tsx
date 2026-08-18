@@ -121,7 +121,7 @@ export default function Header() {
           </nav>
 
           <div className="relative z-[62] flex items-center justify-end gap-2 sm:gap-3">
-            <div className="hidden items-center gap-2.5 2xl:flex">
+            <div className="hidden items-center gap-1.5 xl:flex">
               {SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.label}
@@ -129,7 +129,7 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="text-bone-soft transition hover:text-bone"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-bone-soft transition hover:bg-bone/5 hover:text-bone"
                 >
                   {social.icon}
                 </a>

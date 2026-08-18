@@ -185,7 +185,7 @@ export const dictionaries = {
 
     "flagship.eyebrow": "Флагман · Корпус 1",
     "flagship.title1": "Загляните внутрь дома,",
-    "flagship.title2": "который уже строится.",
+    "flagship.title2": "который уже построен.",
 
     "facade.eyebrow": "Архитектура",
     "facade.title1": "Тёплый свет",
@@ -196,7 +196,7 @@ export const dictionaries = {
     "facade.meta.facade": "Фасад",
     "facade.meta.facade.value": "HPL-панели",
     "facade.meta.glazing": "Остекление",
-    "facade.meta.glazing.value": "2-камерное",
+    "facade.meta.glazing.value": "5-камерное",
     "facade.meta.light": "Освещение",
     "facade.meta.light.value": "Архитектурное",
 
@@ -395,7 +395,7 @@ export const dictionaries = {
 
     "flagship.eyebrow": "Флагман · 1-корпус",
     "flagship.title1": "Үйдің ішіне үңіліңіз,",
-    "flagship.title2": "ол қазір салынып жатыр.",
+    "flagship.title2": "ол қазірдің өзінде салынған.",
 
     "facade.eyebrow": "Сәулет",
     "facade.title1": "Жылы жарық",
@@ -406,7 +406,7 @@ export const dictionaries = {
     "facade.meta.facade": "Қасбет",
     "facade.meta.facade.value": "HPL-панельдер",
     "facade.meta.glazing": "Шынылау",
-    "facade.meta.glazing.value": "2 камералы",
+    "facade.meta.glazing.value": "5 камералы",
     "facade.meta.light": "Жарықтандыру",
     "facade.meta.light.value": "Сәулеттік",
 

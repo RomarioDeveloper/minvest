@@ -36,8 +36,6 @@ const GALLERY: Record<Tab, string[]> = {
   facade: [
     `${FACADE}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
     `${FACADE}/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.png`,
-    `${FACADE}/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.png`,
-    `${FACADE}/5b43565591a74ce208225cb74fbb6926_470adef1-f7ee-44e0-b9e5-db7788e4f2fc.png`,
     `${FACADE}/7b3aef5a98199018116dfc82b023f7da_930f09ae-5722-462a-8880-2d498132476d.png`,
     `${FACADE}/88b321f5ceeecb55f2d35ed2598c3e2f_65567578-29b5-45e8-8456-a1ea24bed0e0.png`,
     `${FACADE}/9e27ad1b2a6e559311e9cd2f31399cf3_b0eec14a-5300-487a-9855-d69b9226e8a6.png`,

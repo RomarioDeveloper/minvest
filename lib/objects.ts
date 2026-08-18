@@ -89,8 +89,6 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     gallery: [
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.png`,
-      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/19086718317f3e5a196967033b163ebf_27ece1ff-b826-4aa3-9941-763ce558d334.png`,
-      `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/5b43565591a74ce208225cb74fbb6926_470adef1-f7ee-44e0-b9e5-db7788e4f2fc.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/7b3aef5a98199018116dfc82b023f7da_930f09ae-5722-462a-8880-2d498132476d.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/88b321f5ceeecb55f2d35ed2598c3e2f_65567578-29b5-45e8-8456-a1ea24bed0e0.png`,
       `/gorgogo47/${encodeURIComponent("Входная дверь, внутрянка")}/124ff09e7dc6c177fbe814461e08cdf1_db043c37-390e-4974-9f33-d8e943653299.png`,

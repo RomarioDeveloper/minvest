@@ -10,7 +10,7 @@ export default function CompanyAdvantages() {
   
   const STATS = [
     { value: 6, suffix: "", label: t("adv.stat1.label"), note: t("adv.stat1.note") },
-    { value: 1200, suffix: "+", label: t("adv.stat2.label"), note: t("adv.stat2.note") },
+    { value: 435, suffix: "", label: t("adv.stat2.label"), note: t("adv.stat2.note") },
     { value: 9, suffix: "", label: t("adv.stat3.label"), note: t("adv.stat3.note") },
     { value: 100, suffix: "%", label: t("adv.stat4.label"), note: t("adv.stat4.note") },
   ];

@@ -58,7 +58,13 @@ export default function ObjectsCatalog() {
 
   useEffect(() => {
     document.body.style.overflow = selected ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis;
+    if (selected) lenis?.stop();
+    else lenis?.start();
+    return () => {
+      document.body.style.overflow = "";
+      lenis?.start();
+    };
   }, [selected]);
 
   return (
@@ -128,8 +134,7 @@ function ObjectCard({ obj, onOpen }: { obj: RealtyObject; onOpen: () => void }) 
       <div className="flex flex-1 flex-col p-6">
         <div className="text-eyebrow uppercase text-bone-dim">{obj.district}</div>
         <h3 className="mt-2 font-display text-2xl font-semibold tracking-tightest text-bone">{obj.name}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-bone-soft">{obj.tagline}</p>
-        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-bone/10 pt-5 text-sm">
+        <dl className="mt-6 grid flex-1 grid-cols-2 content-start gap-x-6 gap-y-3 border-t border-bone/10 pt-5 text-sm">
           <Spec label={t("catalog.floors")} value={`${obj.floors}`} />
           <Spec label={t("catalog.apartments")} value={`${obj.apartments}`} />
           <Spec label={t("catalog.sqm")} value={obj.rooms} />
@@ -211,13 +216,22 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         transition={{ duration: 0.3 }} onClick={onClose} />
 
       <motion.div
-        className="fixed inset-x-0 bottom-0 z-[71] flex h-[88svh] flex-col bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
+        className="fixed inset-x-0 bottom-0 z-[71] flex h-[88svh] flex-col overflow-hidden bg-[#111113] md:inset-x-auto md:inset-y-0 md:right-0 md:h-full md:w-[520px]"
         initial={{ y: "100%", opacity: 0.6 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", stiffness: 380, damping: 40, mass: 0.85 }}
         onClick={(e) => e.stopPropagation()}
       >
+        <button onClick={onClose} aria-label="Закрыть"
+          className="absolute right-3 top-3 z-30 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </button>
+
+        <div
+          className="min-h-0 flex-1 touch-pan-y overflow-y-scroll overscroll-contain [scrollbar-color:rgba(244,244,245,0.28)_transparent] [scrollbar-width:thin]"
+          onWheel={(e) => e.stopPropagation()}
+        >
         {/* ── Media area ── */}
-        <div className={`relative w-full shrink-0 overflow-hidden bg-ink ${mediaTab === "layouts" ? "h-[260px] sm:h-[300px] md:h-[360px]" : "h-[220px] sm:h-[260px] md:h-[300px]"}`}>
+        <div className={`relative w-full overflow-hidden bg-ink ${mediaTab === "layouts" ? "h-[260px] sm:h-[300px] md:h-[360px]" : "h-[220px] sm:h-[260px] md:h-[300px]"}`}>
 
           {mediaTab === "photo" && (
             <>
@@ -356,10 +370,6 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
           {obj.flagship && (
             <div className="absolute left-3 bottom-10 bg-bone px-2.5 py-1 text-eyebrow uppercase text-ink">{t("catalog.flagship")}</div>
           )}
-          <button onClick={onClose} aria-label="Закрыть"
-            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center bg-black/60 text-bone backdrop-blur-sm transition hover:bg-black">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-          </button>
         </div>
 
         {/* ── Tabs ── */}
@@ -387,9 +397,7 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
           </div>
         )}
 
-        {/* ── Scrollable content ── */}
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="px-5 pb-4 pt-5 sm:px-6">
+        <div className="px-5 pb-8 pt-5 sm:px-6">
             <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">{obj.district}</div>
             <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">{obj.name}</h2>
             <div className="mt-4 inline-flex items-baseline gap-1.5">
