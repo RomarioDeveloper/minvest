@@ -61,6 +61,7 @@ export default function BrandFilm({
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isMobile = useMobileViewport();
 
   const loaderRef = useRef<ReturnType<typeof createSlidingFrameLoader> | null>(null);
@@ -100,6 +101,66 @@ export default function BrandFilm({
     if (!ready || !mobile) return;
     window.dispatchEvent(new CustomEvent("brandfilm:progress", { detail: 1 }));
     window.dispatchEvent(new CustomEvent("brandfilm:ready"));
+  }, [ready, mobile]);
+
+  // После полного проигрыша — плавно листаем на следующий экран,
+  // если человек сам ещё не свайпнул.
+  useEffect(() => {
+    if (!ready || !mobile) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    let cancelled = false;
+    let userMoved = false;
+    let scrollTimer = 0;
+    let playTimer = 0;
+
+    const playFromStart = () => {
+      if (cancelled || userMoved) return;
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    };
+
+    const onPreloaderDone = () => {
+      // Ждём, пока занавес уедет (~0.9s), и только потом крутим ролик.
+      playTimer = window.setTimeout(playFromStart, 900);
+    };
+    window.addEventListener("preloader:done", onPreloaderDone, { once: true });
+    const fallback = window.setTimeout(playFromStart, 5000);
+
+    const markMoved = () => {
+      if (window.scrollY > 40) userMoved = true;
+    };
+    window.addEventListener("scroll", markMoved, { passive: true });
+    window.addEventListener("wheel", markMoved, { passive: true });
+
+    const onEnded = () => {
+      if (cancelled || userMoved) return;
+      if (window.scrollY > 40) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      scrollTimer = window.setTimeout(() => {
+        if (cancelled || userMoved || window.scrollY > 40) return;
+        const next =
+          document.getElementById("hero") ??
+          sectionRef.current?.closest("#top")?.nextElementSibling;
+        if (next instanceof HTMLElement) {
+          next.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 240);
+    };
+    video.addEventListener("ended", onEnded);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(fallback);
+      window.clearTimeout(playTimer);
+      window.clearTimeout(scrollTimer);
+      window.removeEventListener("preloader:done", onPreloaderDone);
+      window.removeEventListener("scroll", markMoved);
+      window.removeEventListener("wheel", markMoved);
+      video.removeEventListener("ended", onEnded);
+    };
   }, [ready, mobile]);
 
   useEffect(() => {
@@ -319,13 +380,12 @@ export default function BrandFilm({
               />
             )}
             <video
+              ref={videoRef}
               className="absolute inset-0 z-[1] h-full w-full object-cover"
               src={videoSrcMobile.replace(/\.mp4$/, "-mobile.mp4")}
               poster={videoPoster}
               muted
-              loop
               playsInline
-              autoPlay
               preload="auto"
               disablePictureInPicture
             />

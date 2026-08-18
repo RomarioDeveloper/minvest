@@ -43,7 +43,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       </div>
 
       {/* ---------- HERO ---------- */}
-      <div>
+      <div id="hero">
         <HeroVideo src="/video/1" />
       </div>
 

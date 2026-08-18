@@ -11,17 +11,17 @@ export default function ConsultationBanner() {
       <div className="mx-auto max-w-5xl">
         <RevealOnView variant="zoom" delay={200}>
           <div className="relative overflow-hidden rounded-[32px] border border-bone/10 bg-ink-panel">
-            <div className="flex flex-col md:flex-row md:items-stretch">
-              <div className="relative mx-auto h-72 w-56 shrink-0 sm:h-80 sm:w-64 md:mx-0 md:h-auto md:min-h-[360px] md:w-[300px] lg:w-[340px]">
+            <div className="flex flex-col items-center md:flex-row md:items-end">
+              <div className="relative z-10 w-[220px] shrink-0 pt-8 sm:w-[260px] md:w-[300px] md:pt-6 lg:w-[340px]">
                 <img
                   src="/consult-character.webp"
                   alt=""
-                  className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-[118%] w-auto max-w-none select-none object-contain object-bottom md:left-0 md:mx-0 md:h-[108%]"
+                  className="mx-auto block h-auto w-full select-none object-contain object-bottom"
                   draggable={false}
                 />
               </div>
 
-              <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-7 px-8 pb-10 pt-2 text-center sm:px-12 md:py-12">
+              <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-7 px-8 pb-10 pt-6 text-center sm:px-12 md:py-12">
                 <div className="max-w-md">
                   <h3 className="font-display text-xl font-semibold leading-tight text-bone sm:text-2xl">
                     {t("consult.title")}
