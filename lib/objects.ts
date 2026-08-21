@@ -124,6 +124,10 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     image: `/${encodeURIComponent("Естая 90 (2).webp")}`,
     gallery: [
       `/${encodeURIComponent("Естая 90 (2).webp")}`,
+      "/hf_20260707_154704_ae1bf95e-251d-48dd-b33c-775ab8c331c5.webp",
+      "/hf_20260707_154651_211e19a5-759a-4d8c-991a-cd7ea5e1d58e.webp",
+      "/hf_20260707_154356_22df592c-8d10-45bd-8e0a-02f3d237c157.webp",
+      "/hf_20260707_154346_5a3795be-0bbb-4b42-a699-17363a20689b.webp",
     ],
     floors: 6,
     apartments: 30,
