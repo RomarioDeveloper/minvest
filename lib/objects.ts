@@ -87,6 +87,9 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
     image: `/${encodeURIComponent("Горького.webp")}`,
     gallery: [
+      "/hf_20260707_155135_aa59f259-f006-4fc2-a9fd-23135a0d42d5.webp",
+      "/hf_20260707_155138_c36ae81d-8885-49ac-9407-6b8dcd803863.webp",
+      "/hf_20260707_155140_458e9520-9019-43e5-9634-c351bae9fb49.webp",
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/41b6768d010586018f82b0599388ee87_f00633db-fee7-4294-afb1-8f5249c41033.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/884b9cde6abe5acff6acdca51ff98611_01bb4eba-a93d-4e21-b418-5b7cc51b79ab.png`,
       `/gorgogo47/${encodeURIComponent("Полный фасад территории")}/7b3aef5a98199018116dfc82b023f7da_930f09ae-5722-462a-8880-2d498132476d.png`,
