@@ -56,7 +56,7 @@ export default function BrandFilm({
   frameCountMobile,
   poster,
   posterMobile,
-  videoSrcMobile = "/hero-scrub-mobile-temp.mp4",
+  videoSrcMobile = "/1.mp4",
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);

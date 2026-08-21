@@ -56,7 +56,7 @@ export default async function RootLayout({
         <link
           rel="preload"
           as="image"
-          href="/hero-scrub-mobile-temp.jpg"
+          href="/1.jpg"
           media="(max-width: 767px)"
         />
         {/* Всегда начинаем с верха страницы: браузерное восстановление скролла

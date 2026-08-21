@@ -38,7 +38,8 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
           frameCount={300}
           frameCountMobile={181}
           poster="/hero-scrub-temp.jpg"
-          posterMobile="/hero-scrub-mobile-temp.jpg"
+          posterMobile="/1.jpg"
+          videoSrcMobile="/1.mp4"
         />
       </div>
 
