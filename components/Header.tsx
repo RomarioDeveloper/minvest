@@ -98,17 +98,17 @@ export default function Header() {
         {/* backdrop-blur пересчитывается на каждый кадр скролла (под шапкой канвас и видео).
             На мобилке блюра нет вообще — плотный фон, на десктопе md вместо xl +
             transform-gpu, чтобы блюр жил на собственном слое композитора. */}
-        <div className="relative mx-auto grid max-w-6xl transform-gpu grid-cols-[1fr_auto] items-center gap-3 rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6 xl:grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1.1fr)] xl:gap-4">
-          <a href="#top" className="relative z-[62] flex min-w-0 items-center gap-3 text-bone" onClick={closeMenu}>
+        <div className={`relative mx-auto flex max-w-6xl transform-gpu items-center gap-3 rounded-full border border-bone/10 bg-ink/90 py-2 pl-5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.35)] md:bg-ink/60 md:backdrop-blur-md sm:pl-6 ${lang === "kk" ? "2xl:gap-6" : "xl:gap-6"}`}>
+          <a href="#top" className="relative z-[62] flex min-w-0 shrink-0 items-center gap-2.5 text-bone sm:gap-3" onClick={closeMenu}>
             <img src="/logo-mark.webp" alt="" aria-hidden className="h-7 w-auto shrink-0" />
-            <span className="font-display text-[13px] font-bold tracking-[0.14em] hidden truncate sm:block">
+            <span className="min-w-0 truncate font-display text-[11px] font-bold tracking-[0.12em] sm:text-[13px] sm:tracking-[0.14em]">
               MALAYSARY
-              <span className="ml-1.5 font-medium text-bone-mute">INVEST</span>
+              <span className="ml-1 font-medium text-bone-mute sm:ml-1.5">INVEST</span>
             </span>
           </a>
 
-          {/* Полное меню только от xl — на ~1000–1200px оно наезжало на соцсети/CTA */}
-          <nav className="hidden items-center gap-6 text-[13px] font-medium text-bone-soft 2xl:gap-8 xl:flex">
+          {/* KK-пункты длиннее — полное меню только от 2xl, иначе наезжает на иконки */}
+          <nav className={`hidden min-w-0 flex-1 items-center justify-center text-[13px] font-medium text-bone-soft ${lang === "kk" ? "gap-5 px-4 2xl:flex" : "gap-6 px-6 2xl:gap-8 xl:flex"}`}>
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
@@ -120,8 +120,8 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="relative z-[62] flex items-center justify-end gap-2 sm:gap-3">
-            <div className="hidden items-center gap-1.5 xl:flex">
+          <div className="relative z-[62] ml-auto flex shrink-0 items-center justify-end gap-3 sm:gap-3.5">
+            <div className={`hidden items-center gap-1.5 border-l border-bone/15 pl-4 ${lang === "kk" ? "2xl:flex" : "xl:flex"}`}>
               {SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.label}
@@ -151,7 +151,7 @@ export default function Header() {
               aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
-              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bone/15 text-bone transition hover:border-bone/40 hover:bg-bone/5 xl:hidden"
+              className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-bone/15 text-bone transition hover:border-bone/40 hover:bg-bone/5 ${lang === "kk" ? "2xl:hidden" : "xl:hidden"}`}
             >
             <span className="sr-only">{menuOpen ? "Закрыть" : "Меню"}</span>
             <span className="relative h-3.5 w-5">
@@ -179,7 +179,7 @@ export default function Header() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-[61] xl:hidden"
+            className={`fixed inset-0 z-[61] ${lang === "kk" ? "2xl:hidden" : "xl:hidden"}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
