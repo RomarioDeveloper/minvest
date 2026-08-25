@@ -412,16 +412,16 @@ export default function BrandFilm({
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
 
-        {/* Брендовый заголовок — только на ПК, поверх облаков */}
-        {!isMobile && titleVisible && (
+        {/* Брендовый заголовок — поверх облаков */}
+        {titleVisible && (
           <div
             ref={overlayRef}
-            className="pointer-events-none absolute inset-0 z-[3] hidden md:flex items-center justify-center"
+            className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center"
           >
             <motion.h1
               className="font-display font-bold tracking-tightest text-center whitespace-nowrap"
               style={{
-                fontSize: "clamp(48px, 6.5vw, 120px)",
+                fontSize: "clamp(32px, 8vw, 120px)",
                 lineHeight: 1,
                 filter: "drop-shadow(0 4px 40px rgba(5,5,6,0.45))",
               }}
