@@ -76,18 +76,17 @@ export default function BrandFilm({
     // подниматься (сам подъём ~0.9s). Ждём, пока экран полностью откроется,
     // и только потом стартуем — иначе половина анимации играет за занавесом.
     const show = () => {
-      timer = window.setTimeout(() => setTitleVisible(true), 1000);
+      timer = window.setTimeout(() => setTitleVisible(true), mobile ? 700 : 1000);
     };
     window.addEventListener("preloader:done", show, { once: true });
-    // Страховка: если событие не пришло (например, компонент перемонтировался
-    // уже после прелоадера) — всё равно показываем заголовок.
-    const fallback = window.setTimeout(show, 6000);
+    // На мобилке быстрее поднимаем страховку — заголовок не должен «пропасть».
+    const fallback = window.setTimeout(show, mobile ? 2800 : 6000);
     return () => {
       window.removeEventListener("preloader:done", show);
       window.clearTimeout(fallback);
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [mobile]);
 
   const ready = isMobile !== null;
   const mobile = isMobile === true;
@@ -412,18 +411,21 @@ export default function BrandFilm({
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-t from-ink to-transparent" />
 
-        {/* Брендовый заголовок — поверх облаков */}
+        {/* Брендовый заголовок — поверх видео/кадров (и на мобилке, и на ПК) */}
         {titleVisible && (
           <div
             ref={overlayRef}
-            className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center"
+            className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4"
+            style={mobile ? { opacity: 1, visibility: "visible" } : undefined}
           >
             <motion.h1
               className="font-display font-bold tracking-tightest text-center whitespace-nowrap"
               style={{
-                fontSize: "clamp(32px, 8vw, 120px)",
+                fontSize: mobile
+                  ? "clamp(28px, 9.2vw, 44px)"
+                  : "clamp(48px, 6.5vw, 120px)",
                 lineHeight: 1,
-                filter: "drop-shadow(0 4px 40px rgba(5,5,6,0.45))",
+                filter: "drop-shadow(0 4px 40px rgba(5,5,6,0.55))",
               }}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
