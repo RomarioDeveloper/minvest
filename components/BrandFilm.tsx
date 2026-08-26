@@ -425,19 +425,22 @@ export default function BrandFilm({
                   ? "clamp(28px, 9.2vw, 44px)"
                   : "clamp(48px, 6.5vw, 120px)",
                 lineHeight: 1,
-                filter: "drop-shadow(0 4px 40px rgba(5,5,6,0.55))",
+                // filter ломает background-clip:text на мобильных WebKit —
+                // тень через text-shadow на псевдо-слое не нужна, оставляем без filter.
               }}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               <DiaTextReveal
+                key="brand-title-reveal"
                 text="MALAYSARY INVEST"
                 textColor="#f4f4f5"
                 colors={["#f7dfae", "#f3b268", "#e8875f", "#fbeedb", "#f7dfae"]}
-                duration={2}
-                delay={0.4}
+                duration={mobile ? 2.4 : 2}
+                delay={mobile ? 0.15 : 0.35}
                 startOnView={false}
+                forceAnimate
               />
             </motion.h1>
           </div>

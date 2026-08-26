@@ -86,6 +86,8 @@ export interface DiaTextRevealProps
   startOnView?: boolean;
   /** Play only the first time (when `startOnView` is used). */
   once?: boolean;
+  /** Ignore prefers-reduced-motion and always run the gradient sweep. */
+  forceAnimate?: boolean;
   className?: string;
   /** Lock width to the widest string when `text` is an array. */
   fixedWidth?: boolean;
@@ -101,6 +103,7 @@ export function DiaTextReveal({
   repeatDelay = 0.5,
   startOnView = true,
   once = true,
+  forceAnimate = false,
   className,
   fixedWidth = false,
   ...props
@@ -108,6 +111,7 @@ export function DiaTextReveal({
   const texts = Array.isArray(text) ? text : [text];
   const isMulti = texts.length > 1;
   const prefersReducedMotion = useReducedMotion();
+  const skipMotion = !forceAnimate && prefersReducedMotion;
 
   const spanRef = useRef<HTMLSpanElement>(null);
   const optsRef = useRef({ colors, textColor, duration, delay, repeat, repeatDelay, texts });
@@ -161,7 +165,7 @@ export function DiaTextReveal({
   };
 
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (skipMotion) {
       sweepPos.set(SWEEP_END);
       return;
     }
@@ -177,7 +181,7 @@ export function DiaTextReveal({
       // разрешаем сыграть заново — иначе текст навсегда остаётся прозрачным.
       hasPlayedRef.current = false;
     };
-  }, [isInView, startOnView, once, prefersReducedMotion, sweepPos]);
+  }, [isInView, startOnView, once, skipMotion, sweepPos]);
 
   const fixedW =
     isMulti && fixedWidth && measuredWidths.length > 0
@@ -195,6 +199,7 @@ export function DiaTextReveal({
       className={cn("align-bottom leading-[100%] text-inherit", className)}
       style={{
         color: "transparent",
+        WebkitTextFillColor: "transparent",
         backgroundClip: "text",
         WebkitBackgroundClip: "text",
         backgroundSize: "100% 100%",
