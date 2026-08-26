@@ -70,6 +70,13 @@ export default function BrandFilm({
   // иначе анимация отыграет за занавесом и никто её не увидит.
   const [titleVisible, setTitleVisible] = useState(false);
 
+  const ready = isMobile !== null;
+  const mobile = isMobile === true;
+  const base = mobile ? (frameBaseMobile ?? frameBase) : frameBase;
+  const count = mobile ? (frameCountMobile ?? frameCount) : frameCount;
+  const videoPoster = mobile ? (posterMobile ?? poster) : poster;
+  const frameStep = mobile ? 2 : 1;
+
   useEffect(() => {
     let timer = 0;
     // Событие приходит в момент, когда занавес прелоадера только начинает
@@ -87,13 +94,6 @@ export default function BrandFilm({
       window.clearTimeout(timer);
     };
   }, [mobile]);
-
-  const ready = isMobile !== null;
-  const mobile = isMobile === true;
-  const base = mobile ? (frameBaseMobile ?? frameBase) : frameBase;
-  const count = mobile ? (frameCountMobile ?? frameCount) : frameCount;
-  const videoPoster = mobile ? (posterMobile ?? poster) : poster;
-  const frameStep = mobile ? 2 : 1;
 
   // На телефоне секвенция не нужна — сразу отпускаем прелоадер.
   useEffect(() => {
