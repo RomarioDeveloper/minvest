@@ -21,18 +21,10 @@ function parseLayoutMeta(filename) {
   const area = match ? Number(match[1]) : 0;
   const suffix = (match?.[2] ?? "").toLowerCase().replace(/\s/g, "");
 
-  const isCommercial =
-    suffix.includes("кк") ||
-    /кв{2,}/.test(suffix) ||
-    suffix.includes("квк");
-
-  const kind = isCommercial ? "commercial" : "apartment";
-  const kindLabel = kind === "commercial" ? "коммерция" : "квартира";
+  const kind = "apartment";
+  const kindLabel = "квартира";
 
   let label = `${area} м² · ${kindLabel}`;
-  if (suffix && suffix !== "кв" && !/^к{2,}в+$/.test(suffix)) {
-    label = `${area} м² · ${kindLabel} (${suffix})`;
-  }
 
   return { area, kind, label };
 }
