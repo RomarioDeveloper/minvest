@@ -1,43 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
-const BAND_HALF = 17;
-const SWEEP_START = -BAND_HALF;
-const SWEEP_END = 100 + BAND_HALF;
-const COLORS = ["#f7dfae", "#f3b268", "#e8875f", "#fbeedb", "#f7dfae"];
 const TEXT_COLOR = "#f4f4f5";
+const GOLD = "#f7dfae";
+const GOLD_MID = "#f3b268";
+const GOLD_HOT = "#e8875f";
+const BAND = 0.16;
 
 const sweepEase = (t: number) =>
   t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
-
-function buildGradient(pos: number) {
-  const bandStart = pos - BAND_HALF;
-  const bandEnd = pos + BAND_HALF;
-
-  if (bandStart >= 100) {
-    return `linear-gradient(90deg, ${TEXT_COLOR}, ${TEXT_COLOR})`;
-  }
-
-  const parts: string[] = [];
-  if (bandStart > 0) {
-    parts.push(`${TEXT_COLOR} 0%`, `${TEXT_COLOR} ${bandStart.toFixed(2)}%`);
-  }
-
-  COLORS.forEach((c, i) => {
-    const pct =
-      COLORS.length === 1
-        ? pos
-        : bandStart + (i / (COLORS.length - 1)) * BAND_HALF * 2;
-    parts.push(`${c} ${pct.toFixed(2)}%`);
-  });
-
-  if (bandEnd < 100) {
-    parts.push(`transparent ${bandEnd.toFixed(2)}%`, `transparent 100%`);
-  }
-
-  return `linear-gradient(90deg, ${parts.join(", ")})`;
-}
 
 type Props = {
   text?: string;
@@ -47,9 +19,8 @@ type Props = {
 };
 
 /**
- * Тот же золотой sweep, что DiaTextReveal, но без Framer MotionValue —
- * на мобильном WebKit/Chrome background-clip + MotionValue часто не рисует кадры.
- * Здесь каждый кадр пишется напрямую в DOM через rAF.
+ * Золотая волна по буквам БЕЗ background-clip:text.
+ * Белый текст + цветная полоса через clip-path — стабильно на мобилках.
  */
 export default function BrandTitleReveal({
   text = "MALAYSARY INVEST",
@@ -57,18 +28,15 @@ export default function BrandTitleReveal({
   delay = 0.2,
   className,
 }: Props) {
-  const ref = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState(0);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
     let raf = 0;
     let startAt = 0;
     const durationMs = duration * 1000;
     const delayMs = delay * 1000;
 
-    el.style.backgroundImage = buildGradient(SWEEP_START);
+    setPos(0);
 
     const tick = (now: number) => {
       if (!startAt) startAt = now + delayMs;
@@ -76,39 +44,99 @@ export default function BrandTitleReveal({
         raf = requestAnimationFrame(tick);
         return;
       }
-
       const t = Math.min(1, (now - startAt) / durationMs);
-      const pos = SWEEP_START + (SWEEP_END - SWEEP_START) * sweepEase(t);
-      el.style.backgroundImage = buildGradient(pos);
-
-      if (t < 1) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        el.style.backgroundImage = buildGradient(SWEEP_END);
-      }
+      setPos(sweepEase(t));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else setPos(1);
     };
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [duration, delay, text]);
 
+  const done = pos >= 0.999;
+  // Белый открывается чуть позади золотого фронта
+  const whiteClipRight = Math.max(0, (1 - Math.max(0, pos - BAND * 0.25)) * 100);
+  const goldClipLeft = Math.max(0, (pos - BAND) * 100);
+  const goldClipRight = Math.max(0, (1 - pos) * 100);
+
   return (
     <span
-      ref={ref}
       className={className}
+      role="text"
+      aria-label={text}
       style={{
+        position: "relative",
         display: "inline-block",
-        color: "transparent",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-        WebkitBackgroundClip: "text",
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
-        // стартовый кадр до первого rAF — невидимый, без белой вспышки
-        backgroundImage: buildGradient(SWEEP_START),
+        whiteSpace: "nowrap",
+        lineHeight: 1,
       }}
     >
-      {text}
+      <span style={{ visibility: "hidden" }} aria-hidden>
+        {text}
+      </span>
+
+      {/* Белая проявленная часть */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          color: TEXT_COLOR,
+          clipPath: done ? undefined : `inset(0 ${whiteClipRight}% 0 0)`,
+          WebkitClipPath: done ? undefined : `inset(0 ${whiteClipRight}% 0 0)`,
+          willChange: "clip-path",
+        }}
+      >
+        {text}
+      </span>
+
+      {/* Золотая полоса на фронте — обычный color, без background-clip */}
+      {!done && (
+        <>
+          <span
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              color: GOLD_MID,
+              clipPath: `inset(0 ${goldClipRight}% 0 ${goldClipLeft}%)`,
+              WebkitClipPath: `inset(0 ${goldClipRight}% 0 ${goldClipLeft}%)`,
+              willChange: "clip-path",
+            }}
+          >
+            {text}
+          </span>
+          {/* Более горячий край фронта */}
+          <span
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              color: GOLD_HOT,
+              clipPath: `inset(0 ${goldClipRight}% 0 ${Math.min(100, goldClipLeft + BAND * 50)}%)`,
+              WebkitClipPath: `inset(0 ${goldClipRight}% 0 ${Math.min(100, goldClipLeft + BAND * 50)}%)`,
+              willChange: "clip-path",
+            }}
+          >
+            {text}
+          </span>
+          <span
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              color: GOLD,
+              opacity: 0.7,
+              clipPath: `inset(0 ${Math.min(100, goldClipRight + BAND * 30)}% 0 ${goldClipLeft}%)`,
+              WebkitClipPath: `inset(0 ${Math.min(100, goldClipRight + BAND * 30)}% 0 ${goldClipLeft}%)`,
+              willChange: "clip-path",
+            }}
+          >
+            {text}
+          </span>
+        </>
+      )}
     </span>
   );
 }
