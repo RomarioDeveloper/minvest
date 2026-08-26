@@ -8,8 +8,7 @@ import {
   snapFrameIndex,
   type Frame,
 } from "@/lib/scrollCanvas";
-import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
-import { motion } from "framer-motion";
+import BrandTitleReveal from "@/components/BrandTitleReveal";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -418,31 +417,21 @@ export default function BrandFilm({
             className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4"
             style={mobile ? { opacity: 1, visibility: "visible" } : undefined}
           >
-            <motion.h1
+            <h1
               className="font-display font-bold tracking-tightest text-center whitespace-nowrap"
               style={{
                 fontSize: mobile
                   ? "clamp(28px, 9.2vw, 44px)"
                   : "clamp(48px, 6.5vw, 120px)",
                 lineHeight: 1,
-                // filter ломает background-clip:text на мобильных WebKit —
-                // тень через text-shadow на псевдо-слое не нужна, оставляем без filter.
               }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
-              <DiaTextReveal
-                key="brand-title-reveal"
+              <BrandTitleReveal
                 text="MALAYSARY INVEST"
-                textColor="#f4f4f5"
-                colors={["#f7dfae", "#f3b268", "#e8875f", "#fbeedb", "#f7dfae"]}
-                duration={mobile ? 2.4 : 2}
-                delay={mobile ? 0.15 : 0.35}
-                startOnView={false}
-                forceAnimate
+                duration={mobile ? 2.4 : 2.1}
+                delay={mobile ? 0.25 : 0.35}
               />
-            </motion.h1>
+            </h1>
           </div>
         )}
       </div>
