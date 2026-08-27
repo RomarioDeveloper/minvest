@@ -113,8 +113,11 @@ export default function BrandFilm({
     let scrollTimer = 0;
     let playTimer = 0;
 
+    video.playbackRate = 1.45;
+
     const playFromStart = () => {
       if (cancelled || userMoved) return;
+      video.playbackRate = 1.45;
       video.currentTime = 0;
       video.play().catch(() => {});
     };
