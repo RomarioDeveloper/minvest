@@ -16,10 +16,30 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const t = (key: string) => getDictionary(lang)[key] || key;
   
   return {
-    title: "Malaysary Invest — " + (lang === 'ru' ? 'застройщик' : 'құрылыс салушы'),
+    title: "Malaysary Invest — " + (lang === 'ru' ? 'застройщик в Павлодаре' : 'Павлодардағы құрылыс салушы'),
     description: lang === 'ru' 
-      ? "Надёжный застройщик Malaysary Invest: жилые комплексы с закрытой территорией, гаражами и детскими площадками. Ипотека и рассрочка."
-      : "Malaysary Invest сенімді құрылыс салушысы: жабық аумағы, гараждары және балалар алаңдары бар тұрғын үй кешендері. Ипотека және бөліп төлеу.",
+      ? "Malaysary Invest (Малайсары Инвест) — застройщик в Павлодаре. Жилые комплексы с закрытой территорией, гаражами и детскими площадками. Ипотека и рассрочка."
+      : "Malaysary Invest (Малайсары Инвест) — Павлодардағы сенімді құрылыс салушы. Жабық аумағы, гараждары және балалар алаңдары бар тұрғын үй кешендері. Ипотека және бөліп төлеу.",
+    keywords: lang === 'ru'
+      ? ["Malaysary Invest", "Малайсары Инвест", "застройщик Павлодар", "квартиры Павлодар", "новостройки Павлодар"]
+      : ["Malaysary Invest", "Малайсары Инвест", "құрылыс салушы Павлодар", "пәтерлер Павлодар"],
+    alternates: {
+      canonical: `https://minvest.kz/${lang}`,
+      languages: {
+        ru: "https://minvest.kz/ru",
+        kk: "https://minvest.kz/kk",
+      },
+    },
+    openGraph: {
+      title: "Malaysary Invest",
+      description: lang === 'ru'
+        ? "Застройщик в Павлодаре — жилые комплексы Malaysary Invest"
+        : "Павлодардағы құрылыс салушы — Malaysary Invest тұрғын үй кешендері",
+      url: `https://minvest.kz/${lang}`,
+      siteName: "Malaysary Invest",
+      locale: lang === "ru" ? "ru_KZ" : "kk_KZ",
+      type: "website",
+    },
   };
 }
 
