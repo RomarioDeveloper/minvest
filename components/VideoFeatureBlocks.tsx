@@ -66,7 +66,14 @@ function SplitFeatureBlock({
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[45%] bg-gradient-to-t from-ink via-ink/40 to-transparent md:hidden" />
+      {/* Сплошной ink у низа — без полупрозрачной «полоски» на стыке с каталогом */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[45%] md:hidden"
+        style={{
+          background:
+            "linear-gradient(to top, #08080a 0%, rgba(8,8,10,0.55) 32%, transparent 58%)",
+        }}
+      />
 
       <div className="relative z-10 flex h-full w-full items-end p-6 pb-20 sm:p-10 md:w-1/2 md:items-center md:p-16 lg:p-24">
         <div className="max-w-4xl">

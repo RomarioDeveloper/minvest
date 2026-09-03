@@ -68,7 +68,7 @@ export default function ObjectsCatalog() {
   }, [selected]);
 
   return (
-    <section id="objects" className="relative border-y border-bone/10 bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
+    <section id="objects" className="relative border-b border-bone/10 bg-ink px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>

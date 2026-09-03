@@ -110,24 +110,42 @@ export default function BrandFilm({
 
     let cancelled = false;
     let userMoved = false;
+    let started = false;
     let scrollTimer = 0;
     let playTimer = 0;
+    let fallback = 0;
 
+    // Держим на паузе до явного старта — иначе браузер/preload
+    // могут крутить кадры, а потом seek на 0 выглядит как «два раза».
+    video.pause();
+    try {
+      video.currentTime = 0;
+    } catch {
+      /* ignore seek before metadata */
+    }
     video.playbackRate = 1.45;
 
     const playFromStart = () => {
-      if (cancelled || userMoved) return;
+      if (cancelled || userMoved || started) return;
+      started = true;
+      window.clearTimeout(fallback);
       video.playbackRate = 1.45;
-      video.currentTime = 0;
+      try {
+        if (video.currentTime > 0.05) video.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
       video.play().catch(() => {});
     };
 
     const onPreloaderDone = () => {
+      window.clearTimeout(fallback);
       // Ждём, пока занавес уедет (~0.9s), и только потом крутим ролик.
       playTimer = window.setTimeout(playFromStart, 900);
     };
     window.addEventListener("preloader:done", onPreloaderDone, { once: true });
-    const fallback = window.setTimeout(playFromStart, 5000);
+    // Страховка, если событие прелоадера уже ушло до подписки.
+    fallback = window.setTimeout(playFromStart, 5000);
 
     const markMoved = () => {
       if (window.scrollY > 40) userMoved = true;
@@ -161,6 +179,7 @@ export default function BrandFilm({
       window.removeEventListener("scroll", markMoved);
       window.removeEventListener("wheel", markMoved);
       video.removeEventListener("ended", onEnded);
+      video.pause();
     };
   }, [ready, mobile]);
 
