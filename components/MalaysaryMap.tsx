@@ -31,13 +31,14 @@ export default function MalaysaryMap() {
         zoom: 13,
         zoomControl: true,
         scrollWheelZoom: false,
+        attributionControl: true,
       });
+      map.attributionControl.setPrefix(false);
 
       mapInstanceRef.current = map;
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · by <strong>Iglobal Corp</strong>',
+        attribution: 'by <strong>Iglobal Corp</strong>',
         maxZoom: 19,
       }).addTo(map);
 
@@ -108,7 +109,7 @@ export default function MalaysaryMap() {
           filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(1.05) saturate(0.2);
         }
         .leaflet-control-attribution a {
-          color: #d4d4d8 !important;
+          display: none !important;
         }
         .leaflet-attribution-flag {
           display: none !important;
