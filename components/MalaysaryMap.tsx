@@ -16,7 +16,13 @@ export default function MalaysaryMap() {
     { lat: 52.281397, lng: 76.954259, label: t("obj.estaya_90.district"), address: "ул. Естая, 90" },
     { lat: 52.261685, lng: 76.949892, label: t("obj.bekturova_348.district"), address: "ул. Академика Бектурова, 348" },
     { lat: 52.261449, lng: 76.949094, label: t("obj.bekturova_356.district"), address: "ул. Академика Бектурова, 356" },
-    { lat: 52.277323, lng: 76.941557, label: t("contact.office"), address: t("contact.office.addr") + ", " + t("contact.office.note") },
+    {
+      lat: 52.277323,
+      lng: 76.941557,
+      label: t("contact.office"),
+      address: t("contact.office.addr") + ", " + t("contact.office.note"),
+      isOffice: true,
+    },
   ];
 
   useEffect(() => {
@@ -42,6 +48,7 @@ export default function MalaysaryMap() {
         maxZoom: 19,
       }).addTo(map);
 
+      // Маркер жилого объекта — силуэт зданий из логотипа
       const markerHeight = 20;
       const markerWidth = Math.round(markerHeight * (187 / 120));
 
@@ -53,10 +60,31 @@ export default function MalaysaryMap() {
         popupAnchor: [0, -Math.round(markerHeight / 2) - 2],
       });
 
+      // Маркер офиса продаж — контрастный бейдж с пином (как в карточке контактов)
+      const officeSize = 34;
+
+      const officeIcon = L.divIcon({
+        className: "malaysary-map-office",
+        html: `<div class="malaysary-map-office-badge">
+          <span class="malaysary-map-office-ring"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </div>`,
+        iconSize: [officeSize, officeSize],
+        iconAnchor: [officeSize / 2, officeSize / 2],
+        popupAnchor: [0, -Math.round(officeSize / 2) - 4],
+        tooltipAnchor: [officeSize / 2 + 6, 0],
+      });
+
       const bounds = L.latLngBounds([]);
 
       LOCATIONS.forEach((loc) => {
-        const marker = L.marker([loc.lat, loc.lng], { icon: markerIcon });
+        const marker = L.marker([loc.lat, loc.lng], {
+          icon: loc.isOffice ? officeIcon : markerIcon,
+          zIndexOffset: loc.isOffice ? 1000 : 0,
+        });
         marker.addTo(map);
         bounds.extend([loc.lat, loc.lng]);
         marker.bindPopup(
@@ -66,6 +94,15 @@ export default function MalaysaryMap() {
           </div>`,
           { closeButton: false }
         );
+
+        if (loc.isOffice) {
+          marker.bindTooltip(loc.label, {
+            permanent: true,
+            direction: "right",
+            interactive: false,
+            className: "malaysary-map-office-label",
+          });
+        }
       });
 
       map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14 });
@@ -114,12 +151,69 @@ export default function MalaysaryMap() {
         .leaflet-attribution-flag {
           display: none !important;
         }
-        .malaysary-map-pin {
+        .malaysary-map-pin,
+        .malaysary-map-office {
           background: transparent !important;
           border: none !important;
         }
         .malaysary-map-pin img {
           pointer-events: none;
+        }
+
+        /* Офис продаж: светлый круглый бейдж с тёмным пином */
+        .malaysary-map-office-badge {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 9999px;
+          background: #f4f4f5;
+          color: #08080a;
+          box-shadow:
+            0 0 0 2px rgba(8,8,10,0.9),
+            0 6px 16px rgba(0,0,0,0.6);
+        }
+        .malaysary-map-office-badge svg {
+          width: 18px;
+          height: 18px;
+          pointer-events: none;
+        }
+        .malaysary-map-office-ring {
+          position: absolute;
+          inset: -4px;
+          border-radius: 9999px;
+          border: 1.5px solid rgba(244,244,245,0.75);
+          pointer-events: none;
+          animation: malaysaryOfficePulse 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        }
+        @keyframes malaysaryOfficePulse {
+          0%   { transform: scale(0.8); opacity: 0.9; }
+          100% { transform: scale(1.7); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .malaysary-map-office-ring { animation: none; opacity: 0.5; }
+        }
+
+        /* Постоянная подпись рядом с офисом */
+        .leaflet-tooltip.malaysary-map-office-label {
+          background: rgba(8,8,10,0.9) !important;
+          backdrop-filter: blur(6px);
+          color: #f4f4f5 !important;
+          border: 1px solid rgba(244,244,245,0.25) !important;
+          border-radius: 9999px;
+          padding: 5px 11px;
+          font-family: 'Manrope', sans-serif;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          white-space: nowrap;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+        }
+        .leaflet-tooltip.malaysary-map-office-label::before {
+          display: none;
         }
       `}</style>
       <div
