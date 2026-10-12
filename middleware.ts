@@ -26,9 +26,9 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return
 
-  // Redirect if there is no locale
+  // Постоянный редирект: иначе Google видит / и /ru как дубли без каноникала
   request.nextUrl.pathname = `/${defaultLocale}${pathname}`
-  return NextResponse.redirect(request.nextUrl)
+  return NextResponse.redirect(request.nextUrl, 308)
 }
 
 export const config = {

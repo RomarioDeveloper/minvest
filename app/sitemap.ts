@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: {
           ru: `${base}/ru`,
           kk: `${base}/kk`,
+          "x-default": `${base}/ru`,
         },
       },
     },
@@ -26,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: {
           ru: `${base}/ru`,
           kk: `${base}/kk`,
+          "x-default": `${base}/ru`,
         },
       },
     },

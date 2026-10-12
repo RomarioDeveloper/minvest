@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
       languages: {
         ru: "https://minvest.kz/ru",
         kk: "https://minvest.kz/kk",
+        "x-default": "https://minvest.kz/ru",
       },
     },
     openGraph: {

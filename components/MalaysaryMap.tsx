@@ -35,15 +35,11 @@ export default function MalaysaryMap() {
 
       mapInstanceRef.current = map;
 
-      // OpenStreetMap tiles (dark-ish Carto variant for better look)
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution: 'by <strong>Iglobal Corp</strong>',
-          subdomains: "abcd",
-          maxZoom: 20,
-        }
-      ).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · by <strong>Iglobal Corp</strong>',
+        maxZoom: 19,
+      }).addTo(map);
 
       const markerHeight = 20;
       const markerWidth = Math.round(markerHeight * (187 / 120));
@@ -108,8 +104,11 @@ export default function MalaysaryMap() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
         }
+        .leaflet-tile-pane {
+          filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(1.05) saturate(0.2);
+        }
         .leaflet-control-attribution a {
-          display: none !important;
+          color: #d4d4d8 !important;
         }
         .leaflet-attribution-flag {
           display: none !important;
