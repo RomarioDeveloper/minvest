@@ -26,6 +26,8 @@ export type RealtyObject = {
   flagship?: boolean;
   /** Горящий бейдж на карточке (например «Последние две квартиры») */
   badgeLabel?: string;
+  /** Продажи завершены — зелёная плашка, цена скрыта */
+  soldOut?: boolean;
   description?: string;
 };
 
@@ -82,9 +84,9 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     name: "Горького, 46",
     district: "ул. Горького",
     status: "sales",
-    badgeLabel: "Последние две квартиры",
+    soldOut: true,
     tagline: "5-ти этажный дом бизнес класса.",
-    description: "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
+    description: "В свободной планировке 2-х и 3-х комнатные квартиры.",
     image: `/${encodeURIComponent("Горького.webp")}`,
     gallery: [
       "/hf_20260707_155135_aa59f259-f006-4fc2-a9fd-23135a0d42d5.webp",
@@ -110,7 +112,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     ],
     floors: 5,
     apartments: 20,
-    priceFrom: "500 000 ₸/м²",
+    priceFrom: "",
     deadline: "III кв. 2026",
     rooms: "52 / 57 / 75 м²",
   },
@@ -140,8 +142,9 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     name: "Бектурова, 348",
     district: "ул. Бектурова",
     status: "sales",
+    soldOut: true,
     tagline: "12-ти этажный дом комфорт класса, 1-но подъездный.",
-    description: "Цена: 350 тысяч тенге за кв.м. Коммерческие помещения на первом и втором этажах (цена: 400 тысяч за кв.м).",
+    description: "Коммерческие помещения на первом и втором этажах.",
     image: `/${encodeURIComponent("Бектурова 348.webp")}`,
     gallery: [
       `/${encodeURIComponent("Бектурова 348.webp")}`,
@@ -157,7 +160,7 @@ const OBJECTS_RAW: Omit<RealtyObject, "layouts">[] = [
     ],
     floors: 12,
     apartments: 66,
-    priceFrom: "от 350 000 ₸/м²",
+    priceFrom: "",
     deadline: "IV кв. 2026",
     rooms: "35–44 м²",
   },

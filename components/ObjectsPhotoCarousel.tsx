@@ -111,7 +111,7 @@ export default function ObjectsPhotoCarousel() {
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <span className="text-eyebrow uppercase text-bone/55">{current.district}</span>
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-bone/40">
-                  {t(`status.${current.status}`)}
+                  {t(current.soldOut ? "status.sold_out" : `status.${current.status}`)}
                 </span>
               </div>
               <h2

@@ -132,9 +132,8 @@ export const dictionaries = {
     "obj.dyusenova_306.rooms": "1 комната",
 
     "obj.gorkogo_46.district": "ул. Горького",
-    "obj.gorkogo_46.badge": "Последние две квартиры",
     "obj.gorkogo_46.tagline": "5-ти этажный дом бизнес класса.",
-    "obj.gorkogo_46.description": "В свободной планировке 2-х и 3-х комнатные квартиры. Цена: 500 тысяч за кв.м.",
+    "obj.gorkogo_46.description": "В свободной планировке 2-х и 3-х комнатные квартиры.",
     "obj.gorkogo_46.rooms": "52 / 57 / 75 м²",
 
     "obj.estaya_90.district": "ул. Естая",
@@ -144,7 +143,7 @@ export const dictionaries = {
 
     "obj.bekturova_348.district": "ул. Бектурова",
     "obj.bekturova_348.tagline": "12-ти этажный дом комфорт класса, 1-но подъездный.",
-    "obj.bekturova_348.description": "Цена: 350 тысяч тенге за кв.м. Коммерческие помещения на первом и втором этажах (цена: 400 тысяч за кв.м).",
+    "obj.bekturova_348.description": "Коммерческие помещения на первом и втором этажах.",
     "obj.bekturova_348.rooms": "35–44 м²",
 
     "obj.bekturova_356.district": "ул. Бектурова",
@@ -182,6 +181,7 @@ export const dictionaries = {
     "status.sales": "В продаже",
     "status.soon": "Скоро",
     "status.done": "Сдан",
+    "status.sold_out": "Продажи завершены",
 
     "flagship.eyebrow": "Флагман · Корпус 1",
     "flagship.title1": "Загляните внутрь дома,",
@@ -342,9 +342,8 @@ export const dictionaries = {
     "obj.dyusenova_306.rooms": "1 бөлмелі",
 
     "obj.gorkogo_46.district": "Горький көш.",
-    "obj.gorkogo_46.badge": "Соңғы екі пәтер",
     "obj.gorkogo_46.tagline": "5 қабатты бизнес класс үйі.",
-    "obj.gorkogo_46.description": "Еркін жоспардағы 2 және 3 бөлмелі пәтерлер. Бағасы: шаршы метріне 500 мың.",
+    "obj.gorkogo_46.description": "Еркін жоспардағы 2 және 3 бөлмелі пәтерлер.",
     "obj.gorkogo_46.rooms": "52 / 57 / 75 м²",
 
     "obj.estaya_90.district": "Естай көш.",
@@ -354,7 +353,7 @@ export const dictionaries = {
 
     "obj.bekturova_348.district": "Бектұров көш.",
     "obj.bekturova_348.tagline": "12 қабатты жайлылық класындағы үй, 1 кіреберісті.",
-    "obj.bekturova_348.description": "Бағасы: шаршы метріне 350 мың теңге. Бірінші және екінші қабаттардағы коммерциялық үй-жайлар (бағасы: шаршы метріне 400 мың).",
+    "obj.bekturova_348.description": "Бірінші және екінші қабаттардағы коммерциялық үй-жайлар.",
     "obj.bekturova_348.rooms": "35–44 м²",
 
     "obj.bekturova_356.district": "Бектұров көш.",
@@ -392,6 +391,7 @@ export const dictionaries = {
     "status.sales": "Сатылымда",
     "status.soon": "Жақында",
     "status.done": "Тапсырылды",
+    "status.sold_out": "Сатылым аяқталды",
 
     "flagship.eyebrow": "Флагман · 1-корпус",
     "flagship.title1": "Үйдің ішіне үңіліңіз,",

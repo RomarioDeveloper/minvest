@@ -24,19 +24,22 @@ const statusDot: Record<ObjectStatus, string> = {
 function StatusBadge({ obj, className = "" }: { obj: RealtyObject; className?: string }) {
   const { t } = useI18n();
   const isHot = !!obj.badgeLabel;
-  const label = isHot ? obj.badgeLabel : t(`catalog.filter.${obj.status}`);
+  const isSoldOut = !!obj.soldOut;
+  const label = isSoldOut ? t("status.sold_out") : isHot ? obj.badgeLabel : t(`catalog.filter.${obj.status}`);
 
   return (
     <div
       className={[
         "flex items-center gap-2 px-3 py-1.5 backdrop-blur-sm",
-        isHot
-          ? "border border-red-500/50 bg-red-950/90 text-red-100 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
-          : "bg-ink/70 text-bone-soft",
+        isSoldOut
+          ? "border border-emerald-500/50 bg-emerald-950/90 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+          : isHot
+            ? "border border-red-500/50 bg-red-950/90 text-red-100 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
+            : "bg-ink/70 text-bone-soft",
         className,
       ].join(" ")}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${isHot ? "animate-pulse bg-red-500" : statusDot[obj.status]}`} />
+      <span className={`h-1.5 w-1.5 rounded-full ${isSoldOut ? "bg-emerald-400" : isHot ? "animate-pulse bg-red-500" : statusDot[obj.status]}`} />
       <span className="text-eyebrow uppercase">{label}</span>
     </div>
   );
@@ -54,7 +57,7 @@ export default function ObjectsCatalog() {
 
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<RealtyObject | null>(null);
-  const visible = OBJECTS(t).filter((o) => filter === "all" || o.status === filter);
+  const visible = OBJECTS(t).filter((o) => filter === "all" || (o.status === filter && !(filter === "sales" && o.soldOut)));
 
   useEffect(() => {
     document.body.style.overflow = selected ? "hidden" : "";
@@ -400,9 +403,11 @@ function ObjectModal({ obj, onClose }: { obj: RealtyObject; onClose: () => void 
         <div className="px-5 pb-8 pt-5 sm:px-6">
             <div className="text-[11px] font-semibold uppercase tracking-widest text-bone/40">{obj.district}</div>
             <h2 className="mt-1.5 font-display text-2xl font-semibold tracking-tightest text-bone sm:text-3xl">{obj.name}</h2>
-            <div className="mt-4 inline-flex items-baseline gap-1.5">
-              <span className="font-display text-2xl sm:text-3xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</span>
-            </div>
+            {obj.priceFrom && (
+              <div className="mt-4 inline-flex items-baseline gap-1.5">
+                <span className="font-display text-2xl sm:text-3xl font-semibold tracking-tightest text-bone">{obj.priceFrom}</span>
+              </div>
+            )}
             {obj.description && <p className="mt-4 text-[15px] leading-relaxed text-bone/60">{obj.description}</p>}
 
             <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-bone/10">
